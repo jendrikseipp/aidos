@@ -27,18 +27,18 @@ public:
     void dump() const;
 
     string get_fact_name(int value) const {
-	return values[value]; 
-    }
-    
-    inline void set_unreachable(int value) {
-      if(reachable[value]){
-	reachable[value] = false;
-	reachable_values --;
-      }
+        return values[value];
     }
 
-    inline bool is_reachable(int value) const{
-      return reachable[value];
+    inline void set_unreachable(int value) {
+        if (reachable[value]) {
+            reachable[value] = false;
+            reachable_values--;
+        }
+    }
+
+    inline bool is_reachable(int value) const {
+        return reachable[value];
     }
 
     void remove_unreachable_facts();

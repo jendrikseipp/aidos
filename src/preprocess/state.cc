@@ -23,12 +23,12 @@ void State::dump() const {
         cout << "  " << it->first->get_name() << ": " << it->second << endl;
 }
 
-void State::remove_unreachable_facts(){
-  map<Variable *, int> newvalues;
-  for (auto it = values.begin();
-       it != values.end(); ++it){
-    if(it->first->is_necessary())
-      newvalues[it->first] = it->first->get_new_id(it->second);
-  }
-  newvalues.swap(values);
+void State::remove_unreachable_facts() {
+    map<Variable *, int> newvalues;
+    for (auto it = values.begin();
+         it != values.end(); ++it) {
+        if (it->first->is_necessary())
+            newvalues[it->first] = it->first->get_new_id(it->second);
+    }
+    newvalues.swap(values);
 }

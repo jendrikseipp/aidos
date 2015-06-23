@@ -126,11 +126,11 @@ void Operator::generate_cpp_input(ofstream &outfile) const {
 
 // Removes ambiguity in the preconditions,
 // detects whether the operator is spurious
-void Operator::remove_ambiguity(const H2Mutexes & h2) {
+void Operator::remove_ambiguity(const H2Mutexes &h2) {
     if (is_redundant())
         return;
     // cout << "Check ambiguity: " << name << endl;
-  
+
     vector<int> preconditions(h2.num_variables(), -1);
     vector<bool> original(h2.num_variables(), false);
 
@@ -139,9 +139,9 @@ void Operator::remove_ambiguity(const H2Mutexes & h2) {
 
     vector<pair<int, int> > known_values;
 
-    for (int i = 0; i < prevail.size(); i++){
+    for (int i = 0; i < prevail.size(); i++) {
         int var = prevail[i].var->get_level();
-        if(var != -1){
+        if (var != -1) {
             preconditions[var] = prevail[i].prev;
             known_values.push_back(make_pair(var, prevail[i].prev));
             original[var] = true;
@@ -166,11 +166,11 @@ void Operator::remove_ambiguity(const H2Mutexes & h2) {
     // check that no precondition is unreachable or mutex with some other precondition
     for (int i = 0; i < preconditions.size(); i++) {
         if (preconditions[i] != -1) {
-            if (h2.is_unreachable(i,preconditions[i])) {
+            if (h2.is_unreachable(i, preconditions[i])) {
                 spurious = true;
                 return;
             }
-            for (int j = i+1; j < preconditions.size(); j++) {
+            for (int j = i + 1; j < preconditions.size(); j++) {
                 if (h2.are_mutex(i, preconditions[i], j, preconditions[j])) {
                     spurious = true;
                     return;
@@ -204,13 +204,13 @@ void Operator::remove_ambiguity(const H2Mutexes & h2) {
 
             // we eliminate candidates mutex with other things
             for (list<unsigned>::iterator it2 = candidate_var.begin(); it2 != candidate_var.end();) {
-                bool mutex = h2.is_unreachable(var,*it2);
+                bool mutex = h2.is_unreachable(var, *it2);
                 for (int k = 0; !mutex && k < known_values.size(); k++)
-                    mutex = h2.are_mutex(known_values[k].first, known_values[k].second, var,*it2);
+                    mutex = h2.are_mutex(known_values[k].first, known_values[k].second, var, *it2);
 
                 if (!effect_var[var]) {
-		    for (int k = 0; !mutex && k < effects.size(); k++)
-			mutex = h2.are_mutex(effects[k].first, effects[k].second, var,*it2);
+                    for (int k = 0; !mutex && k < effects.size(); k++)
+                        mutex = h2.are_mutex(effects[k].first, effects[k].second, var, *it2);
                 }
 
 
@@ -219,7 +219,7 @@ void Operator::remove_ambiguity(const H2Mutexes & h2) {
                     it2 = candidate_var.erase(it2);
                 } else {
                     ++it2;
-                }   
+                }
             }
 
             // we check the remaining candidates
@@ -227,7 +227,7 @@ void Operator::remove_ambiguity(const H2Mutexes & h2) {
                 spurious = true;
                 return;
             } else if (candidate_var.size() == 1) { // add the single possible fluent to preconditions and aux_values and remove the variables from candidate
-                pair<int, int> new_fluent = make_pair(var,candidate_var.front());
+                pair<int, int> new_fluent = make_pair(var, candidate_var.front());
                 aux_values.push_back(new_fluent);
                 preconditions[new_fluent.first] = new_fluent.second;
                 it = candidates.erase(it);
@@ -238,12 +238,12 @@ void Operator::remove_ambiguity(const H2Mutexes & h2) {
 
         known_values.swap(aux_values);
     }
-    
+
 
     // new preconditions are added
     for (int i = 0; i < preconditions.size(); i++)
         if (preconditions[i] != -1 && !original[i])
-            augmented_preconditions.push_back(make_pair(i,preconditions[i]));
+            augmented_preconditions.push_back(make_pair(i, preconditions[i]));
 
     // potential preconditions are set
     // important for backwards h^2
@@ -255,7 +255,7 @@ void Operator::remove_ambiguity(const H2Mutexes & h2) {
             continue;
 
         int var = pre_post[i].var->get_level();
-        if (preconditions[var] != -1){
+        if (preconditions[var] != -1) {
             potential_preconditions.push_back(make_pair(var, preconditions[var]));
             continue;
         }
@@ -268,37 +268,37 @@ void Operator::remove_ambiguity(const H2Mutexes & h2) {
                     conflict = h2.are_mutex(var, j, i, preconditions[i]);
 
             if (!conflict)
-                potential_preconditions.push_back(make_pair(var,j));
+                potential_preconditions.push_back(make_pair(var, j));
         }
     }
 }
 
-void Operator::remove_unreachable_facts(const vector<Variable *> &variables){
+void Operator::remove_unreachable_facts(const vector<Variable *> &variables) {
     vector<Prevail> newprev;
-    for(int i = 0; i < prevail.size(); ++i){
-	if(prevail[i].var->is_necessary()) {
-	    prevail[i].remove_unreachable_facts();
-	    newprev.push_back(prevail[i]);
-	}
+    for (int i = 0; i < prevail.size(); ++i) {
+        if (prevail[i].var->is_necessary()) {
+            prevail[i].remove_unreachable_facts();
+            newprev.push_back(prevail[i]);
+        }
     }
     newprev.swap(prevail);
-    for(int i = 0; i < pre_post.size(); ++i){
-	pre_post[i].remove_unreachable_facts();
+    for (int i = 0; i < pre_post.size(); ++i) {
+        pre_post[i].remove_unreachable_facts();
     }
-    for(int i = 0; i < augmented_preconditions.size(); ++i){
-	int var = augmented_preconditions[i].first;
-	int val = augmented_preconditions[i].second;
-	if(variables[var]->is_necessary()){
-	    augmented_preconditions_var.push_back(pair<Variable *, int> (variables[var], variables[var]->get_new_id(val)));
-	}
+    for (int i = 0; i < augmented_preconditions.size(); ++i) {
+        int var = augmented_preconditions[i].first;
+        int val = augmented_preconditions[i].second;
+        if (variables[var]->is_necessary()) {
+            augmented_preconditions_var.push_back(pair<Variable *, int> (variables[var], variables[var]->get_new_id(val)));
+        }
     }
-    for(int i = 0; i < potential_preconditions.size(); ++i){
-	int var = potential_preconditions[i].first;
-	int val = potential_preconditions[i].second;
+    for (int i = 0; i < potential_preconditions.size(); ++i) {
+        int var = potential_preconditions[i].first;
+        int val = potential_preconditions[i].second;
 
-	if(variables[var]->is_necessary()){
-	    potential_preconditions_var.push_back(pair<Variable *, int> (variables[var], variables[var]->get_new_id(val)));
-	}
+        if (variables[var]->is_necessary()) {
+            potential_preconditions_var.push_back(pair<Variable *, int> (variables[var], variables[var]->get_new_id(val)));
+        }
     }
 }
 
@@ -307,68 +307,69 @@ void Operator::remove_unreachable_facts(const vector<Variable *> &variables){
 void Operator::include_augmented_preconditions() {
     //cout << "Including augmented precondition in" << name << endl;
 
-    for(int i = 0; i < augmented_preconditions_var.size(); i++){
-	Variable * var = augmented_preconditions_var[i].first;
-	int val = augmented_preconditions_var[i].second;
-	//cout << name << " AFTER: " << var->get_fact_name(val) << endl;
+    for (int i = 0; i < augmented_preconditions_var.size(); i++) {
+        Variable *var = augmented_preconditions_var[i].first;
+        int val = augmented_preconditions_var[i].second;
+        //cout << name << " AFTER: " << var->get_fact_name(val) << endl;
 
 
-	bool included_in_eff = false;
-	for(int j = 0; j < pre_post.size(); j++) {
-	    if (pre_post[j].var->get_level() == var->get_level()){
-		if (pre_post[j].pre != -1) {
-		    cerr <<
-			"Assertion error: augmented precondition was already encoded in the operator" 
-			 << endl;
-		    cerr << name << endl;
-		    exit(-1);
-		}else {
-		    if (pre_post[j].post != val) {
-			pre_post[j].pre = val;
-			included_in_eff = true;
-		    }else{
-			//Remove prepost
-			pre_post.erase(pre_post.begin() + j);
-		    }
-		    break;
-		}
-	    }
-	}
-	if(!included_in_eff){
-	    prevail.push_back(Prevail(var, val));
-	}
+        bool included_in_eff = false;
+        for (int j = 0; j < pre_post.size(); j++) {
+            if (pre_post[j].var->get_level() == var->get_level()) {
+                if (pre_post[j].pre != -1) {
+                    cerr <<
+                    "Assertion error: augmented precondition was already encoded in the operator"
+                         << endl;
+                    cerr << name << endl;
+                    exit(-1);
+                } else {
+                    if (pre_post[j].post != val) {
+                        pre_post[j].pre = val;
+                        included_in_eff = true;
+                    } else {
+                        //Remove prepost
+                        pre_post.erase(pre_post.begin() + j);
+                    }
+                    break;
+                }
+            }
+        }
+        if (!included_in_eff) {
+            prevail.push_back(Prevail(var, val));
+        }
     }
     vector<pair<int, int> > ().swap(augmented_preconditions);
 }
 
 
 int Operator::count_potential_noeff_preconditions() const {
-    std::set<Variable*> found, found_eff;
-    for(int i = 0; i < potential_preconditions_var.size(); i++){
-	Variable * var = potential_preconditions_var[i].first;
-	int val = potential_preconditions_var[i].second;
-	bool isaug = false;
-	for(int j = 0; j < augmented_preconditions_var.size(); j++){
-	    if(augmented_preconditions_var[j].first->get_level() == var->get_level()){
-		isaug = true;
-		break;
-	    }
-	}
-	if(isaug) continue;
-	for(int j = 0; j < pre_post.size(); j++){
-	    if(pre_post[j].var->get_level() == var->get_level()){
-		if(pre_post[j].post == val){
-		    found_eff.insert(var);
-		}else{
-		    found.insert(var);
-		}
-		break;
-	    }
-	}
+    std::set<Variable *> found, found_eff;
+    for (int i = 0; i < potential_preconditions_var.size(); i++) {
+        Variable *var = potential_preconditions_var[i].first;
+        int val = potential_preconditions_var[i].second;
+        bool isaug = false;
+        for (int j = 0; j < augmented_preconditions_var.size(); j++) {
+            if (augmented_preconditions_var[j].first->get_level() == var->get_level()) {
+                isaug = true;
+                break;
+            }
+        }
+        if (isaug)
+            continue;
+        for (int j = 0; j < pre_post.size(); j++) {
+            if (pre_post[j].var->get_level() == var->get_level()) {
+                if (pre_post[j].post == val) {
+                    found_eff.insert(var);
+                } else {
+                    found.insert(var);
+                }
+                break;
+            }
+        }
     }
-    for (std::set<Variable *>::iterator it = found_eff.begin(); 
-	 it != found_eff.end(); ++it)
-	found.erase(*it);
+    for (std::set<Variable *>::iterator it = found_eff.begin();
+         it != found_eff.end(); ++it)
+        found.erase(*it);
 
 
     return found.size();
@@ -377,18 +378,19 @@ int Operator::count_potential_noeff_preconditions() const {
 
 int Operator::count_potential_preconditions() const {
     std::set<Variable *> found;
-    for(int i = 0; i < potential_preconditions_var.size(); i++){
-	Variable * var = potential_preconditions_var[i].first;
-	bool isaug = false;
-	for(int j = 0; j < augmented_preconditions_var.size(); j++){
-	    if(augmented_preconditions_var[j].first->get_level() == var->get_level()){
-		isaug = true;
-		break;
-	    }
-	}
-	if(isaug) continue;
+    for (int i = 0; i < potential_preconditions_var.size(); i++) {
+        Variable *var = potential_preconditions_var[i].first;
+        bool isaug = false;
+        for (int j = 0; j < augmented_preconditions_var.size(); j++) {
+            if (augmented_preconditions_var[j].first->get_level() == var->get_level()) {
+                isaug = true;
+                break;
+            }
+        }
+        if (isaug)
+            continue;
 
-	found.insert(var);
+        found.insert(var);
     }
 
     return found.size();

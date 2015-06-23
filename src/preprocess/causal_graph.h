@@ -51,7 +51,6 @@ public:
     void generate_cpp_input(ofstream &outfile,
                             const vector<Variable *> &ordered_vars) const;
     void update();
-
 };
 
 extern bool g_do_not_prune_variables;

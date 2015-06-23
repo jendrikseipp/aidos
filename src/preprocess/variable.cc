@@ -54,7 +54,7 @@ void Variable::dump() const {
     if (is_derived())
         cout << "; derived; layer: " << layer << " values: ";
     for (size_t i = 0; i < values.size(); ++i)
-	cout << " " << values[i];
+        cout << " " << values[i];
     cout << "]" << endl;
 }
 
@@ -64,34 +64,33 @@ void Variable::generate_cpp_input(ofstream &outfile) const {
             << layer << endl
             << reachable_values << endl;
     for (size_t i = 0; i < values.size(); ++i)
-      if(reachable[i])
-        outfile << values[i] << endl;
+        if (reachable[i])
+            outfile << values[i] << endl;
     outfile << "end_variable" << endl;
 }
 
-void Variable::remove_unreachable_facts(){
-  vector<string> new_values;
-  for (int i = 0; i < values.size(); i++){
-    if(reachable[i]){
-      new_values.push_back(values[i]);
+void Variable::remove_unreachable_facts() {
+    vector<string> new_values;
+    for (int i = 0; i < values.size(); i++) {
+        if (reachable[i]) {
+            new_values.push_back(values[i]);
+        }
     }
-  }
-  new_values.swap(values);
-  vector<bool> (values.size(), true).swap(reachable);  
-  
+    new_values.swap(values);
+    vector<bool> (values.size(), true).swap(reachable);
 }
 
-int Variable::get_new_id(int value) const{
-  assert(reachable[value]);
-  if(!reachable[value]){
-    cerr << "ERROR: Tried to update an unreachable fact" << endl;
-    exit(-1);
-  }
-  int id = 0;
-  for(int i = 0; i < value; ++i){
-    if(reachable[i]){
-      id++;
+int Variable::get_new_id(int value) const {
+    assert(reachable[value]);
+    if (!reachable[value]) {
+        cerr << "ERROR: Tried to update an unreachable fact" << endl;
+        exit(-1);
     }
-  }
-  return id;
+    int id = 0;
+    for (int i = 0; i < value; ++i) {
+        if (reachable[i]) {
+            id++;
+        }
+    }
+    return id;
 }

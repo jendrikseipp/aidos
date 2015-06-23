@@ -14,32 +14,32 @@ class H2Mutexes;
 
 class Operator {
 public:
-  class Prevail {
-    public:
+    class Prevail {
+public:
         Variable *var;
         int prev;
         Prevail(Variable *v, int p) : var(v), prev(p) {}
-    inline void remove_unreachable_facts(){
-      prev = var->get_new_id(prev);
-    }
+        inline void remove_unreachable_facts() {
+            prev = var->get_new_id(prev);
+        }
     };
-  class EffCond {
-  public:
+    class EffCond {
+public:
         Variable *var;
         int cond;
         EffCond(Variable *v, int c) : var(v), cond(c) {}
-    //return true if the condition is reachable 
-    inline bool remove_unreachable_facts(){
-      if(var->is_reachable(cond)){
-	cond = var->get_new_id(cond);
-	return true;
-      }else{
-	return false;
-      }
-    }
+        //return true if the condition is reachable
+        inline bool remove_unreachable_facts() {
+            if (var->is_reachable(cond)) {
+                cond = var->get_new_id(cond);
+                return true;
+            } else {
+                return false;
+            }
+        }
     };
-  class PrePost {
-  public:
+    class PrePost {
+public:
         Variable *var;
         int pre, post;
         bool is_conditional_effect;
@@ -49,27 +49,27 @@ public:
         }
         PrePost(Variable *v, vector<EffCond> ecs, int pr, int po) : var(v), pre(pr),
                                                                     post(po), effect_conds(ecs) {is_conditional_effect = true; }
-    bool is_conditional () const{
-	return is_conditional_effect;
-    }
+        bool is_conditional() const {
+            return is_conditional_effect;
+        }
 
-    inline void remove_unreachable_facts(){
-      if(pre != -1)
-	pre = var->get_new_id(pre);
-      post = var->get_new_id(post);
-      if(is_conditional_effect){
-	vector<EffCond> new_conds;
-	for(int i = 0; i < effect_conds.size(); ++i){
-	  if(effect_conds[i].remove_unreachable_facts()){
-	    new_conds.push_back(effect_conds[i]);
-	  }
-	}
-	effect_conds.swap(new_conds);
-	if(effect_conds.empty()){
-	  is_conditional_effect = false;
-	}
-      }
-    }    
+        inline void remove_unreachable_facts() {
+            if (pre != -1)
+                pre = var->get_new_id(pre);
+            post = var->get_new_id(post);
+            if (is_conditional_effect) {
+                vector<EffCond> new_conds;
+                for (int i = 0; i < effect_conds.size(); ++i) {
+                    if (effect_conds[i].remove_unreachable_facts()) {
+                        new_conds.push_back(effect_conds[i]);
+                    }
+                }
+                effect_conds.swap(new_conds);
+                if (effect_conds.empty()) {
+                    is_conditional_effect = false;
+                }
+            }
+        }
     };
 
 private:
@@ -96,33 +96,34 @@ public:
     int get_cost() const {return cost; }
     string get_name() const {return name; }
     bool has_conditional_effects() const {
-	for(int i = 0; i < pre_post.size(); i++)
-	    if(pre_post[i].is_conditional()) return true;
-	
-	return false;
+        for (int i = 0; i < pre_post.size(); i++)
+            if (pre_post[i].is_conditional())
+                return true;
+
+        return false;
     }
-    inline void set_spurious(){
-      spurious = true;
+    inline void set_spurious() {
+        spurious = true;
     }
     inline const vector<Prevail> &get_prevail() const {return prevail; }
     inline const vector<PrePost> &get_pre_post() const {return pre_post; }
-    inline const  std::vector<std::pair<int, int> > & get_augmented_preconditions() const{
-      return augmented_preconditions;
+    inline const std::vector<std::pair<int, int> > &get_augmented_preconditions() const {
+        return augmented_preconditions;
     }
 
-    inline const  std::vector<std::pair<int, int> > & get_potential_preconditions() const {
-      return potential_preconditions;
+    inline const std::vector<std::pair<int, int> > &get_potential_preconditions() const {
+        return potential_preconditions;
     }
 
     int count_potential_preconditions() const;
     inline int count_augmented_preconditions() const {
-	return augmented_preconditions.size();
+        return augmented_preconditions.size();
     }
 
-    int count_potential_noeff_preconditions() const; 
+    int count_potential_noeff_preconditions() const;
     void include_augmented_preconditions();
-    
-    void remove_ambiguity(const H2Mutexes & h2);
+
+    void remove_ambiguity(const H2Mutexes &h2);
 
     void remove_unreachable_facts(const vector<Variable *> &variables);
 };
