@@ -31,6 +31,7 @@ HEADERS = \
           state.h \
           successor_generator.h \
           variable.h \
+          h2_mutexes.h \
 
 SOURCES = planner.cc $(HEADERS:%.h=%.cc)
 TARGET = preprocess
