@@ -246,9 +246,6 @@ PlainPrinter::PlainPrinter(ostream &out, bool pa)
       print_all(pa) {
 }
 
-PlainPrinter::~PlainPrinter() {
-}
-
 void PlainPrinter::print_synopsis(const DocStruct &info) {
     if (!info.full_name.empty())
         os << "== " << info.full_name << " ==" << endl;
