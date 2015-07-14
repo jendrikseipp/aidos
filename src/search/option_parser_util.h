@@ -613,4 +613,21 @@ public:
     virtual ~PlainPrinter() override = default;
 };
 
+
+class SmacPrinter : public DocPrinter {
+protected:
+    virtual void print_synopsis(const DocStruct &info);
+    virtual void print_usage(std::string call_name, const DocStruct &info);
+    virtual void print_arguments(const DocStruct &info);
+    virtual void print_notes(const DocStruct &info);
+    virtual void print_language_features(const DocStruct &info);
+    virtual void print_properties(const DocStruct &info);
+    virtual void print_category_header(std::string category_name);
+    virtual void print_category_footer();
+
+public:
+    SmacPrinter(std::ostream &out);
+    virtual ~SmacPrinter() override = default;
+};
+
 #endif

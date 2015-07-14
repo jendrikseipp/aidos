@@ -327,3 +327,90 @@ void PlainPrinter::print_category_header(string category_name) {
 void PlainPrinter::print_category_footer() {
     os << endl;
 }
+
+
+SmacPrinter::SmacPrinter(ostream &out)
+    : DocPrinter(out) {
+}
+
+void SmacPrinter::print_synopsis(const DocStruct &info) {
+    if (!info.full_name.empty())
+        os << "== " << info.full_name << " ==" << endl;
+    if (!info.synopsis.empty()) {
+        os << info.synopsis << endl;
+    }
+}
+
+void SmacPrinter::print_usage(string call_name, const DocStruct &info) {
+    if (!call_name.empty()) {
+        os << call_name << "(";
+        for (size_t i = 0; i < info.arg_help.size(); ++i) {
+            ArgumentInfo arg = info.arg_help[i];
+            os << arg.kwd;
+            if (!info.arg_help[i].default_value.empty()) {
+                os << "=" << info.arg_help[i].default_value;
+            } else if (!info.arg_help[i].mandatory) {
+                os << "=None";
+            }
+            if (i != info.arg_help.size() - 1)
+                os << ", ";
+        }
+        os << ")" << endl;
+    }
+}
+
+void SmacPrinter::print_arguments(const DocStruct &info) {
+    for (size_t i = 0; i < info.arg_help.size(); ++i) {
+        ArgumentInfo arg = info.arg_help[i];
+        os << " " << arg.kwd << "("
+           << arg.type_name << "): "
+           << arg.help << endl;
+    }
+}
+
+void SmacPrinter::print_notes(const DocStruct &info) {
+    if (true) {
+        for (size_t i = 0; i < info.notes.size(); ++i) {
+            NoteInfo note = info.notes[i];
+            if (note.long_text) {
+                os << "=== " << note.name << " ===" << endl
+                   << note.description << endl << endl;
+            } else {
+                os << " * " << note.name << ": " << note.description << endl << endl;
+            }
+        }
+    }
+}
+
+void SmacPrinter::print_language_features(const DocStruct &info) {
+    if (true) {
+        if (!info.support_help.empty()) {
+            os << "Language features supported:" << endl;
+        }
+        for (size_t i = 0; i < info.support_help.size(); ++i) {
+            LanguageSupportInfo ls = info.support_help[i];
+            os << " * " << ls.feature << ": " << ls.description << endl;
+        }
+    }
+}
+
+void SmacPrinter::print_properties(const DocStruct &info) {
+    if (true) {
+        if (!info.property_help.empty()) {
+            os << "Properties:" << endl;
+        }
+        for (size_t i = 0; i < info.property_help.size(); ++i) {
+            PropertyInfo p = info.property_help[i];
+            os << " * " << p.property << ": " << p.description << endl;
+        }
+    }
+}
+
+
+void SmacPrinter::print_category_header(string category_name) {
+    os << "Help for " << category_name << endl << endl;
+}
+
+void SmacPrinter::print_category_footer() {
+    os << endl;
+}
