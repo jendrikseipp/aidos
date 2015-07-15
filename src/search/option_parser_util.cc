@@ -342,6 +342,18 @@ void SmacPrinter::print_synopsis(const DocStruct &info) {
         os << "# " << info.full_name << endl;
 }
 
+string expand_infinity(const string &type_name, const string &value) {
+    stringstream ss;
+    if (!type_name.compare("int") && !value.compare("infinity")) {
+        ss << numeric_limits<int>::max();
+    } else if (!type_name.compare("double") && !value.compare("infinity")) {
+        ss << numeric_limits<double>::max();
+    } else {
+        ss << value;
+    }
+    return ss.str();
+}
+
 void SmacPrinter::print_usage(string feature_name, const DocStruct &info) {
     if (!info.type.compare("Heuristic")) {
         os << feature_name
@@ -356,9 +368,16 @@ void SmacPrinter::print_usage(string feature_name, const DocStruct &info) {
 
         string type;
         string domain;
+        // TODO: We assume all integer and double params are >= 0.
         if (!arg.type_name.compare("int")) {
             type = "integer";
-            domain = "[TODO, TODO]";
+            if (!arg.default_value.compare("infinity")) {
+                stringstream ss;
+                ss << "[0, " << expand_infinity(arg.type_name, arg.default_value) << "]";
+                domain = ss.str();
+            } else {
+                domain = "[0, TODO]";
+            }
         } else if (!arg.type_name.compare("double")) {
             type = "real";
             domain = "[TODO, TODO]";
@@ -376,7 +395,8 @@ void SmacPrinter::print_usage(string feature_name, const DocStruct &info) {
 
         string parameter = feature_name + separator + arg.kwd;
         os << parameter << " " << type << " " << domain << " ["
-           << lowercase(arg.default_value) << "]" << endl;
+           << lowercase(expand_infinity(arg.type_name, arg.default_value))
+           << "]" << endl;
         os << parameter << " | " << feature_name << " != off" << endl;
     }
 }
