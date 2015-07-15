@@ -29,6 +29,9 @@ class OpenList;
 class AbstractTask;
 
 
+std::string lowercase(std::string s);
+
+
 struct ParseNode {
     ParseNode()
         : value(""),
@@ -615,6 +618,8 @@ public:
 
 
 class SmacPrinter : public DocPrinter {
+    const std::string separator = ":";
+
 protected:
     virtual void print_synopsis(const DocStruct &info);
     virtual void print_usage(std::string call_name, const DocStruct &info);

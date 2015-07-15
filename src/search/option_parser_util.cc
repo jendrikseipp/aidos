@@ -1,13 +1,18 @@
+#include "option_parser_util.h"
+
 #include <algorithm>
 #include <string>
 #include <vector>
-#include "option_parser_util.h"
-
 
 using namespace std;
 
+string lowercase(string s) {
+    transform(s.begin(), s.end(), s.begin(), ::tolower);
+    return s;
+}
+
 void DocStore::register_object(string k, string type) {
-    transform(k.begin(), k.end(), k.begin(), ::tolower); //k to lowercase
+    k = lowercase(k);
     registered[k] = DocStruct();
     registered[k].type = type;
     registered[k].full_name = k;
@@ -357,9 +362,29 @@ void SmacPrinter::print_usage(string call_name, const DocStruct &info) {
 
 void SmacPrinter::print_arguments(const DocStruct &info) {
     for (const ArgumentInfo &arg : info.arg_help) {
-        os << " " << arg.kwd << "("
-           << arg.type_name << "): "
-           << arg.help << endl;
+        if (!arg.mandatory)
+            continue;
+
+        string type;
+        string domain;
+        if (!arg.type_name.compare("int")) {
+            type = "integer";
+            domain = "[TODO, TODO]";
+        } else if (!arg.type_name.compare("double")) {
+            type = "real";
+            domain = "[TODO, TODO]";
+        } else if (!arg.type_name.compare(0, 1, "{")) {
+            type = "categorical";
+            // Keep curly braces.
+            domain = lowercase(arg.type_name);
+        } else {
+            continue;
+            //ABORT("Unrecognized type: " + arg.type_name);
+        }
+
+        os << "TODONAME" << separator << arg.kwd << " " << type << " " << domain << " [";
+        assert(!arg.default_value.empty());
+        os << lowercase(arg.default_value) << "]" << endl;
     }
 }
 
