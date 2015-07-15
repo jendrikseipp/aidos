@@ -342,8 +342,8 @@ void SmacPrinter::print_synopsis(const DocStruct &info) {
         os << "# " << info.full_name << endl;
 }
 
-void SmacPrinter::print_usage(string call_name, const DocStruct &info) {
-    os << call_name
+void SmacPrinter::print_usage(string feature_name, const DocStruct &info) {
+    os << feature_name
        << " categorical {off, sum, tiebreaking} [off]" << endl;
 
     for (const ArgumentInfo &arg : info.arg_help) {
@@ -373,10 +373,10 @@ void SmacPrinter::print_usage(string call_name, const DocStruct &info) {
             //ABORT("Unrecognized type: " + arg.type_name);
         }
 
-        assert(!arg.default_value.empty());
-        os << call_name << separator << arg.kwd << " "
-           << type << " " << domain << " ["
+        string parameter = feature_name + separator + arg.kwd;
+        os << parameter << " " << type << " " << domain << " ["
            << lowercase(arg.default_value) << "]" << endl;
+        os << parameter << " | " << feature_name << " != off" << endl;
     }
 }
 
