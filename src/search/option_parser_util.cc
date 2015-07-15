@@ -335,6 +335,7 @@ void PlainPrinter::print_category_footer() {
 
 SmacPrinter::SmacPrinter(ostream &out)
     : DocPrinter(out) {
+    os << "search categorical {eager, lazy, ehc} [lazy]" << endl;
 }
 
 void SmacPrinter::print_synopsis(const DocStruct &info) {
@@ -402,7 +403,12 @@ void SmacPrinter::print_usage(string feature_name, const DocStruct &info) {
         os << parameter << " " << type << " " << domain << " ["
            << lowercase(expand_infinity(arg.default_value))
            << "]" << endl;
-        os << parameter << " | " << feature_name << " != off" << endl;
+
+        if (!info.type.compare("Heuristic")) {
+            os << parameter << " | " << feature_name << " != off" << endl;
+        } else if (!info.type.compare("SearchEngine")) {
+            os << parameter << " | search == " << feature_name << endl;
+        }
     }
 }
 
@@ -417,7 +423,6 @@ void SmacPrinter::print_language_features(const DocStruct &) {
 
 void SmacPrinter::print_properties(const DocStruct &) {
 }
-
 
 void SmacPrinter::print_category_header(string category_name) {
     os << "# Parameters for " << category_name << endl << endl;
