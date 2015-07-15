@@ -348,7 +348,7 @@ void SmacPrinter::print_usage(string feature_name, const DocStruct &info) {
 
     for (const ArgumentInfo &arg : info.arg_help) {
         if (!arg.mandatory) {
-            assert(!arg.type_name.compare("AbstractTask"));
+            cerr << "Optional: " << arg.type_name << endl;
             continue;
         }
 
@@ -368,9 +368,8 @@ void SmacPrinter::print_usage(string feature_name, const DocStruct &info) {
             // Keep curly braces.
             domain = lowercase(arg.type_name);
         } else {
-            os << "Unrecognized type: " << arg.type_name << endl;
+            cerr << "Unrecognized type: " << arg.type_name << endl;
             continue;
-            //ABORT("Unrecognized type: " + arg.type_name);
         }
 
         string parameter = feature_name + separator + arg.kwd;
