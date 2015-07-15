@@ -339,7 +339,7 @@ SmacPrinter::SmacPrinter(ostream &out)
 
 void SmacPrinter::print_synopsis(const DocStruct &info) {
     if (!info.full_name.empty())
-        os << "== " << info.full_name << " ==" << endl;
+        os << "# " << info.full_name << endl;
 }
 
 void SmacPrinter::print_usage(string call_name, const DocStruct &) {
@@ -392,7 +392,7 @@ void SmacPrinter::print_properties(const DocStruct &) {
 
 
 void SmacPrinter::print_category_header(string category_name) {
-    os << "Help for " << category_name << endl << endl;
+    os << "# Parameters for " << category_name << endl << endl;
 }
 
 void SmacPrinter::print_category_footer() {
