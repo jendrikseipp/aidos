@@ -622,7 +622,7 @@ class SmacPrinter : public DocPrinter {
 
 protected:
     virtual void print_synopsis(const DocStruct &info);
-    virtual void print_usage(std::string feature_name, const DocStruct &info);
+    virtual void print_usage(std::string feature, const DocStruct &info);
     virtual void print_arguments(const DocStruct &info);
     virtual void print_notes(const DocStruct &info);
     virtual void print_language_features(const DocStruct &info);

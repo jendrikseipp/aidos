@@ -362,23 +362,25 @@ static string get_upper_bound(const string &value) {
     }
 }
 
-void SmacPrinter::print_usage(string feature_name, const DocStruct &info) {
+void SmacPrinter::print_usage(string feature, const DocStruct &info) {
     if (!info.type.compare("Heuristic")) {
-        os << feature_name
+        os << feature
            << " categorical {off, sum, tiebreaking} [off]" << endl;
-        string pref_ops_param = feature_name + separator + "use_preferred_operators";
+        string pref_ops_param = feature + separator + "use_preferred_operators";
         os << pref_ops_param << " categorical {true, false} [false]" << endl;
-        os << pref_ops_param << " | " << feature_name << " != off" << endl;
+        os << pref_ops_param << " | " << feature << " != off" << endl;
     } else if (!info.type.compare("LandmarkGraph")) {
-        os << feature_name << " categorical {off, on} [off]" << endl;
+        os << feature << " categorical {off, on} [off]" << endl;
+        os << feature << " | lmcount != off" << endl;
     } else if (!info.type.compare("Synergy")) {
-        os << feature_name << " categorical {off, on} [off]" << endl;
-        os << feature_name << " | ff != off && lmcount != off" << endl;
+        os << feature << " categorical {off, on} [off]" << endl;
+        os << feature << " | ff != off && lmcount != off" << endl;
     }
 
     for (const ArgumentInfo &arg : info.arg_help) {
         if (!arg.mandatory) {
-            cerr << "Optional: " << arg.type_name << endl;
+            if (arg.type_name.compare("AbstractTask"))
+                cerr << "Optional: " << arg.type_name << endl;
             continue;
         }
 
@@ -407,19 +409,19 @@ void SmacPrinter::print_usage(string feature_name, const DocStruct &info) {
             continue;
         }
 
-        string parameter = feature_name + separator + arg.kwd;
+        string parameter = feature + separator + arg.kwd;
         os << parameter << " " << type << " " << domain << " ["
            << lowercase(expand_infinity(arg.default_value))
            << "]" << endl;
 
         if (!info.type.compare("Heuristic")) {
-            os << parameter << " | " << feature_name << " != off" << endl;
+            os << parameter << " | " << feature << " != off" << endl;
         } else if (!info.type.compare("SearchEngine")) {
-            os << parameter << " | search == " << feature_name << endl;
+            os << parameter << " | search == " << feature << endl;
         } else if (!info.type.compare("LandmarkGraph")) {
-            os << parameter << " | " << feature_name << " == on" << endl;
+            os << parameter << " | " << feature << " == on" << endl;
         } else if (!info.type.compare("Synergy")) {
-            os << parameter << " | " << feature_name << " == on" << endl;
+            os << parameter << " | " << feature << " == on" << endl;
         }
     }
 }
