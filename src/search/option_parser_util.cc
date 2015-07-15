@@ -366,6 +366,9 @@ void SmacPrinter::print_usage(string feature_name, const DocStruct &info) {
     if (!info.type.compare("Heuristic")) {
         os << feature_name
            << " categorical {off, sum, tiebreaking} [off]" << endl;
+        string pref_ops_param = feature_name + separator + "use_preferred_operators";
+        os << pref_ops_param << " categorical {true, false} [false]" << endl;
+        os << pref_ops_param << " | " << feature_name << " != off" << endl;
     } else if (!info.type.compare("LandmarkGraph")) {
         os << feature_name << " categorical {off, on} [off]" << endl;
     } else if (!info.type.compare("Synergy")) {
