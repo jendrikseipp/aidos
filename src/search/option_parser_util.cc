@@ -366,6 +366,9 @@ void SmacPrinter::print_usage(string feature_name, const DocStruct &info) {
     if (!info.type.compare("Heuristic")) {
         os << feature_name
            << " categorical {off, sum, tiebreaking} [off]" << endl;
+    } else if (!info.type.compare("LandmarkGraph")) {
+        os << feature_name
+           << " categorical {off, on} [off]" << endl;
     }
 
     for (const ArgumentInfo &arg : info.arg_help) {
@@ -408,6 +411,8 @@ void SmacPrinter::print_usage(string feature_name, const DocStruct &info) {
             os << parameter << " | " << feature_name << " != off" << endl;
         } else if (!info.type.compare("SearchEngine")) {
             os << parameter << " | search == " << feature_name << endl;
+        } else if (!info.type.compare("LandmarkGraph")) {
+            os << parameter << " | " << feature_name << " == on" << endl;
         }
     }
 }
