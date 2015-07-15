@@ -362,8 +362,10 @@ void SmacPrinter::print_usage(string call_name, const DocStruct &info) {
 
 void SmacPrinter::print_arguments(const DocStruct &info) {
     for (const ArgumentInfo &arg : info.arg_help) {
-        if (!arg.mandatory)
+        if (!arg.mandatory) {
+            assert(!arg.type_name.compare("AbstractTask"));
             continue;
+        }
 
         string type;
         string domain;
@@ -373,11 +375,15 @@ void SmacPrinter::print_arguments(const DocStruct &info) {
         } else if (!arg.type_name.compare("double")) {
             type = "real";
             domain = "[TODO, TODO]";
+        } else if (!arg.type_name.compare("bool")) {
+            type = "categorical";
+            domain = "{false, true}";
         } else if (!arg.type_name.compare(0, 1, "{")) {
             type = "categorical";
             // Keep curly braces.
             domain = lowercase(arg.type_name);
         } else {
+            os << "Unrecognized type: " << arg.type_name << endl;
             continue;
             //ABORT("Unrecognized type: " + arg.type_name);
         }
