@@ -342,22 +342,8 @@ void SmacPrinter::print_synopsis(const DocStruct &info) {
         os << "== " << info.full_name << " ==" << endl;
 }
 
-void SmacPrinter::print_usage(string call_name, const DocStruct &info) {
-    if (!call_name.empty()) {
-        os << call_name << "(";
-        string sep = "";
-        for (const ArgumentInfo &arg : info.arg_help) {
-            os << sep;
-            os << arg.kwd;
-            if (!arg.default_value.empty()) {
-                os << "=" << arg.default_value;
-            } else if (!arg.mandatory) {
-                os << "=None";
-            }
-            sep = ", ";
-        }
-        os << ")" << endl;
-    }
+void SmacPrinter::print_usage(string call_name, const DocStruct &) {
+    current_call_name = call_name;
 }
 
 void SmacPrinter::print_arguments(const DocStruct &info) {
@@ -388,9 +374,10 @@ void SmacPrinter::print_arguments(const DocStruct &info) {
             //ABORT("Unrecognized type: " + arg.type_name);
         }
 
-        os << "TODONAME" << separator << arg.kwd << " " << type << " " << domain << " [";
         assert(!arg.default_value.empty());
-        os << lowercase(arg.default_value) << "]" << endl;
+        os << current_call_name << separator << arg.kwd << " "
+           << type << " " << domain << " ["
+           << lowercase(arg.default_value) << "]" << endl;
     }
 }
 
