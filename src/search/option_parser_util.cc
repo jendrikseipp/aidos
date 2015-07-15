@@ -367,8 +367,10 @@ void SmacPrinter::print_usage(string feature_name, const DocStruct &info) {
         os << feature_name
            << " categorical {off, sum, tiebreaking} [off]" << endl;
     } else if (!info.type.compare("LandmarkGraph")) {
-        os << feature_name
-           << " categorical {off, on} [off]" << endl;
+        os << feature_name << " categorical {off, on} [off]" << endl;
+    } else if (!info.type.compare("Synergy")) {
+        os << feature_name << " categorical {off, on} [off]" << endl;
+        os << feature_name << " | ff != off && lmcount != off" << endl;
     }
 
     for (const ArgumentInfo &arg : info.arg_help) {
@@ -412,6 +414,8 @@ void SmacPrinter::print_usage(string feature_name, const DocStruct &info) {
         } else if (!info.type.compare("SearchEngine")) {
             os << parameter << " | search == " << feature_name << endl;
         } else if (!info.type.compare("LandmarkGraph")) {
+            os << parameter << " | " << feature_name << " == on" << endl;
+        } else if (!info.type.compare("Synergy")) {
             os << parameter << " | " << feature_name << " == on" << endl;
         }
     }
