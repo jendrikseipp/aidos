@@ -343,6 +343,9 @@ void SmacPrinter::print_synopsis(const DocStruct &info) {
 }
 
 void SmacPrinter::print_usage(string call_name, const DocStruct &info) {
+    os << call_name
+       << " categorical {off, sum, tiebreaking} [off]" << endl;
+
     for (const ArgumentInfo &arg : info.arg_help) {
         if (!arg.mandatory) {
             assert(!arg.type_name.compare("AbstractTask"));
