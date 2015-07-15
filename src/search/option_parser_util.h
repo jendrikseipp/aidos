@@ -619,7 +619,6 @@ public:
 
 class SmacPrinter : public DocPrinter {
     const std::string separator = ":";
-    std::string current_call_name;
 
 protected:
     virtual void print_synopsis(const DocStruct &info);

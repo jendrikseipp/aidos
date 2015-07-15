@@ -342,11 +342,7 @@ void SmacPrinter::print_synopsis(const DocStruct &info) {
         os << "# " << info.full_name << endl;
 }
 
-void SmacPrinter::print_usage(string call_name, const DocStruct &) {
-    current_call_name = call_name;
-}
-
-void SmacPrinter::print_arguments(const DocStruct &info) {
+void SmacPrinter::print_usage(string call_name, const DocStruct &info) {
     for (const ArgumentInfo &arg : info.arg_help) {
         if (!arg.mandatory) {
             assert(!arg.type_name.compare("AbstractTask"));
@@ -375,10 +371,13 @@ void SmacPrinter::print_arguments(const DocStruct &info) {
         }
 
         assert(!arg.default_value.empty());
-        os << current_call_name << separator << arg.kwd << " "
+        os << call_name << separator << arg.kwd << " "
            << type << " " << domain << " ["
            << lowercase(arg.default_value) << "]" << endl;
     }
+}
+
+void SmacPrinter::print_arguments(const DocStruct &) {
 }
 
 void SmacPrinter::print_notes(const DocStruct &) {
