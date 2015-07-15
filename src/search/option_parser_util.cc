@@ -273,8 +273,7 @@ void PlainPrinter::print_usage(string call_name, const DocStruct &info) {
 }
 
 void PlainPrinter::print_arguments(const DocStruct &info) {
-    for (size_t i = 0; i < info.arg_help.size(); ++i) {
-        ArgumentInfo arg = info.arg_help[i];
+    for (const ArgumentInfo &arg : info.arg_help) {
         os << " " << arg.kwd << "("
            << arg.type_name << "): "
            << arg.help << endl;
@@ -357,8 +356,7 @@ void SmacPrinter::print_usage(string call_name, const DocStruct &info) {
 }
 
 void SmacPrinter::print_arguments(const DocStruct &info) {
-    for (size_t i = 0; i < info.arg_help.size(); ++i) {
-        ArgumentInfo arg = info.arg_help[i];
+    for (const ArgumentInfo &arg : info.arg_help) {
         os << " " << arg.kwd << "("
            << arg.type_name << "): "
            << arg.help << endl;
