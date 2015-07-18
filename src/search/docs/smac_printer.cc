@@ -76,17 +76,18 @@ void SmacPrinter::print_condition(const string &feature,
     }
 }
 
-void SmacPrinter::print_usage(string feature, const DocStruct &info) {
-    if (!info.type.compare("Heuristic")) {
+void SmacPrinter::print_usage(string plugin, const DocStruct &info) {
+    string feature = lowercase(info.type) + separator + plugin;
+    if (info.type == "Heuristic") {
         os << feature
            << " categorical {off, sum, tiebreaking} [off]" << endl;
         string pref_ops_param = feature + separator + "use_preferred_operators";
         os << pref_ops_param << " categorical {true, false} [false]" << endl;
         os << pref_ops_param << " | " << feature << " != off" << endl;
-    } else if (!info.type.compare("LandmarkGraph")) {
+    } else if (info.type == "LandmarkGraph") {
         os << feature << " categorical {off, on} [off]" << endl;
         os << feature << " | lmcount != off" << endl;
-    } else if (!info.type.compare("Synergy")) {
+    } else if (info.type == "Synergy") {
         os << feature << " categorical {off, on} [off]" << endl;
         os << feature << " | ff != off && lmcount != off" << endl;
     }
