@@ -1,8 +1,12 @@
-#include "globals.h"
 #include "option_parser.h"
-#include "ext/tree_util.hh"
+
+#include "globals.h"
 #include "plugin.h"
 #include "rng.h"
+
+#include "docs/smac_printer.h"
+
+#include "ext/tree_util.hh"
 
 #include <algorithm>
 #include <iostream>
@@ -269,7 +273,7 @@ SearchEngine *OptionParser::parse_cmd_line_aux(
             if (txt2tags) {
                 dp = new Txt2TagsPrinter(cout);
             } else if (smac) {
-                dp = new SmacPrinter(cout);
+                dp = new docs::SmacPrinter(cout);
             } else {
                 dp = new PlainPrinter(cout);
             }
