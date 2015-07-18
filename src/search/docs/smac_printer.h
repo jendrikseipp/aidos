@@ -8,6 +8,10 @@ namespace docs {
 class SmacPrinter : public DocPrinter {
     const std::string separator = ":";
 
+    void print_parameter(const std::string &parameter, const ArgumentInfo &arg);
+    void print_condition(
+        const std::string &feature, const std::string &type, const std::string &parameter);
+
 protected:
     virtual void print_synopsis(const DocStruct &info);
     virtual void print_usage(std::string feature, const DocStruct &info);

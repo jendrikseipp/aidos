@@ -33,6 +33,49 @@ static string get_upper_bound(const string &value) {
     }
 }
 
+void SmacPrinter::print_parameter(const string &parameter, const ArgumentInfo &arg) {
+    string type;
+    string domain;
+    // TODO: We assume all integer and double params are >= 0.
+    if (!arg.type_name.compare("int")) {
+        type = "integer";
+        stringstream ss;
+        ss << "[0, " << get_upper_bound(arg.default_value) << "]";
+        domain = ss.str();
+    } else if (!arg.type_name.compare("double")) {
+        type = "real";
+        stringstream ss;
+        ss << "[0.0, " << get_upper_bound(arg.default_value) << "]";
+        domain = ss.str();
+    } else if (!arg.type_name.compare("bool")) {
+        type = "categorical";
+        domain = "{false, true}";
+    } else if (!arg.type_name.compare(0, 1, "{")) {
+        type = "categorical";
+        // Keep curly braces.
+        domain = lowercase(arg.type_name);
+    } else {
+        cerr << "Unrecognized type: " << arg.type_name << endl;
+        return;
+    }
+
+    os << parameter << " " << type << " " << domain << " ["
+       << lowercase(expand_infinity(arg.default_value))
+       << "]" << endl;
+}
+
+void SmacPrinter::print_condition(const string &feature,
+                                  const string &type,
+                                  const string &parameter) {
+    if (type == "Heuristic") {
+        os << parameter << " | " << feature << " != off" << endl;
+    } else if (type == "SearchEngine") {
+        os << parameter << " | search == " << feature << endl;
+    } else {
+        os << parameter << " | " << feature << " == on" << endl;
+    }
+}
+
 void SmacPrinter::print_usage(string feature, const DocStruct &info) {
     if (!info.type.compare("Heuristic")) {
         os << feature
@@ -54,46 +97,9 @@ void SmacPrinter::print_usage(string feature, const DocStruct &info) {
                 cerr << "Optional: " << arg.type_name << endl;
             continue;
         }
-
-        string type;
-        string domain;
-        // TODO: We assume all integer and double params are >= 0.
-        if (!arg.type_name.compare("int")) {
-            type = "integer";
-            stringstream ss;
-            ss << "[0, " << get_upper_bound(arg.default_value) << "]";
-            domain = ss.str();
-        } else if (!arg.type_name.compare("double")) {
-            type = "real";
-            stringstream ss;
-            ss << "[0.0, " << get_upper_bound(arg.default_value) << "]";
-            domain = ss.str();
-        } else if (!arg.type_name.compare("bool")) {
-            type = "categorical";
-            domain = "{false, true}";
-        } else if (!arg.type_name.compare(0, 1, "{")) {
-            type = "categorical";
-            // Keep curly braces.
-            domain = lowercase(arg.type_name);
-        } else {
-            cerr << "Unrecognized type: " << arg.type_name << endl;
-            continue;
-        }
-
         string parameter = feature + separator + arg.kwd;
-        os << parameter << " " << type << " " << domain << " ["
-           << lowercase(expand_infinity(arg.default_value))
-           << "]" << endl;
-
-        if (!info.type.compare("Heuristic")) {
-            os << parameter << " | " << feature << " != off" << endl;
-        } else if (!info.type.compare("SearchEngine")) {
-            os << parameter << " | search == " << feature << endl;
-        } else if (!info.type.compare("LandmarkGraph")) {
-            os << parameter << " | " << feature << " == on" << endl;
-        } else if (!info.type.compare("Synergy")) {
-            os << parameter << " | " << feature << " == on" << endl;
-        }
+        print_parameter(parameter, arg);
+        print_condition(feature, info.type, parameter);
     }
 }
 
