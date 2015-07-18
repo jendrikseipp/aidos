@@ -25,10 +25,9 @@ void DocStore::add_arg(string k,
                        string help,
                        string type,
                        string default_value,
-                       bool mandatory,
                        ValueExplanations value_explanations) {
     registered[k].arg_help.push_back(
-        ArgumentInfo(arg_name, help, type, default_value, mandatory,
+        ArgumentInfo(arg_name, help, type, default_value,
                      value_explanations));
 }
 
@@ -166,11 +165,7 @@ void Txt2TagsPrinter::print_usage(string call_name, const DocStruct &info) {
         for (size_t i = 0; i < info.arg_help.size(); ++i) {
             ArgumentInfo arg = info.arg_help[i];
             os << arg.kwd;
-            if (!info.arg_help[i].default_value.empty()) {
-                os << "=" << info.arg_help[i].default_value;
-            } else if (!info.arg_help[i].mandatory) {
-                os << "=None";
-            }
+            os << "=" << info.arg_help[i].default_value;
             if (i != info.arg_help.size() - 1)
                 os << ", ";
         }
@@ -266,11 +261,7 @@ void PlainPrinter::print_usage(string call_name, const DocStruct &info) {
         for (const ArgumentInfo &arg : info.arg_help) {
             os << sep;
             os << arg.kwd;
-            if (!arg.default_value.empty()) {
-                os << "=" << arg.default_value;
-            } else if (!arg.mandatory) {
-                os << "=None";
-            }
+            os << "=" << arg.default_value;
             sep = ", ";
         }
         os << ")" << endl;
@@ -378,7 +369,7 @@ void SmacPrinter::print_usage(string feature, const DocStruct &info) {
     }
 
     for (const ArgumentInfo &arg : info.arg_help) {
-        if (!arg.mandatory) {
+        if (arg.default_value == "<none>") {
             if (arg.type_name.compare("AbstractTask"))
                 cerr << "Optional: " << arg.type_name << endl;
             continue;
