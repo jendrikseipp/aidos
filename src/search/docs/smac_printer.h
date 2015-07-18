@@ -7,6 +7,7 @@ namespace docs {
 
 class SmacPrinter : public DocPrinter {
     const std::string separator = ":";
+    std::vector<std::string> searches;
 
     void print_parameter(const std::string &parameter, const ArgumentInfo &arg);
     void print_condition(
@@ -21,6 +22,8 @@ protected:
     virtual void print_properties(const DocStruct &info);
     virtual void print_category_header(std::string category_name);
     virtual void print_category_footer();
+
+    virtual void print_all() override;
 
 public:
     SmacPrinter(std::ostream &out);

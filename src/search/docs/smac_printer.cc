@@ -6,7 +6,6 @@ namespace docs {
 
 SmacPrinter::SmacPrinter(ostream &out)
     : DocPrinter(out) {
-    os << "search categorical {eager, lazy, ehc} [lazy]" << endl;
 }
 
 void SmacPrinter::print_synopsis(const DocStruct &info) {
@@ -84,6 +83,8 @@ void SmacPrinter::print_usage(string plugin, const DocStruct &info) {
         string pref_ops_param = feature + separator + "use_preferred_operators";
         os << pref_ops_param << " categorical {true, false} [false]" << endl;
         os << pref_ops_param << " | " << feature << " != off" << endl;
+    } else if (info.type == "SearchEngine") {
+        searches.push_back(feature);
     } else if (info.type == "LandmarkGraph") {
         os << feature << " categorical {off, on} [off]" << endl;
         os << feature << " | lmcount != off" << endl;
@@ -122,6 +123,17 @@ void SmacPrinter::print_category_header(string category_name) {
 
 void SmacPrinter::print_category_footer() {
     os << endl;
+}
+
+void SmacPrinter::print_all() {
+    DocPrinter::print_all();
+    os << "search categorical {";
+    string sep = "";
+    for (const string &search : searches) {
+        os << sep << search;
+        sep = ", ";
+    }
+    os << "} [TODO]" << endl;
 }
 
 }
