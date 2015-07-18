@@ -32,6 +32,20 @@ static string get_upper_bound(const string &value) {
     }
 }
 
+string SmacPrinter::get_category(const string &type) const {
+    if (type == "Heuristic") {
+        return "heuristic";
+    } else if (type == "LandmarkGraph") {
+        return "landmarks";
+    } else if (type == "SearchEngine") {
+        return "search";
+    } else if (type == "Synergy") {
+        return "synergy"; // TODO: Return "heuristic"?
+    } else {
+        ABORT("Unknown type: " + type);
+    }
+}
+
 void SmacPrinter::print_parameter(const string &parameter, const ArgumentInfo &arg) {
     string type;
     string domain;
@@ -76,7 +90,9 @@ void SmacPrinter::print_condition(const string &feature,
 }
 
 void SmacPrinter::print_usage(string plugin, const DocStruct &info) {
-    string feature = lowercase(info.type) + separator + plugin;
+    if (plugin.empty())
+        return;
+    string feature = get_category(info.type) + separator + plugin;
     if (info.type == "Heuristic") {
         os << feature
            << " categorical {off, on} [off]" << endl;
