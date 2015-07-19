@@ -39,14 +39,20 @@ string SmacPrinter::get_heuristic(const string &nick) const {
 string SmacPrinter::get_category(const string &type) const {
     if (type == "Heuristic") {
         return "heuristic";
+    } else if (type == "Labels") {
+        return "label_reduction";
     } else if (type == "LandmarkGraph") {
         return "landmarks";
-    } else if (type == "SearchEngine") {
-        return "search";
-    } else if (type == "Synergy") {
-        return "synergy"; // TODO: Return "heuristic"?
+    } else if (type == "MergeStrategy") {
+        return "merge_strategy";
     } else if (type == "OpenList") {
         return "openlist";
+    } else if (type == "SearchEngine") {
+        return "search";
+    } else if (type == "ShrinkStrategy") {
+        return "shrink_strategy";
+    } else if (type == "Synergy") {
+        return "synergy"; // TODO: Return "heuristic"?
     } else {
         ABORT("Unknown type: " + type);
     }
@@ -104,7 +110,7 @@ void SmacPrinter::print_bool(const string &parameter) const {
 }
 
 void SmacPrinter::print_usage(string plugin, const DocStruct &info) {
-    if (plugin.empty())
+    if (plugin.empty() || info.type == "AbstractTask" || info.type == "ScalarEvaluator")
         return;
     string feature = get_category(info.type) + separator + plugin;
     if (info.type == "Heuristic") {
