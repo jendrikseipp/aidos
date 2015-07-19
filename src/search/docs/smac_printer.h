@@ -13,15 +13,16 @@ class SmacPrinter : public DocPrinter {
     std::vector<std::string> searches;
 
     std::string get_category(const std::string &type) const;
+    std::string get_heuristic(const std::string &nick) const;
     void print_bool(const std::string &parameter) const;
     void print_parameter(const std::string &parameter, const ArgumentInfo &arg);
-    void print_condition(
-        const std::string &feature, const std::string &type, const std::string &parameter);
+    void print_condition(const std::string &child,
+                         const std::string &parent,
+                         std::string condition = "") const;
     void print_helper_parameter(
         const std::string &parent, const std::string &child,
         const std::string &type, const std::string &range,
         const std::string &default_value, const std::string &condition) const;
-
 
 protected:
     virtual void print_synopsis(const DocStruct &info);

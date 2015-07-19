@@ -32,6 +32,10 @@ static string get_upper_bound(const string &value) {
     }
 }
 
+string SmacPrinter::get_heuristic(const string &nick) const {
+    return "heuristic" + separator + nick;
+}
+
 string SmacPrinter::get_category(const string &type) const {
     if (type == "Heuristic") {
         return "heuristic";
@@ -79,16 +83,12 @@ void SmacPrinter::print_parameter(const string &parameter, const ArgumentInfo &a
        << "]" << endl;
 }
 
-void SmacPrinter::print_condition(const string &feature,
-                                  const string &type,
-                                  const string &parameter) {
-    if (type == "Heuristic") {
-        os << parameter << " | " << feature << " != off" << endl;
-    } else if (type == "SearchEngine") {
-        os << parameter << " | search == " << feature << endl;
-    } else {
-        os << parameter << " | " << feature << " == on" << endl;
-    }
+void SmacPrinter::print_condition(const string &child,
+                                  const string &parent,
+                                  string condition) const {
+    if (condition.empty())
+        condition = parent + " == on";
+    os << child << " | " << condition << endl;
 }
 
 void SmacPrinter::print_helper_parameter(
@@ -96,7 +96,7 @@ void SmacPrinter::print_helper_parameter(
     const string &range, const string &default_value, const string &condition) const {
     string param = parent + separator + child;
     os << param << " " << type << " " << range << " [" << default_value << "]" << endl;
-    os << param << " | " << parent << " " << condition << endl;
+    print_condition(param, parent, condition);
 }
 
 void SmacPrinter::print_bool(const string &parameter) const {
@@ -111,22 +111,23 @@ void SmacPrinter::print_usage(string plugin, const DocStruct &info) {
         print_bool(feature);
         string preferred_param = feature + separator + "preferred";
         print_bool(preferred_param);
-        os << preferred_param << " | " << feature << " == on" << endl;
+        print_condition(preferred_param, feature);
         string single_param = feature + separator + "single";
         os << single_param << " categorical " << open_list_options << " [both]" << endl;
-        os << single_param << " | " << feature << " == on" << endl;
+        print_condition(single_param, feature);
         string single_weight_param = feature + separator + "single" + separator + "weight";
         os << single_weight_param << " integer [1, 10] [1]" << endl;
-        os << single_weight_param << " | " << single_param << " != off" << endl;
+        print_condition(single_weight_param, single_param);
     } else if (info.type == "SearchEngine") {
         searches.push_back(feature);
     } else if (info.type == "LandmarkGraph") {
         print_bool(feature);
-        os << feature << " | heuristic" << separator << "lmcount == on" << endl;
+        print_condition(feature, get_heuristic("lmcount"));
     } else if (info.type == "Synergy") {
         print_bool(feature);
-        os << feature << " | heuristic" << separator << "ff == on && "
-           << "heuristic" << separator << "lmcount == on" << endl;
+        print_condition(feature, "",
+            get_heuristic("ff") + " == on && " +
+            get_heuristic("lmcount") + " == on");
     }
 
     for (const ArgumentInfo &arg : info.arg_help) {
@@ -137,7 +138,7 @@ void SmacPrinter::print_usage(string plugin, const DocStruct &info) {
         }
         string parameter = feature + separator + arg.kwd;
         print_parameter(parameter, arg);
-        print_condition(feature, info.type, parameter);
+        print_condition(feature, parameter);
     }
 }
 
@@ -170,12 +171,19 @@ void SmacPrinter::print_all() {
         sep = ", ";
     }
     os << "} [TODO]" << endl;
-    os << "openlist" << separator << lc << " " << open_list_options << " [off]" << endl;
-    string lc_g = "openlist" + separator + lc + separator + "g";
+
+    // Linear combination.
+
+    string lc_param = "openlist" + separator + lc;
+    os << lc_param << " " << open_list_options << " [off]" << endl;
+
+    string lc_g = lc_param + separator + "g";
     print_bool(lc_g);
+    print_condition(lc_g, lc_param);
+
     string lc_g_weight = lc_g + separator + "weight";
     os << lc_g_weight << " integer [1, 10] [TODO]" << endl;
-    os << lc_g_weight << " | " << lc_g << " == on" << endl;
+    print_condition(lc_g_weight, lc_g);
 }
 
 }
