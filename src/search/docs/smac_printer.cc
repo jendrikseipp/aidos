@@ -89,6 +89,14 @@ void SmacPrinter::print_condition(const string &feature,
     }
 }
 
+void SmacPrinter::print_helper_parameter(
+    const string &parent, const string& child, const string &type,
+    const string &range, const string &default_value, const string &condition) const {
+    string param = parent + separator + child;
+    os << param << " " << type << " " << range << " [" << default_value << "]" << endl;
+    os << param << " | " << parent << " " << condition << endl;
+}
+
 void SmacPrinter::print_usage(string plugin, const DocStruct &info) {
     if (plugin.empty())
         return;
