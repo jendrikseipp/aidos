@@ -96,9 +96,15 @@ void SmacPrinter::print_usage(string plugin, const DocStruct &info) {
     if (info.type == "Heuristic") {
         os << feature
            << " categorical {off, on} [off]" << endl;
-        string pref_ops_param = feature + separator + "use_preferred_operators";
-        os << pref_ops_param << " categorical {true, false} [false]" << endl;
-        os << pref_ops_param << " | " << feature << " != off" << endl;
+        string preferred_param = feature + separator + "preferred";
+        os << preferred_param << " categorical {true, false} [false]" << endl;
+        os << preferred_param << " | " << feature << " == on" << endl;
+        string single_param = feature + separator + "single";
+        os << single_param << " categorical {off, all_ops, pref_ops, both} [both]" << endl;
+        os << single_param << " | " << feature << " == on" << endl;
+        string single_weight_param = feature + separator + "single" + separator + "weight";
+        os << single_weight_param << " integer [1, 10] [1]" << endl;
+        os << single_weight_param << " | " << single_param << " != off" << endl;
     } else if (info.type == "SearchEngine") {
         searches.push_back(feature);
     } else if (info.type == "LandmarkGraph") {
@@ -106,7 +112,8 @@ void SmacPrinter::print_usage(string plugin, const DocStruct &info) {
         os << feature << " | heuristic" << separator << "lmcount == on" << endl;
     } else if (info.type == "Synergy") {
         os << feature << " categorical {off, on} [off]" << endl;
-        os << feature << " | ff != off && lmcount != off" << endl;
+        os << feature << " | heuristic" << separator << "ff == on && "
+           << "heuristic" << separator << "lmcount == on" << endl;
     }
 
     for (const ArgumentInfo &arg : info.arg_help) {
