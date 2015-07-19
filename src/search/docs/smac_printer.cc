@@ -165,6 +165,12 @@ void SmacPrinter::print_all() {
         sep = ", ";
     }
     os << "} [TODO]" << endl;
+    os << "openlist" << separator << lc << " " << open_list_options << " [off]" << endl;
+    string lc_g = "openlist" + separator + lc + separator + "g";
+    os << lc_g << " categorical " << range_off_on << " [off]" << endl;
+    string lc_g_weight = lc_g + separator + "weight";
+    os << lc_g_weight << " integer [1, 10] [TODO]" << endl;
+    os << lc_g_weight << " | " << lc_g << " == on" << endl;
 }
 
 }
