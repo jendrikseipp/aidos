@@ -93,7 +93,7 @@ void SmacPrinter::print_condition(const string &child,
                                   const string &parent,
                                   string condition) const {
     if (condition.empty())
-        condition = parent + " == on";
+        condition = parent + " == " + on;
     os << child << " | " << condition << endl;
 }
 
@@ -106,7 +106,7 @@ void SmacPrinter::print_helper_parameter(
 }
 
 void SmacPrinter::print_bool(const string &parameter) const {
-    os << parameter << " categorical " << range_off_on << " [off]" << endl;
+    os << parameter << " categorical " << bool_range << " [" << off << "]" << endl;
 }
 
 void SmacPrinter::print_usage(string plugin, const DocStruct &info) {
@@ -132,8 +132,8 @@ void SmacPrinter::print_usage(string plugin, const DocStruct &info) {
     } else if (info.type == "Synergy") {
         print_bool(feature);
         print_condition(feature, "",
-            get_heuristic("ff") + " == on && " +
-            get_heuristic("lmcount") + " == on");
+            get_heuristic("ff") + " == " + on + " && " +
+            get_heuristic("lmcount") + " == " + on);
     }
 
     for (const ArgumentInfo &arg : info.arg_help) {
@@ -181,7 +181,7 @@ void SmacPrinter::print_all() {
     // Linear combination.
 
     string lc_param = "openlist" + separator + lc;
-    os << lc_param << " " << open_list_options << " [off]" << endl;
+    os << lc_param << " " << open_list_options << " [" << off << "]" << endl;
 
     string lc_g = lc_param + separator + "g";
     print_bool(lc_g);
