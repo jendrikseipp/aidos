@@ -41,6 +41,8 @@ string SmacPrinter::get_category(const string &type) const {
         return "search";
     } else if (type == "Synergy") {
         return "synergy"; // TODO: Return "heuristic"?
+    } else if (type == "OpenList") {
+        return "openlist";
     } else {
         ABORT("Unknown type: " + type);
     }
@@ -97,18 +99,21 @@ void SmacPrinter::print_helper_parameter(
     os << param << " | " << parent << " " << condition << endl;
 }
 
+void SmacPrinter::print_bool(const string &parameter) const {
+    os << parameter << " categorical " << range_off_on << " [off]" << endl;
+}
+
 void SmacPrinter::print_usage(string plugin, const DocStruct &info) {
     if (plugin.empty())
         return;
     string feature = get_category(info.type) + separator + plugin;
     if (info.type == "Heuristic") {
-        os << feature
-           << " categorical {off, on} [off]" << endl;
+        print_bool(feature);
         string preferred_param = feature + separator + "preferred";
-        os << preferred_param << " categorical {true, false} [false]" << endl;
+        print_bool(preferred_param);
         os << preferred_param << " | " << feature << " == on" << endl;
         string single_param = feature + separator + "single";
-        os << single_param << " categorical {off, all_ops, pref_ops, both} [both]" << endl;
+        os << single_param << " categorical " << open_list_options << " [both]" << endl;
         os << single_param << " | " << feature << " == on" << endl;
         string single_weight_param = feature + separator + "single" + separator + "weight";
         os << single_weight_param << " integer [1, 10] [1]" << endl;
@@ -116,10 +121,10 @@ void SmacPrinter::print_usage(string plugin, const DocStruct &info) {
     } else if (info.type == "SearchEngine") {
         searches.push_back(feature);
     } else if (info.type == "LandmarkGraph") {
-        os << feature << " categorical {off, on} [off]" << endl;
+        print_bool(feature);
         os << feature << " | heuristic" << separator << "lmcount == on" << endl;
     } else if (info.type == "Synergy") {
-        os << feature << " categorical {off, on} [off]" << endl;
+        print_bool(feature);
         os << feature << " | heuristic" << separator << "ff == on && "
            << "heuristic" << separator << "lmcount == on" << endl;
     }
@@ -167,7 +172,7 @@ void SmacPrinter::print_all() {
     os << "} [TODO]" << endl;
     os << "openlist" << separator << lc << " " << open_list_options << " [off]" << endl;
     string lc_g = "openlist" + separator + lc + separator + "g";
-    os << lc_g << " categorical " << range_off_on << " [off]" << endl;
+    print_bool(lc_g);
     string lc_g_weight = lc_g + separator + "weight";
     os << lc_g_weight << " integer [1, 10] [TODO]" << endl;
     os << lc_g_weight << " | " << lc_g << " == on" << endl;

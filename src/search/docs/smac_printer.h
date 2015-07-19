@@ -13,6 +13,7 @@ class SmacPrinter : public DocPrinter {
     std::vector<std::string> searches;
 
     std::string get_category(const std::string &type) const;
+    void print_bool(const std::string &parameter) const;
     void print_parameter(const std::string &parameter, const ArgumentInfo &arg);
     void print_condition(
         const std::string &feature, const std::string &type, const std::string &parameter);
