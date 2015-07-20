@@ -21,6 +21,7 @@ class SmacPrinter : public DocPrinter {
     void print_condition(const std::string &child,
                          const std::string &parent,
                          std::string condition = "") const;
+    void print_weight(const std::string &parent, bool mixed) const;
     void print_helper_parameter(
         const std::string &parent, const std::string &child,
         const std::string &type, const std::string &range,

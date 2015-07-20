@@ -105,6 +105,18 @@ void SmacPrinter::print_helper_parameter(
     print_condition(param, parent, condition);
 }
 
+void SmacPrinter::print_weight(const string &parent, bool mixed) const {
+    string weight_param = parent + separator + "weight";
+    os << weight_param << " ";
+    if (mixed) {
+        os << "real [0.1, 20] [1]";
+    } else {
+        os << "integer [1, 10] [1]";
+    }
+    os << endl;
+    print_condition(weight_param, parent);
+}
+
 void SmacPrinter::print_heuristic_helper_parameters(const string &heuristic_parameter) const {
     // Add heuristic to search engine's preferred list.
     string preferred_param = heuristic_parameter + separator + "preferred";
@@ -115,9 +127,7 @@ void SmacPrinter::print_heuristic_helper_parameters(const string &heuristic_para
     string single_param = heuristic_parameter + separator + "single";
     os << single_param << " categorical " << open_list_options << " [both]" << endl;
     print_condition(single_param, heuristic_parameter);
-    string single_weight_param = single_param + separator + "weight";
-    os << single_weight_param << " integer [1, 10] [1]" << endl;
-    print_condition(single_weight_param, single_param);
+    print_weight(single_param, false);
 
     // Use heuristic in linear combination or pareto open list.
     for (string &open_list : vector<string>({lc, "pareto"})) {
@@ -125,9 +135,7 @@ void SmacPrinter::print_heuristic_helper_parameters(const string &heuristic_para
         print_bool(use_in_open_list_param);
         print_condition(use_in_open_list_param, heuristic_parameter);
 
-        string weight_param = use_in_open_list_param + separator + "weight";
-        os << weight_param << " integer [1, 10] [TODO]" << endl;
-        print_condition(weight_param, use_in_open_list_param);
+        print_weight(use_in_open_list_param, false);
     }
 }
 
@@ -209,9 +217,7 @@ void SmacPrinter::print_all() {
         print_bool(open_list_g);
         print_condition(open_list_g, open_list_param);
 
-        string open_list_g_weight = open_list_g + separator + "weight";
-        os << open_list_g_weight << " integer [1, 10] [TODO]" << endl;
-        print_condition(open_list_g_weight, open_list_g);
+        print_weight(open_list_g, false);
         os << endl;
     }
 }
