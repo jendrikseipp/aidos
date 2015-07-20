@@ -7,6 +7,7 @@ namespace docs {
 
 class SmacPrinter : public DocPrinter {
     const std::string separator = ":";
+    const std::string helper = "+";
     const std::string lc = "linear_combination";
     const std::string on = "true";
     const std::string off = "false";

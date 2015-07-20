@@ -101,13 +101,13 @@ void SmacPrinter::print_condition(const string &child,
 void SmacPrinter::print_helper_parameter(
     const string &parent, const string& child, const string &type,
     const string &range, const string &default_value, const string &condition) const {
-    string param = parent + separator + child;
+    string param = parent + separator + helper + child;
     os << param << " " << type << " " << range << " [" << default_value << "]" << endl;
     print_condition(param, parent, condition);
 }
 
 void SmacPrinter::print_weight(const string &parent, bool mixed) const {
-    string weight_param = parent + separator + "weight";
+    string weight_param = parent + separator + helper + "weight";
     os << weight_param << " ";
     if (mixed) {
         os << "real [0.1, 20] [1]";
@@ -120,34 +120,34 @@ void SmacPrinter::print_weight(const string &parent, bool mixed) const {
 
 void SmacPrinter::print_heuristic_helper_parameters(const string &heuristic_parameter) const {
     // Add heuristic to search engine's preferred list.
-    string preferred_param = heuristic_parameter + separator + "preferred";
+    string preferred_param = heuristic_parameter + separator + helper + "preferred";
     print_bool(preferred_param);
     print_condition(preferred_param, heuristic_parameter);
 
     // Use heuristic for (weighted) estimates.
-    string single_param = heuristic_parameter + separator + "single";
+    string single_param = heuristic_parameter + separator + helper + "single";
     os << single_param << " categorical " << open_list_options << " [both]" << endl;
     print_condition(single_param, heuristic_parameter);
     print_weight(single_param, false);
 
     // Use heuristic for single(sum(weight(g(), gw), weight(H, w)) open lists.
-    string sum_param = heuristic_parameter + separator + "sum";
+    string sum_param = heuristic_parameter + separator + helper + "sum";
     os << sum_param << " categorical " << open_list_options << " [" << off << "]" << endl;
     print_condition(sum_param, heuristic_parameter);
     print_weight(sum_param, true);
 
     // Use heuristic for tiebreaking([sum(weight(g(), gw), weight(H, w)), H]) open lists.
-    string tb_param = heuristic_parameter + separator + "tiebreaking";
+    string tb_param = heuristic_parameter + separator + helper + "tiebreaking";
     os << tb_param << " categorical " << open_list_options << " [" << off << "]" << endl;
     print_condition(tb_param, heuristic_parameter);
     print_weight(tb_param, true);
-    string tb_on_h_param = tb_param + separator + "on_h";
+    string tb_on_h_param = tb_param + separator + helper + "on_h";
     print_bool(tb_on_h_param);
     print_condition(tb_on_h_param, tb_param);
 
     // Use heuristic in linear combination or pareto open list.
     for (string &open_list : vector<string>({lc, "pareto"})) {
-        string use_in_open_list_param = heuristic_parameter + separator + open_list;
+        string use_in_open_list_param = heuristic_parameter + separator + helper + open_list;
         print_bool(use_in_open_list_param);
         print_condition(use_in_open_list_param, heuristic_parameter);
 
@@ -216,10 +216,10 @@ void SmacPrinter::print_all() {
     vector<string> open_lists = {lc, "pareto"};
 
     for (auto &open_list : open_lists) {
-        string open_list_param = "openlist" + separator + open_list;
+        string open_list_param = "openlist" + separator + helper + open_list;
         os << open_list_param << " " << open_list_options << " [" << off << "]" << endl;
 
-        string open_list_g = open_list_param + separator + "g";
+        string open_list_g = open_list_param + separator + helper + "g";
         print_bool(open_list_g);
         print_condition(open_list_g, open_list_param);
 
