@@ -118,6 +118,17 @@ void SmacPrinter::print_heuristic_helper_parameters(const string &heuristic_para
     string single_weight_param = single_param + separator + "weight";
     os << single_weight_param << " integer [1, 10] [1]" << endl;
     print_condition(single_weight_param, single_param);
+
+    // Use heuristic in linear combination or pareto open list.
+    for (string &open_list : vector<string>({lc, "pareto"})) {
+        string use_in_open_list_param = heuristic_parameter + separator + open_list;
+        print_bool(use_in_open_list_param);
+        print_condition(use_in_open_list_param, heuristic_parameter);
+
+        string weight_param = use_in_open_list_param + separator + "weight";
+        os << weight_param << " integer [1, 10] [TODO]" << endl;
+        print_condition(weight_param, use_in_open_list_param);
+    }
 }
 
 void SmacPrinter::print_bool(const string &parameter) const {
