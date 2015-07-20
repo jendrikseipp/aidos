@@ -14,16 +14,8 @@ class JsonPrinter : public DocPrinter {
     const std::string open_list_options = "{" + off + ", all_ops, pref_ops, both}";
     const std::string bool_range = "{" + off + ", " + on + "}";
 
-    std::map<std::string,std::map<std::string,std::string> > types;
-
-    std::string get_category(const std::string &type) const;
-    std::string get_heuristic(const std::string &nick) const;
-    void print_bool(const std::string &parameter) const;
-    void print_parameter(const std::string &parameter, const std::string &feature, const ArgumentInfo &arg);
-    void print_condition(const std::string &child,
-                         const std::string &parent,
-                         std::string condition = "") const;
-    void print_weight(const std::string &parent, bool mixed) const;
+    void print_arg(const ArgumentInfo &arg) const;
+    void print_key_value_pair(const std::string &key, const std::string &value) const;
 
 protected:
     virtual void print_synopsis(const DocStruct &info);
