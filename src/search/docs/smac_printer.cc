@@ -121,9 +121,11 @@ void SmacPrinter::print_usage(string plugin, const DocStruct &info) {
         string single_param = feature + separator + "single";
         os << single_param << " categorical " << open_list_options << " [both]" << endl;
         print_condition(single_param, feature);
-        string single_weight_param = feature + separator + "single" + separator + "weight";
+        string single_weight_param = single_param + separator + "weight";
         os << single_weight_param << " integer [1, 10] [1]" << endl;
         print_condition(single_weight_param, single_param);
+    } else if (info.type == "OpenList") {
+        // We add parameters for choosing open lists elsewhere.
     } else if (info.type == "SearchEngine") {
         searches.push_back(feature);
     } else if (info.type == "LandmarkGraph") {
@@ -144,7 +146,7 @@ void SmacPrinter::print_usage(string plugin, const DocStruct &info) {
         }
         string parameter = feature + separator + arg.kwd;
         print_parameter(parameter, arg);
-        print_condition(feature, parameter);
+        print_condition(parameter, feature);
     }
 }
 
@@ -176,20 +178,24 @@ void SmacPrinter::print_all() {
         os << sep << search;
         sep = ", ";
     }
-    os << "} [TODO]" << endl;
+    os << "} [TODO]" << endl << endl;
 
-    // Linear combination.
+    // Additional open lists.
+    vector<string> open_lists = {lc, "pareto"};
 
-    string lc_param = "openlist" + separator + lc;
-    os << lc_param << " " << open_list_options << " [" << off << "]" << endl;
+    for (auto &open_list : open_lists) {
+        string open_list_param = "openlist" + separator + open_list;
+        os << open_list_param << " " << open_list_options << " [" << off << "]" << endl;
 
-    string lc_g = lc_param + separator + "g";
-    print_bool(lc_g);
-    print_condition(lc_g, lc_param);
+        string open_list_g = open_list_param + separator + "g";
+        print_bool(open_list_g);
+        print_condition(open_list_g, open_list_param);
 
-    string lc_g_weight = lc_g + separator + "weight";
-    os << lc_g_weight << " integer [1, 10] [TODO]" << endl;
-    print_condition(lc_g_weight, lc_g);
+        string open_list_g_weight = open_list_g + separator + "weight";
+        os << open_list_g_weight << " integer [1, 10] [TODO]" << endl;
+        print_condition(open_list_g_weight, open_list_g);
+        os << endl;
+    }
 }
 
 }
