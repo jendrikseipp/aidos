@@ -4,6 +4,16 @@ using namespace std;
 
 namespace docs {
 
+static void print_map(ostream &stream, const map<string, string> &dict) {
+    stream << "{";
+    string sep = "";
+    for (auto &pair : dict) {
+        stream << sep << "\"" << pair.first << "\": \"" << pair.second << "\"";
+        sep = ", ";
+    }
+    stream << "}";
+}
+
 JsonPrinter::JsonPrinter(ostream &out)
     : DocPrinter(out) {
 }
@@ -98,63 +108,6 @@ void JsonPrinter::print_condition(const string &child,
     os << child << " | " << condition << endl;
 }
 
-void JsonPrinter::print_helper_parameter(
-    const string &parent, const string& child, const string &type,
-    const string &range, const string &default_value, const string &condition) const {
-    string param = parent + separator + helper + child;
-    os << param << " " << type << " " << range << " [" << default_value << "]" << endl;
-    print_condition(param, parent, condition);
-}
-
-void JsonPrinter::print_weight(const string &parent, bool mixed) const {
-    string weight_param = parent + separator + helper + "weight";
-    os << weight_param << " ";
-    if (mixed) {
-        os << "real [0.1, 20] [1]";
-    } else {
-        os << "integer [1, 10] [1]";
-    }
-    os << endl;
-    print_condition(weight_param, parent);
-}
-
-void JsonPrinter::print_heuristic_helper_parameters(const string &heuristic_parameter) const {
-    // Add heuristic to search engine's preferred list.
-    string preferred_param = heuristic_parameter + separator + helper + "preferred";
-    print_bool(preferred_param);
-    print_condition(preferred_param, heuristic_parameter);
-
-    // Use heuristic for (weighted) estimates.
-    string single_param = heuristic_parameter + separator + helper + "single";
-    os << single_param << " categorical " << open_list_options << " [both]" << endl;
-    print_condition(single_param, heuristic_parameter);
-    print_weight(single_param, false);
-
-    // Use heuristic for single(sum(weight(g(), gw), weight(H, w)) open lists.
-    string sum_param = heuristic_parameter + separator + helper + "sum";
-    os << sum_param << " categorical " << open_list_options << " [" << off << "]" << endl;
-    print_condition(sum_param, heuristic_parameter);
-    print_weight(sum_param, true);
-
-    // Use heuristic for tiebreaking([sum(weight(g(), gw), weight(H, w)), H]) open lists.
-    string tb_param = heuristic_parameter + separator + helper + "tiebreaking";
-    os << tb_param << " categorical " << open_list_options << " [" << off << "]" << endl;
-    print_condition(tb_param, heuristic_parameter);
-    print_weight(tb_param, true);
-    string tb_on_h_param = tb_param + separator + helper + "on_h";
-    print_bool(tb_on_h_param);
-    print_condition(tb_on_h_param, tb_param);
-
-    // Use heuristic in linear combination or pareto open list.
-    for (string &open_list : vector<string>({lc, "pareto"})) {
-        string use_in_open_list_param = heuristic_parameter + separator + helper + open_list;
-        print_bool(use_in_open_list_param);
-        print_condition(use_in_open_list_param, heuristic_parameter);
-
-        print_weight(use_in_open_list_param, false);
-    }
-}
-
 void JsonPrinter::print_bool(const string &parameter) const {
     os << parameter << " categorical " << bool_range << " [" << off << "]" << endl;
 }
@@ -192,11 +145,7 @@ void JsonPrinter::print_all() {
         const string &type = pair.first;
         os << type << endl;
         const auto &param_map = pair.second;
-        for (auto plugin : param_map) {
-            const string &key = plugin.first;
-            const string &value = plugin.second;
-            os << key << " = " << value << endl;
-        }
+        print_map(os, param_map);
     }
 }
 

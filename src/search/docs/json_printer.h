@@ -9,8 +9,6 @@ namespace docs {
 
 class JsonPrinter : public DocPrinter {
     const std::string separator = ":";
-    const std::string helper = "+";
-    const std::string lc = "linear_combination";
     const std::string on = "true";
     const std::string off = "false";
     const std::string open_list_options = "{" + off + ", all_ops, pref_ops, both}";
@@ -26,11 +24,6 @@ class JsonPrinter : public DocPrinter {
                          const std::string &parent,
                          std::string condition = "") const;
     void print_weight(const std::string &parent, bool mixed) const;
-    void print_helper_parameter(
-        const std::string &parent, const std::string &child,
-        const std::string &type, const std::string &range,
-        const std::string &default_value, const std::string &condition) const;
-    void print_heuristic_helper_parameters(const std::string &heuristic_parameter) const;
 
 protected:
     virtual void print_synopsis(const DocStruct &info);
