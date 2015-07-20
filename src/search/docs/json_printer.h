@@ -3,6 +3,8 @@
 
 #include "../option_parser_util.h"
 
+#include <map>
+
 namespace docs {
 
 class JsonPrinter : public DocPrinter {
@@ -13,6 +15,8 @@ class JsonPrinter : public DocPrinter {
     const std::string off = "false";
     const std::string open_list_options = "{" + off + ", all_ops, pref_ops, both}";
     const std::string bool_range = "{" + off + ", " + on + "}";
+
+    std::map<std::string,std::map<std::string,std::string> > types;
 
     std::string get_category(const std::string &type) const;
     std::string get_heuristic(const std::string &nick) const;

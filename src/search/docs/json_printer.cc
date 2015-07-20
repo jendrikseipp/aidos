@@ -162,33 +162,8 @@ void JsonPrinter::print_bool(const string &parameter) const {
 void JsonPrinter::print_usage(string plugin, const DocStruct &info) {
     if (plugin.empty() || info.type == "AbstractTask" || info.type == "ScalarEvaluator")
         return;
-    string feature = get_category(info.type) + separator + plugin;
-    if (info.type == "Heuristic") {
-        print_bool(feature);
-        print_heuristic_helper_parameters(feature);
-    } else if (info.type == "OpenList") {
-        // We add parameters for choosing open lists elsewhere.
-    } else if (info.type == "SearchEngine") {
-        print_bool(feature);
-    } else if (info.type == "LandmarkGraph") {
-        print_bool(feature);
-        print_condition(feature, get_heuristic("lmcount"));
-    } else if (info.type == "Synergy") {
-        print_bool(feature);
-        print_condition(feature, "",
-            get_heuristic("ff") + " == " + on + " && " +
-            get_heuristic("lmcount") + " == " + on);
-    }
-
-    for (const ArgumentInfo &arg : info.arg_help) {
-        if (arg.default_value == "<none>") {
-            if (arg.type_name.compare("AbstractTask"))
-                cerr << "Optional: " << arg.type_name << endl;
-            continue;
-        }
-        string parameter = feature + separator + arg.kwd;
-        print_parameter(parameter, feature, arg);
-    }
+    map<string, string> param_map;
+    types[info.type] = param_map;
 }
 
 void JsonPrinter::print_arguments(const DocStruct &) {
@@ -212,21 +187,17 @@ void JsonPrinter::print_category_footer() {
 }
 
 void JsonPrinter::print_all() {
-    // Additional open lists.
-    vector<string> open_lists = {lc, "pareto"};
-
-    for (auto &open_list : open_lists) {
-        string open_list_param = "openlist" + separator + helper + open_list;
-        os << open_list_param << " " << open_list_options << " [" << off << "]" << endl;
-
-        string open_list_g = open_list_param + separator + helper + "g";
-        print_bool(open_list_g);
-        print_condition(open_list_g, open_list_param);
-
-        print_weight(open_list_g, false);
-        os << endl;
-    }
     DocPrinter::print_all();
+    for (auto &pair : types) {
+        const string &type = pair.first;
+        os << type << endl;
+        const auto &param_map = pair.second;
+        for (auto plugin : param_map) {
+            const string &key = plugin.first;
+            const string &value = plugin.second;
+            os << key << " = " << value << endl;
+        }
+    }
 }
 
 }
