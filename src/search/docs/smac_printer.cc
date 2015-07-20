@@ -105,6 +105,21 @@ void SmacPrinter::print_helper_parameter(
     print_condition(param, parent, condition);
 }
 
+void SmacPrinter::print_heuristic_helper_parameters(const string &heuristic_parameter) const {
+    // Add heuristic to search engine's preferred list.
+    string preferred_param = heuristic_parameter + separator + "preferred";
+    print_bool(preferred_param);
+    print_condition(preferred_param, heuristic_parameter);
+
+    // Use heuristic for (weighted) estimates.
+    string single_param = heuristic_parameter + separator + "single";
+    os << single_param << " categorical " << open_list_options << " [both]" << endl;
+    print_condition(single_param, heuristic_parameter);
+    string single_weight_param = single_param + separator + "weight";
+    os << single_weight_param << " integer [1, 10] [1]" << endl;
+    print_condition(single_weight_param, single_param);
+}
+
 void SmacPrinter::print_bool(const string &parameter) const {
     os << parameter << " categorical " << bool_range << " [" << off << "]" << endl;
 }
@@ -115,15 +130,7 @@ void SmacPrinter::print_usage(string plugin, const DocStruct &info) {
     string feature = get_category(info.type) + separator + plugin;
     if (info.type == "Heuristic") {
         print_bool(feature);
-        string preferred_param = feature + separator + "preferred";
-        print_bool(preferred_param);
-        print_condition(preferred_param, feature);
-        string single_param = feature + separator + "single";
-        os << single_param << " categorical " << open_list_options << " [both]" << endl;
-        print_condition(single_param, feature);
-        string single_weight_param = single_param + separator + "weight";
-        os << single_weight_param << " integer [1, 10] [1]" << endl;
-        print_condition(single_weight_param, single_param);
+        print_heuristic_helper_parameters(feature);
     } else if (info.type == "OpenList") {
         // We add parameters for choosing open lists elsewhere.
     } else if (info.type == "SearchEngine") {
