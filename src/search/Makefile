@@ -45,6 +45,7 @@ HEADERS = \
           countdown_timer.h \
           delegating_task.h \
           domain_transition_graph.h \
+          docs/json_printer.h \
           docs/smac_printer.h \
           eager_search.h \
           enforced_hill_climbing_search.h \
