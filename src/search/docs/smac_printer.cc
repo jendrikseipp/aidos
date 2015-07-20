@@ -93,7 +93,7 @@ void SmacPrinter::print_condition(const string &child,
                                   const string &parent,
                                   string condition) const {
     if (condition.empty())
-        condition = parent + " == " + on;
+        condition = parent + " != " + off;
     os << child << " | " << condition << endl;
 }
 
@@ -128,6 +128,21 @@ void SmacPrinter::print_heuristic_helper_parameters(const string &heuristic_para
     os << single_param << " categorical " << open_list_options << " [both]" << endl;
     print_condition(single_param, heuristic_parameter);
     print_weight(single_param, false);
+
+    // Use heuristic for single(sum(weight(g(), gw), weight(H, w)) open lists.
+    string sum_param = heuristic_parameter + separator + "sum";
+    os << sum_param << " categorical " << open_list_options << " [" << off << "]" << endl;
+    print_condition(sum_param, heuristic_parameter);
+    print_weight(sum_param, true);
+
+    // Use heuristic for tiebreaking([sum(weight(g(), gw), weight(H, w)), H]) open lists.
+    string tb_param = heuristic_parameter + separator + "tiebreaking";
+    os << tb_param << " categorical " << open_list_options << " [" << off << "]" << endl;
+    print_condition(tb_param, heuristic_parameter);
+    print_weight(tb_param, true);
+    string tb_on_h_param = tb_param + separator + "on_h";
+    print_bool(tb_on_h_param);
+    print_condition(tb_on_h_param, tb_param);
 
     // Use heuristic in linear combination or pareto open list.
     for (string &open_list : vector<string>({lc, "pareto"})) {

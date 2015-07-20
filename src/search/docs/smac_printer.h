@@ -8,9 +8,9 @@ namespace docs {
 class SmacPrinter : public DocPrinter {
     const std::string separator = ":";
     const std::string lc = "linear_combination";
-    const std::string open_list_options = "{none, all_ops, pref_ops, both}";
     const std::string on = "true";
     const std::string off = "false";
+    const std::string open_list_options = "{" + off + ", all_ops, pref_ops, both}";
     const std::string bool_range = "{" + off + ", " + on + "}";
     std::vector<std::string> searches;
 
