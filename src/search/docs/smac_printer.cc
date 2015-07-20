@@ -58,7 +58,7 @@ string SmacPrinter::get_category(const string &type) const {
     }
 }
 
-void SmacPrinter::print_parameter(const string &parameter, const ArgumentInfo &arg) {
+void SmacPrinter::print_parameter(const string &parameter, const string &feature, const ArgumentInfo &arg) {
     string type;
     string domain;
     // TODO: We assume all integer and double params are >= 0.
@@ -87,6 +87,7 @@ void SmacPrinter::print_parameter(const string &parameter, const ArgumentInfo &a
     os << parameter << " " << type << " " << domain << " ["
        << lowercase(expand_infinity(arg.default_value))
        << "]" << endl;
+    print_condition(parameter, feature);
 }
 
 void SmacPrinter::print_condition(const string &child,
@@ -168,7 +169,7 @@ void SmacPrinter::print_usage(string plugin, const DocStruct &info) {
     } else if (info.type == "OpenList") {
         // We add parameters for choosing open lists elsewhere.
     } else if (info.type == "SearchEngine") {
-        searches.push_back(feature);
+        print_bool(feature);
     } else if (info.type == "LandmarkGraph") {
         print_bool(feature);
         print_condition(feature, get_heuristic("lmcount"));
@@ -186,8 +187,7 @@ void SmacPrinter::print_usage(string plugin, const DocStruct &info) {
             continue;
         }
         string parameter = feature + separator + arg.kwd;
-        print_parameter(parameter, arg);
-        print_condition(parameter, feature);
+        print_parameter(parameter, feature, arg);
     }
 }
 
@@ -212,15 +212,6 @@ void SmacPrinter::print_category_footer() {
 }
 
 void SmacPrinter::print_all() {
-    DocPrinter::print_all();
-    os << "search categorical {";
-    string sep = "";
-    for (const string &search : searches) {
-        os << sep << search;
-        sep = ", ";
-    }
-    os << "} [TODO]" << endl << endl;
-
     // Additional open lists.
     vector<string> open_lists = {lc, "pareto"};
 
@@ -235,6 +226,7 @@ void SmacPrinter::print_all() {
         print_weight(open_list_g, false);
         os << endl;
     }
+    DocPrinter::print_all();
 }
 
 }
