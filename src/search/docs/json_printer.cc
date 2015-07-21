@@ -9,33 +9,49 @@ static string quote(const string &s) {
 }
 
 JsonPrinter::JsonPrinter(ostream &out)
-    : DocPrinter(out) {
+    : DocPrinter(out),
+      level(0) {
 }
 
 void JsonPrinter::print_synopsis(const DocStruct &) {
 }
 
-void JsonPrinter::print_key_value_pair(const string &key, const string &value) const {
-    os << quote(key) << ": " << quote(value) << "," << endl;
+void JsonPrinter::print(const string &s) const {
+    assert(level >= 0);
+    for (int i = 0; i < level; ++i) {
+        os << indent;
+    }
+    os << s << endl;
 }
 
-void JsonPrinter::print_arg(const ArgumentInfo &arg) const {
-    os << quote(arg.kwd) << ": {" << endl;
+void JsonPrinter::print_key_value_pair(const string &key, const string &value) const {
+    print(quote(key) + ": " + quote(value) + ",");
+}
+
+void JsonPrinter::print_arg(const ArgumentInfo &arg) {
+    print(quote(arg.kwd) + ": {");
+    ++level;
     print_key_value_pair("type_name", arg.type_name);
     print_key_value_pair("default_value", arg.default_value);
-    os << "}" << endl;
+    --level;
+    print("}");
 }
 
 void JsonPrinter::print_usage(string plugin, const DocStruct &info) {
     if (plugin.empty() || info.type == "AbstractTask" || info.type == "ScalarEvaluator")
         return;
-    os << quote(plugin) << ": {" << endl;
+    print(quote(plugin) + ": {");
+    ++level;
     print_key_value_pair("type", info.type);
-    os << quote("args") << ": {" << endl;
+    print(quote("args") + ": {");
+    ++level;
     for (auto &arg : info.arg_help) {
         print_arg(arg);
     }
-    os << "}" << endl << "}," << endl;
+    --level;
+    print("}");
+    --level;
+    print("},");
 }
 
 void JsonPrinter::print_arguments(const DocStruct &) {
@@ -58,9 +74,12 @@ void JsonPrinter::print_category_footer() {
 }
 
 void JsonPrinter::print_all() {
-    os << "{" << endl;
+    level = 0;
+    print("{");
+    ++level;
     DocPrinter::print_all();
-    os << "}" << endl;
+    --level;
+    print("}");
 }
 
 }

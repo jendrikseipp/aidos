@@ -14,7 +14,11 @@ class JsonPrinter : public DocPrinter {
     const std::string open_list_options = "{" + off + ", all_ops, pref_ops, both}";
     const std::string bool_range = "{" + off + ", " + on + "}";
 
-    void print_arg(const ArgumentInfo &arg) const;
+    const std::string indent = "    ";
+    int level;
+
+    void print(const std::string &s) const;
+    void print_arg(const ArgumentInfo &arg);
     void print_key_value_pair(const std::string &key, const std::string &value) const;
 
 protected:
