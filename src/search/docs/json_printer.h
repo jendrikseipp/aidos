@@ -3,15 +3,14 @@
 
 #include "../option_parser_util.h"
 
+#include "../ext/jzon/Jzon.h"
+
 namespace docs {
 
 class JsonPrinter : public DocPrinter {
-    const std::string indent = "    ";
-    int level;
+    Jzon::Node doc;
 
-    void print(const std::string &s) const;
-    void print_arg(const ArgumentInfo &arg, bool is_last);
-    void print_key_value_pair(const std::string &key, const std::string &value, bool is_last = false) const;
+    Jzon::Node get_arg_node(const ArgumentInfo &arg) const;
 
 protected:
     virtual void print_synopsis(const DocStruct &info);
