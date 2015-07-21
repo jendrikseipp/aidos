@@ -4,7 +4,8 @@ using namespace std;
 
 namespace docs {
 
-static string quote(const string &s) {
+static string quote(string s) {
+    replace(s.begin(), s.end(), '"', '\"');
     return "\"" + s + "\"";
 }
 
@@ -36,6 +37,9 @@ void JsonPrinter::print_arg(const ArgumentInfo &arg, bool is_last) {
     ++level;
     print_key_value_pair("type_name", arg.type_name);
     print_key_value_pair("default_value", arg.default_value, true);
+    // TODO: Include help and value_explanations? We should probably
+    //       use a json library for this.
+    // print_key_value_pair("help", arg.help, true);
     --level;
     if (!is_last) {
         print("},");
@@ -50,6 +54,9 @@ void JsonPrinter::print_usage(string plugin, const DocStruct &info) {
     print(quote(plugin) + ": {");
     ++level;
     print_key_value_pair("type", info.type);
+    print_key_value_pair("full_name", info.full_name);
+    // print_key_value_pair("synopsis", info.synopsis);
+    // TODO: Include property_help, support_help and notes?
     print(quote("args") + ": {");
     ++level;
     for (size_t i = 0; i < info.arg_help.size(); ++i) {
