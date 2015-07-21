@@ -3,23 +3,15 @@
 
 #include "../option_parser_util.h"
 
-#include <map>
-
 namespace docs {
 
 class JsonPrinter : public DocPrinter {
-    const std::string separator = ":";
-    const std::string on = "true";
-    const std::string off = "false";
-    const std::string open_list_options = "{" + off + ", all_ops, pref_ops, both}";
-    const std::string bool_range = "{" + off + ", " + on + "}";
-
     const std::string indent = "    ";
     int level;
 
     void print(const std::string &s) const;
-    void print_arg(const ArgumentInfo &arg);
-    void print_key_value_pair(const std::string &key, const std::string &value) const;
+    void print_arg(const ArgumentInfo &arg, bool is_last);
+    void print_key_value_pair(const std::string &key, const std::string &value, bool is_last = false) const;
 
 protected:
     virtual void print_synopsis(const DocStruct &info);

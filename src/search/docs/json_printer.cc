@@ -24,29 +24,38 @@ void JsonPrinter::print(const string &s) const {
     os << s << endl;
 }
 
-void JsonPrinter::print_key_value_pair(const string &key, const string &value) const {
-    print(quote(key) + ": " + quote(value) + ",");
+void JsonPrinter::print_key_value_pair(const string &key, const string &value, bool is_last) const {
+    string line = quote(key) + ": " + quote(value);
+    if (!is_last)
+        line += ",";
+    print(line);
 }
 
-void JsonPrinter::print_arg(const ArgumentInfo &arg) {
+void JsonPrinter::print_arg(const ArgumentInfo &arg, bool is_last) {
     print(quote(arg.kwd) + ": {");
     ++level;
     print_key_value_pair("type_name", arg.type_name);
-    print_key_value_pair("default_value", arg.default_value);
+    print_key_value_pair("default_value", arg.default_value, true);
     --level;
-    print("}");
+    if (!is_last) {
+        print("},");
+    } else {
+        print("}");
+    }
 }
 
 void JsonPrinter::print_usage(string plugin, const DocStruct &info) {
-    if (plugin.empty() || info.type == "AbstractTask" || info.type == "ScalarEvaluator")
+    if (plugin.empty())
         return;
     print(quote(plugin) + ": {");
     ++level;
     print_key_value_pair("type", info.type);
     print(quote("args") + ": {");
     ++level;
-    for (auto &arg : info.arg_help) {
-        print_arg(arg);
+    for (size_t i = 0; i < info.arg_help.size(); ++i) {
+        auto &arg = info.arg_help[i];
+        bool is_last = i == info.arg_help.size() - 1;
+        print_arg(arg, is_last);
     }
     --level;
     print("}");
@@ -70,7 +79,7 @@ void JsonPrinter::print_category_header(string) {
 }
 
 void JsonPrinter::print_category_footer() {
-    os << endl;
+    //os << endl;
 }
 
 void JsonPrinter::print_all() {
@@ -78,6 +87,14 @@ void JsonPrinter::print_all() {
     print("{");
     ++level;
     DocPrinter::print_all();
+
+    // Remove trailing comma.
+    long pos = os.tellp();
+    os.seekp(pos - 3);
+    --level;
+    print("}");
+    ++level;
+
     --level;
     print("}");
 }
