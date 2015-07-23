@@ -16,8 +16,7 @@ Jzon::Node JsonPrinter::get_arg_node(const ArgumentInfo &arg) const {
     Jzon::Node node = Jzon::object();
     node.add("type_name", arg.type_name);
     node.add("default_value", arg.default_value);
-    // TODO: Include help and value_explanations? We should probably
-    //       use a json library for this.
+    // TODO: Include help and value_explanations?
     return node;
 }
 
@@ -32,7 +31,7 @@ void JsonPrinter::print_usage(string plugin, const DocStruct &info) {
         property_help.add(prop_info.property, prop_info.description);
     }
     plugin_node.add("properties", property_help);
-    // print_key_value_pair("synopsis", info.synopsis);
+    // plugin_node.add("synopsis", info.synopsis);
     // TODO: Include support_help and notes?
     Jzon::Node args_node = Jzon::object();
     for (auto &arg : info.arg_help) {

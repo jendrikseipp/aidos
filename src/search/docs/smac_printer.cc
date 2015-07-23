@@ -98,14 +98,6 @@ void SmacPrinter::print_condition(const string &child,
     os << child << " | " << condition << endl;
 }
 
-void SmacPrinter::print_helper_parameter(
-    const string &parent, const string& child, const string &type,
-    const string &range, const string &default_value, const string &condition) const {
-    string param = parent + separator + helper + child;
-    os << param << " " << type << " " << range << " [" << default_value << "]" << endl;
-    print_condition(param, parent, condition);
-}
-
 void SmacPrinter::print_weight(const string &parent, bool mixed) const {
     string weight_param = parent + separator + helper + "weight";
     os << weight_param << " ";
