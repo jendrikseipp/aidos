@@ -4,7 +4,6 @@
 #include "../option_parser_util.h"
 
 namespace docs {
-
 class SmacPrinter : public DocPrinter {
     const std::string separator = ":";
     const std::string helper = "+";
@@ -40,7 +39,6 @@ public:
     SmacPrinter(std::ostream &out);
     virtual ~SmacPrinter() override = default;
 };
-
 }
 
 #endif

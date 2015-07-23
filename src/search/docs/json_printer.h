@@ -6,7 +6,6 @@
 #include "../ext/jzon/Jzon.h"
 
 namespace docs {
-
 class JsonPrinter : public DocPrinter {
     Jzon::Node doc;
 
@@ -28,7 +27,6 @@ public:
     JsonPrinter(std::ostream &out);
     virtual ~JsonPrinter() override = default;
 };
-
 }
 
 #endif

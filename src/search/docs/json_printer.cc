@@ -3,7 +3,6 @@
 using namespace std;
 
 namespace docs {
-
 JsonPrinter::JsonPrinter(ostream &out)
     : DocPrinter(out),
       doc(Jzon::object()) {
@@ -62,10 +61,11 @@ void JsonPrinter::print_category_footer() {
 void JsonPrinter::print_all() {
     DocPrinter::print_all();
 
-    Jzon::Format format = {true, true, false, 4};
+    Jzon::Format format = {
+        true, true, false, 4
+    };
     Jzon::Writer writer(format);
     writer.writeStream(doc, os);
     os << endl;
 }
-
 }

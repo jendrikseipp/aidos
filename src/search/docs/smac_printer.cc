@@ -3,7 +3,6 @@
 using namespace std;
 
 namespace docs {
-
 SmacPrinter::SmacPrinter(ostream &out)
     : DocPrinter(out) {
 }
@@ -138,7 +137,8 @@ void SmacPrinter::print_heuristic_helper_parameters(const string &heuristic_para
     print_condition(tb_on_h_param, tb_param);
 
     // Use heuristic in linear combination or pareto open list.
-    for (string &open_list : vector<string>({lc, "pareto"})) {
+    for (string &open_list : vector<string>({lc, "pareto"}
+                                            )) {
         string use_in_open_list_param = heuristic_parameter + separator + helper + open_list;
         print_bool(use_in_open_list_param);
         print_condition(use_in_open_list_param, heuristic_parameter);
@@ -168,8 +168,8 @@ void SmacPrinter::print_usage(string plugin, const DocStruct &info) {
     } else if (info.type == "Synergy") {
         print_bool(feature);
         print_condition(feature, "",
-            get_heuristic("ff") + " == " + on + " && " +
-            get_heuristic("lmcount") + " == " + on);
+                        get_heuristic("ff") + " == " + on + " && " +
+                        get_heuristic("lmcount") + " == " + on);
     }
 
     for (const ArgumentInfo &arg : info.arg_help) {
@@ -205,7 +205,9 @@ void SmacPrinter::print_category_footer() {
 
 void SmacPrinter::print_all() {
     // Additional open lists.
-    vector<string> open_lists = {lc, "pareto"};
+    vector<string> open_lists = {
+        lc, "pareto"
+    };
 
     for (auto &open_list : open_lists) {
         string open_list_param = "openlist" + separator + helper + open_list;
@@ -220,5 +222,4 @@ void SmacPrinter::print_all() {
     }
     DocPrinter::print_all();
 }
-
 }
