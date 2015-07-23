@@ -325,9 +325,8 @@ Node::const_iterator Node::end() const {
 }
 
 bool Node::operator==(const Node &other) const {
-    return
-        (data == other.data) ||
-        (isValue() && (data->type == other.data->type) && (data->valueStr == other.data->valueStr));
+    return (data == other.data) ||
+           (isValue() && (data->type == other.data->type) && (data->valueStr == other.data->valueStr));
 }
 bool Node::operator!=(const Node &other) const {
     return !(*this == other);
