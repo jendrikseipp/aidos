@@ -31,7 +31,12 @@ void JsonPrinter::print_usage(string plugin, const DocStruct &info) {
     }
     plugin_node.add("properties", property_help);
     // plugin_node.add("synopsis", info.synopsis);
-    // TODO: Include support_help and notes?
+    // TODO: Include support_help?
+    Jzon::Node notes = Jzon::object();
+    for (auto &note : info.notes) {
+        notes.add(note.name, note.description);
+    }
+    plugin_node.add("notes", notes);
     Jzon::Node args_node = Jzon::object();
     for (auto &arg : info.arg_help) {
         args_node.add(arg.kwd, get_arg_node(arg));
