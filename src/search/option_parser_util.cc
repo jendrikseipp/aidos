@@ -1,18 +1,13 @@
-#include "option_parser_util.h"
-
 #include <algorithm>
 #include <string>
 #include <vector>
+#include "option_parser_util.h"
+
 
 using namespace std;
 
-string lowercase(string s) {
-    transform(s.begin(), s.end(), s.begin(), ::tolower);
-    return s;
-}
-
 void DocStore::register_object(string k, string type) {
-    k = lowercase(k);
+    transform(k.begin(), k.end(), k.begin(), ::tolower); //k to lowercase
     registered[k] = DocStruct();
     registered[k].type = type;
     registered[k].full_name = k;
@@ -165,7 +160,8 @@ void Txt2TagsPrinter::print_usage(string call_name, const DocStruct &info) {
         for (size_t i = 0; i < info.arg_help.size(); ++i) {
             ArgumentInfo arg = info.arg_help[i];
             os << arg.kwd;
-            os << "=" << info.arg_help[i].default_value;
+            if (!arg.default_value.empty())
+                os << "=" << arg.default_value;
             if (i != info.arg_help.size() - 1)
                 os << ", ";
         }
@@ -246,6 +242,9 @@ PlainPrinter::PlainPrinter(ostream &out, bool pa)
       print_all(pa) {
 }
 
+PlainPrinter::~PlainPrinter() {
+}
+
 void PlainPrinter::print_synopsis(const DocStruct &info) {
     if (!info.full_name.empty())
         os << "== " << info.full_name << " ==" << endl;
@@ -257,19 +256,21 @@ void PlainPrinter::print_synopsis(const DocStruct &info) {
 void PlainPrinter::print_usage(string call_name, const DocStruct &info) {
     if (!call_name.empty()) {
         os << call_name << "(";
-        string sep = "";
-        for (const ArgumentInfo &arg : info.arg_help) {
-            os << sep;
+        for (size_t i = 0; i < info.arg_help.size(); ++i) {
+            ArgumentInfo arg = info.arg_help[i];
             os << arg.kwd;
-            os << "=" << arg.default_value;
-            sep = ", ";
+            if (!arg.default_value.empty())
+                os << "=" << arg.default_value;
+            if (i != info.arg_help.size() - 1)
+                os << ", ";
         }
         os << ")" << endl;
     }
 }
 
 void PlainPrinter::print_arguments(const DocStruct &info) {
-    for (const ArgumentInfo &arg : info.arg_help) {
+    for (size_t i = 0; i < info.arg_help.size(); ++i) {
+        ArgumentInfo arg = info.arg_help[i];
         os << " " << arg.kwd << "("
            << arg.type_name << "): "
            << arg.help << endl;

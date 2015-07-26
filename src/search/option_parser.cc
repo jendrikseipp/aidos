@@ -434,6 +434,11 @@ void OptionParser::set_unparsed_config() {
     unparsed_config = stream.str();
 }
 
+static string str_to_lower(string s) {
+    transform(s.begin(), s.end(), s.begin(), ::tolower);
+    return s;
+}
+
 void OptionParser::add_enum_option(string k,
                                    vector<string > enumeration,
                                    string h, string def_val,
@@ -467,7 +472,7 @@ void OptionParser::add_enum_option(string k,
     if (!opts.contains(k))
         return;
 
-    string name = lowercase(opts.get<string>(k));
+    string name = str_to_lower(opts.get<string>(k));
 
     //...then check if the parsed string can be treated as a number
     stringstream str_stream(name);
@@ -482,7 +487,7 @@ void OptionParser::add_enum_option(string k,
     } else {
         //...otherwise try to map the string to its position in the enumeration vector
         transform(enumeration.begin(), enumeration.end(), enumeration.begin(),
-                  lowercase); //make the enumeration lower case
+                  str_to_lower); //make the enumeration lower case
         vector<string>::const_iterator it =
             find(enumeration.begin(), enumeration.end(), name);
         if (it == enumeration.end()) {

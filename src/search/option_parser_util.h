@@ -29,9 +29,6 @@ class OpenList;
 class AbstractTask;
 
 
-std::string lowercase(std::string s);
-
-
 struct ParseNode {
     ParseNode()
         : value(""),
@@ -587,9 +584,9 @@ protected:
 };
 
 class PlainPrinter : public DocPrinter {
-    // If this is false, notes, properties and language_features are omitted.
-    bool print_all;
-
+public:
+    PlainPrinter(std::ostream &out, bool print_all = false);
+    virtual ~PlainPrinter();
 protected:
     virtual void print_synopsis(const DocStruct &info);
     virtual void print_usage(std::string call_name, const DocStruct &info);
@@ -599,10 +596,8 @@ protected:
     virtual void print_properties(const DocStruct &info);
     virtual void print_category_header(std::string category_name);
     virtual void print_category_footer();
-
-public:
-    PlainPrinter(std::ostream &out, bool print_all = false);
-    virtual ~PlainPrinter() override = default;
+private:
+    bool print_all; //if this is false, notes, properties and language_features are omitted
 };
 
 #endif
