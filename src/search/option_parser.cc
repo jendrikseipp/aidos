@@ -5,7 +5,6 @@
 #include "rng.h"
 
 #include "docs/json_printer.h"
-#include "docs/smac_printer.h"
 
 #include "ext/tree_util.hh"
 
@@ -249,22 +248,19 @@ SearchEngine *OptionParser::parse_cmd_line_aux(
         } else if ((arg.compare("--help") == 0) && dry_run) {
             cout << "Help:" << endl;
             bool txt2tags = false;
-            bool smac = false;
             bool json = false;
             vector<string> helpiands;
             for (size_t j = i + 1; j < args.size(); ++j) {
                 if (args[j] == "--txt2tags") {
                     txt2tags = true;
-                } else if (args[j] == "--smac") {
-                    smac = true;
                 } else if (args[j] == "--json") {
                     json = true;
                 } else {
                     helpiands.push_back(string(args[j]));
                 }
             }
-            if (txt2tags && smac) {
-                ABORT("Use either --txt2tags or --smac, but not both.");
+            if (txt2tags && json) {
+                ABORT("Use either --txt2tags or --json, but not both.");
             }
             if (helpiands.empty()) {
                 get_full_help();
@@ -276,8 +272,6 @@ SearchEngine *OptionParser::parse_cmd_line_aux(
             DocPrinter *dp;
             if (txt2tags) {
                 dp = new Txt2TagsPrinter(cout);
-            } else if (smac) {
-                dp = new docs::SmacPrinter(cout);
             } else if (json) {
                 dp = new docs::JsonPrinter(cout);
             } else {

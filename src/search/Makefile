@@ -46,7 +46,6 @@ HEADERS = \
           delegating_task.h \
           domain_transition_graph.h \
           docs/json_printer.h \
-          docs/smac_printer.h \
           ext/jzon/Jzon.h \
           eager_search.h \
           enforced_hill_climbing_search.h \
