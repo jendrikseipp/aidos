@@ -80,9 +80,12 @@ void JsonPrinter::print_category_footer() {
 void JsonPrinter::print_all() {
     DocPrinter::print_all();
 
-    Jzon::Format format = {
-        true, true, false, 4
-    };
+    Jzon::Format format;
+    format.newline = true;
+    format.spacing = true;
+    format.useTabs = false;
+    format.indentSize = 4;
+
     Jzon::Writer writer(format);
     writer.writeStream(doc, os);
     os << endl;
