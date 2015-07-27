@@ -13,14 +13,14 @@ class JsonPrinter : public DocPrinter {
     Jzon::Node get_arg_node(const ArgumentInfo &arg) const;
 
 protected:
-    virtual void print_synopsis(const DocStruct &info);
-    virtual void print_usage(std::string plugin, const DocStruct &info);
-    virtual void print_arguments(const DocStruct &info);
-    virtual void print_notes(const DocStruct &info);
-    virtual void print_language_features(const DocStruct &info);
-    virtual void print_properties(const DocStruct &info);
-    virtual void print_category_header(std::string category_name);
-    virtual void print_category_footer();
+    virtual void print_synopsis(const DocStruct &info) override;
+    virtual void print_usage(std::string plugin, const DocStruct &info) override;
+    virtual void print_arguments(const DocStruct &info) override;
+    virtual void print_notes(const DocStruct &info) override;
+    virtual void print_language_features(const DocStruct &info) override;
+    virtual void print_properties(const DocStruct &info) override;
+    virtual void print_category_header(std::string category_name) override;
+    virtual void print_category_footer() override;
 
     virtual void print_all() override;
 
