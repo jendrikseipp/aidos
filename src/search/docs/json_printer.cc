@@ -15,7 +15,14 @@ Jzon::Node JsonPrinter::get_arg_node(const ArgumentInfo &arg) const {
     Jzon::Node node = Jzon::object();
     node.add("type_name", arg.type_name);
     node.add("default_value", arg.default_value);
-    // TODO: Include help and value_explanations?
+    node.add("help", arg.help);
+    Jzon::Node explanations = Jzon::object();
+    for (auto &pair : arg.value_explanations) {
+        const string &value = pair.first;
+        const string &explanation = pair.second;
+        explanations.add(value, explanation);
+    }
+    node.add("value_explanations", explanations);
     return node;
 }
 
