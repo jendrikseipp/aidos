@@ -46,7 +46,6 @@ HEADERS = \
           delegating_task.h \
           domain_transition_graph.h \
           docs/json_printer.h \
-          ext/jzon/Jzon.h \
           eager_search.h \
           enforced_hill_climbing_search.h \
           equivalence_relation.h \
@@ -101,6 +100,8 @@ HEADERS = \
           \
           lp_internals.h \
           lp_solver.h \
+
+HEADERS += ext/jzon/Jzon.h \
 
 ## Each of the following "HEADERS += ..." constructs defines a
 ## "plugin" feature that can be enabled or disabled by simply

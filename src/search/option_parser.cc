@@ -260,7 +260,8 @@ SearchEngine *OptionParser::parse_cmd_line_aux(
                 }
             }
             if (txt2tags && json) {
-                ABORT("Use either --txt2tags or --json, but not both.");
+                cerr << "Use either --txt2tags or --json, not both." << endl;
+                exit_with(EXIT_INPUT_ERROR);
             }
             if (helpiands.empty()) {
                 get_full_help();
