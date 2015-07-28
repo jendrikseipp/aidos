@@ -9,6 +9,7 @@
 namespace docs {
 class JsonPrinter : public DocPrinter {
     Jzon::Node doc;
+    Jzon::Node plugin_node;
 
     Jzon::Node get_arg_node(const ArgumentInfo &arg) const;
 
@@ -22,11 +23,12 @@ protected:
     virtual void print_category_header(std::string category_name) override;
     virtual void print_category_footer() override;
 
-    virtual void print_all() override;
-
 public:
     JsonPrinter(std::ostream &out);
     virtual ~JsonPrinter() override = default;
+
+    virtual void print_element(std::string plugin, const DocStruct &info) override;
+    virtual void print_all() override;
 };
 }
 
