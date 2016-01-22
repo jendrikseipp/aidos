@@ -8,6 +8,8 @@
 
 #include "../globals.h"
 
+#include "../docs/json_printer.h"
+
 #include "../ext/tree_util.hh"
 
 #include "../utils/rng.h"
@@ -320,15 +322,20 @@ SearchEngine *OptionParser::parse_cmd_line_aux(
         } else if ((arg.compare("--help") == 0) && dry_run) {
             cout << "Help:" << endl;
             bool txt2tags = false;
+            bool json = false;
             vector<string> helpiands;
-            if (i + 1 < args.size()) {
-                for (size_t j = i + 1; j < args.size(); ++j) {
-                    if (args[j] == "--txt2tags") {
-                        txt2tags = true;
-                    } else {
-                        helpiands.push_back(string(args[j]));
-                    }
+            for (size_t j = i + 1; j < args.size(); ++j) {
+                if (args[j] == "--txt2tags") {
+                    txt2tags = true;
+                } else if (args[j] == "--json") {
+                    json = true;
+                } else {
+                    helpiands.push_back(string(args[j]));
                 }
+            }
+            if (txt2tags && json) {
+                cerr << "Use either --txt2tags or --json, not both." << endl;
+                utils::exit_with(utils::ExitCode::INPUT_ERROR);
             }
             if (helpiands.empty()) {
                 get_full_help();
@@ -340,6 +347,8 @@ SearchEngine *OptionParser::parse_cmd_line_aux(
             DocPrinter *dp;
             if (txt2tags) {
                 dp = new Txt2TagsPrinter(cout);
+            } else if (json) {
+                dp = new docs::JsonPrinter(cout);
             } else {
                 dp = new PlainPrinter(cout);
             }

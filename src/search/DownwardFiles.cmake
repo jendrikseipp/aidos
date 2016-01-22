@@ -118,6 +118,15 @@ fast_downward_plugin(
 )
 
 fast_downward_plugin(
+    NAME DOCS
+    HELP "Documentation"
+    SOURCES
+        docs/json_printer.cc
+        ext/jzon/Jzon.cc
+    CORE_PLUGIN
+)
+
+fast_downward_plugin(
     NAME UTILS
     HELP "System utilities"
     SOURCES
