@@ -8,7 +8,10 @@
 
 class GlobalOperator;
 class GlobalState;
+
+namespace options {
 class Options;
+}
 
 class AbstractTask {
 public:
@@ -18,6 +21,8 @@ public:
     virtual const std::string &get_variable_name(int var) const = 0;
     virtual int get_variable_domain_size(int var) const = 0;
     virtual const std::string &get_fact_name(int var, int value) const = 0;
+    virtual bool are_facts_mutex(
+        const std::pair<int, int> &fact1, const std::pair<int, int> &fact2) const = 0;
 
     virtual int get_operator_cost(int index, bool is_axiom) const = 0;
     virtual const std::string &get_operator_name(int index, bool is_axiom) const = 0;
@@ -43,6 +48,7 @@ public:
     virtual std::vector<int> get_state_values(const GlobalState &global_state) const = 0;
 };
 
-const std::shared_ptr<AbstractTask> get_task_from_options(const Options &opts);
+const std::shared_ptr<AbstractTask> get_task_from_options(
+    const options::Options &opts);
 
 #endif

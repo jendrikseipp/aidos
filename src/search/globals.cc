@@ -2,17 +2,18 @@
 
 #include "axioms.h"
 #include "causal_graph.h"
-#include "domain_transition_graph.h"
 #include "global_operator.h"
 #include "global_state.h"
 #include "heuristic.h"
 #include "int_packer.h"
-#include "rng.h"
 #include "root_task.h"
 #include "state_registry.h"
 #include "successor_generator.h"
-#include "timer.h"
-#include "utilities.h"
+
+#include "utils/logging.h"
+#include "utils/rng.h"
+#include "utils/system.h"
+#include "utils/timer.h"
 
 #include <cstdlib>
 #include <fstream>
@@ -24,6 +25,7 @@
 #include <vector>
 
 using namespace std;
+using utils::ExitCode;
 
 static const int PRE_FILE_VERSION = 3;
 
@@ -34,7 +36,7 @@ static const int PRE_FILE_VERSION = 3;
 //       are_mutex, which is at least better than exposing the data
 //       structure globally.)
 
-static vector<vector<set<pair<int, int> > > > g_inconsistent_facts;
+static vector<vector<set<pair<int, int>>>> g_inconsistent_facts;
 
 bool test_goal(const GlobalState &state) {
     for (size_t i = 0; i < g_goal.size(); ++i) {
@@ -82,15 +84,6 @@ void save_plan(const vector<const GlobalOperator *> &plan,
     ++g_num_previously_generated_plans;
 }
 
-bool peek_magic(istream &in, string magic) {
-    string word;
-    in >> word;
-    bool result = (word == magic);
-    for (int i = word.size() - 1; i >= 0; --i)
-        in.putback(word[i]);
-    return result;
-}
-
 void check_magic(istream &in, string magic) {
     string word;
     in >> word;
@@ -102,7 +95,7 @@ void check_magic(istream &in, string magic) {
                  << "on a preprocessor file from " << endl
                  << "an older version." << endl;
         }
-        exit_with(EXIT_INPUT_ERROR);
+        utils::exit_with(ExitCode::INPUT_ERROR);
     }
 }
 
@@ -115,7 +108,7 @@ void read_and_verify_version(istream &in) {
         cerr << "Expected preprocessor file version " << PRE_FILE_VERSION
              << ", got " << version << "." << endl;
         cerr << "Exiting." << endl;
-        exit_with(EXIT_INPUT_ERROR);
+        utils::exit_with(ExitCode::INPUT_ERROR);
     }
 }
 
@@ -166,7 +159,7 @@ void read_mutexes(istream &in) {
         check_magic(in, "begin_mutex_group");
         int num_facts;
         in >> num_facts;
-        vector<pair<int, int> > invariant_group;
+        vector<pair<int, int>> invariant_group;
         invariant_group.reserve(num_facts);
         for (int j = 0; j < num_facts; ++j) {
             int var, val;
@@ -204,7 +197,7 @@ void read_goal(istream &in) {
     in >> count;
     if (count < 1) {
         cerr << "Task has no goal condition!" << endl;
-        exit_with(EXIT_INPUT_ERROR);
+        utils::exit_with(ExitCode::INPUT_ERROR);
     }
     for (int i = 0; i < count; ++i) {
         int var, val;
@@ -238,7 +231,7 @@ void read_axioms(istream &in) {
 }
 
 void read_everything(istream &in) {
-    cout << "reading input... [t=" << g_timer << "]" << endl;
+    cout << "reading input... [t=" << utils::g_timer << "]" << endl;
     read_and_verify_version(in);
     read_metric(in);
     read_variables(in);
@@ -257,21 +250,19 @@ void read_everything(istream &in) {
 
     // Ignore successor generator from preprocessor output.
     check_magic(in, "begin_SG");
-    while (!peek_magic(in, "end_SG")) {
-        string dummy_string;
+    string dummy_string = "";
+    while (dummy_string != "end_SG") {
         getline(in, dummy_string);
     }
-    check_magic(in, "end_SG");
 
-    DomainTransitionGraph::read_all(in);
-    check_magic(in, "begin_CG"); // ignore everything from here
+    check_magic(in, "begin_DTG"); // ignore everything from here
 
-    cout << "done reading input! [t=" << g_timer << "]" << endl;
+    cout << "done reading input! [t=" << utils::g_timer << "]" << endl;
 
     cout << "packing state variables..." << flush;
     assert(!g_variable_domain.empty());
     g_state_packer = new IntPacker(g_variable_domain);
-    cout << "done! [t=" << g_timer << "]" << endl;
+    cout << "done! [t=" << utils::g_timer << "]" << endl;
 
     // NOTE: state registry stores the sizes of the state, so must be
     // built after the problem has been read in.
@@ -286,13 +277,13 @@ void read_everything(istream &in) {
     cout << "Facts: " << num_facts << endl;
     cout << "Bytes per state: "
          << g_state_packer->get_num_bins() *
-    g_state_packer->get_bin_size_in_bytes() << endl;
+        g_state_packer->get_bin_size_in_bytes() << endl;
 
     cout << "Building successor generator..." << flush;
     g_successor_generator = new SuccessorGenerator(g_root_task());
-    cout << "done! [t=" << g_timer << "]" << endl;
+    cout << "done! [t=" << utils::g_timer << "]" << endl;
 
-    cout << "done initalizing global data [t=" << g_timer << "]" << endl;
+    cout << "done initalizing global data [t=" << utils::g_timer << "]" << endl;
 }
 
 void dump_everything() {
@@ -328,7 +319,7 @@ void verify_no_axioms() {
     if (has_axioms()) {
         cerr << "Heuristic does not support axioms!" << endl << "Terminating."
              << endl;
-        exit_with(EXIT_UNSUPPORTED);
+        utils::exit_with(ExitCode::UNSUPPORTED);
     }
 }
 
@@ -354,7 +345,7 @@ void verify_no_conditional_effects() {
         cerr << "Heuristic does not support conditional effects "
              << "(operator " << g_operators[op_id].get_name() << ")" << endl
              << "Terminating." << endl;
-        exit_with(EXIT_UNSUPPORTED);
+        utils::exit_with(ExitCode::UNSUPPORTED);
     }
 }
 
@@ -364,8 +355,10 @@ void verify_no_axioms_no_conditional_effects() {
 }
 
 bool are_mutex(const pair<int, int> &a, const pair<int, int> &b) {
-    if (a.first == b.first) // same variable: mutex iff different value
+    if (a.first == b.first) {
+        // Same variable: mutex iff different value.
         return a.second != b.second;
+    }
     return bool(g_inconsistent_facts[a.first][a.second].count(b));
 }
 
@@ -383,21 +376,21 @@ int g_min_action_cost = numeric_limits<int>::max();
 int g_max_action_cost = 0;
 vector<string> g_variable_name;
 vector<int> g_variable_domain;
-vector<vector<string> > g_fact_names;
+vector<vector<string>> g_fact_names;
 vector<int> g_axiom_layers;
 vector<int> g_default_axiom_values;
 IntPacker *g_state_packer;
 vector<int> g_initial_state_data;
-vector<pair<int, int> > g_goal;
+vector<pair<int, int>> g_goal;
 vector<GlobalOperator> g_operators;
 vector<GlobalOperator> g_axioms;
 AxiomEvaluator *g_axiom_evaluator;
 SuccessorGenerator *g_successor_generator;
-vector<DomainTransitionGraph *> g_transition_graphs;
 
-Timer g_timer;
 string g_plan_filename = "sas_plan";
 int g_num_previously_generated_plans = 0;
 bool g_is_part_of_anytime_portfolio = false;
-RandomNumberGenerator g_rng(2011); // Use an arbitrary default seed.
+utils::RandomNumberGenerator g_rng(2011); // Use an arbitrary default seed.
 StateRegistry *g_state_registry = 0;
+
+utils::Log g_log;

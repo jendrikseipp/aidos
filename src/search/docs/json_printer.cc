@@ -1,15 +1,17 @@
 #include "json_printer.h"
 
+#include "../options/doc_store.h"
+
 using namespace std;
 
 
 namespace docs {
 JsonPrinter::JsonPrinter(ostream &out)
-    : DocPrinter(out),
+    : options::DocPrinter(out),
       doc(Jzon::object()) {
 }
 
-Jzon::Node JsonPrinter::get_arg_node(const ArgumentInfo &arg) const {
+Jzon::Node JsonPrinter::get_arg_node(const options::ArgumentInfo &arg) const {
     Jzon::Node node = Jzon::object();
     node.add("type_name", arg.type_name);
     node.add("default_value", arg.default_value);

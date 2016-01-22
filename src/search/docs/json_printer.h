@@ -1,17 +1,23 @@
 #ifndef DOCS_JSON_PRINTER_H
 #define DOCS_JSON_PRINTER_H
 
-#include "../option_parser_util.h"
+#include "../options/doc_printer.h"
 
 #include "../ext/jzon/Jzon.h"
 
+namespace options {
+struct ArgumentInfo;
+struct DocStruct;
+}
+
+using options::DocStruct;
 
 namespace docs {
-class JsonPrinter : public DocPrinter {
+class JsonPrinter : public options::DocPrinter {
     Jzon::Node doc;
     Jzon::Node plugin_node;
 
-    Jzon::Node get_arg_node(const ArgumentInfo &arg) const;
+    Jzon::Node get_arg_node(const options::ArgumentInfo &arg) const;
 
 protected:
     virtual void print_synopsis(const DocStruct &info) override;
