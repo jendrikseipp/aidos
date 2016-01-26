@@ -6,42 +6,42 @@ cd "$(dirname "$0")"
 cd ..
 
 ./build.py -j4
-./fast-downward.py --search -- --search-options --help --json \
-    all_states_potential \
-    blind \
-    cegar \
-    cpdbs \
-    diverse_potentials \
-    hm \
-    hmax \
-    initial_state_potential \
-    ipdb \
-    lmcount \
-    merge_and_shrink \
-    operatorcounting \
-    pdb \
-    sample_based_potentials \
-    zopdbs \
-    single \
-    eager \
-    combo \
-    genetic \
-    hillclimbing \
-    systematic \
-    exact \
-    goals \
-    landmarks \
-    original \
-    lm_exhaust \
-    lm_hm \
-    lm_merged \
-    lm_rhw \
-    lm_zg \
-    lmcut_constraints \
-    pho_constraints \
-    state_equation_constraints \
-    merge_dfp \
-    merge_linear \
-    shrink_bisimulation \
-    shrink_fh \
-    shrink_random \
+./fast-downward.py --search -- --search-options --help --json
+    # all_states_potential \
+    # blind \
+    # cegar \
+    # cpdbs \
+    # diverse_potentials \
+    # hm \
+    # hmax \
+    # initial_state_potential \
+    # ipdb \
+    # lmcount \
+    # merge_and_shrink \
+    # operatorcounting \
+    # pdb \
+    # sample_based_potentials \
+    # zopdbs \
+    # single \
+    # eager \
+    # combo \
+    # genetic \
+    # hillclimbing \
+    # systematic \
+    # exact \
+    # goals \
+    # landmarks \
+    # original \
+    # lm_exhaust \
+    # lm_hm \
+    # lm_merged \
+    # lm_rhw \
+    # lm_zg \
+    # lmcut_constraints \
+    # pho_constraints \
+    # state_equation_constraints \
+    # merge_dfp \
+    # merge_linear \
+    # shrink_bisimulation \
+    # shrink_fh \
+    # shrink_random \
