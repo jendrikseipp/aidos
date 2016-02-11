@@ -30,7 +30,8 @@ class PatternCollectionGeneratorSystematic : public PatternCollectionGenerator {
     std::shared_ptr<PatternCollection> patterns;
     PatternSet pattern_set;  // Cleared after pattern computation.
 
-    void enqueue_pattern_if_new(const Pattern &pattern);
+    bool enqueue_pattern_if_new(const Pattern &pattern,
+                                std::function<bool(const Pattern &)> handle_pattern);
     void compute_eff_pre_neighbors(const CausalGraph &cg,
                                    const Pattern &pattern,
                                    std::vector<int> &result) const;
@@ -38,15 +39,19 @@ class PatternCollectionGeneratorSystematic : public PatternCollectionGenerator {
                                    const Pattern &pattern,
                                    std::vector<int> &result) const;
 
-    void build_sga_patterns(TaskProxy task_proxy, const CausalGraph &cg);
-    void build_patterns(TaskProxy task_proxy);
-    void build_patterns_naive(TaskProxy task_proxy);
+    bool build_sga_patterns(TaskProxy task_proxy, const CausalGraph &cg,
+                            std::function<bool(const Pattern &)> handle_pattern);
+    void build_patterns(TaskProxy task_proxy,
+                        std::function<bool(const Pattern &)> handle_pattern);
+    void build_patterns_naive(TaskProxy task_proxy,
+                              std::function<bool(const Pattern &)> handle_pattern);
 public:
     explicit PatternCollectionGeneratorSystematic(const options::Options &opts);
     ~PatternCollectionGeneratorSystematic() = default;
 
     virtual PatternCollectionInformation generate(
-        std::shared_ptr<AbstractTask> task) override;
+        std::shared_ptr<AbstractTask> task,
+        std::function<bool(const Pattern &)> handle_pattern = nullptr) override;
 };
 }
 
