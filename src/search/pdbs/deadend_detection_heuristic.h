@@ -27,7 +27,7 @@ public:
 
 class PDBDeadendDetectionHeuristic : public Heuristic {
     int max_deadends;
-    bool add_pattern_deadends(const Pattern &pattern);
+    void add_pattern_deadends(const Pattern &pattern);
     DeadEndCollection deadend_collection;
 protected:
     virtual int compute_heuristic(const GlobalState &state) override;

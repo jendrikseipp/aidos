@@ -319,6 +319,7 @@ vector<vector<FactProxy>> PatternDatabase::get_dead_ends() const {
             partial_state.push_back(var.get_fact(value));
             remaining_index -= value * hash_multipliers[i];
         }
+        reverse(partial_state.begin(), partial_state.end());
         dead.push_back(partial_state);
         // just checking
         size_t testindex = 0;
