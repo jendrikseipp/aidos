@@ -303,4 +303,35 @@ bool PatternDatabase::is_operator_relevant(const OperatorProxy &op) const {
     }
     return false;
 }
+
+vector<vector<FactProxy>> PatternDatabase::get_dead_ends() const {
+    vector<vector<FactProxy>> dead;
+    VariablesProxy vars = task_proxy.get_variables();
+    for (size_t index = 0; index < distances.size(); ++index) {
+        if (distances[index] != numeric_limits<int>::max())
+            continue;
+        // Reverse index to partial state
+        vector<FactProxy> partial_state;
+        int remaining_index = index;
+        for (int i = pattern.size() - 1; i >= 0; --i) {
+            VariableProxy var = vars[pattern[i]];
+            int value = remaining_index / hash_multipliers[i];
+            partial_state.push_back(var.get_fact(value));
+            remaining_index -= value * hash_multipliers[i];
+        }
+        dead.push_back(partial_state);
+        // just checking
+        size_t testindex = 0;
+        int testi = 0;
+        for (FactProxy f : partial_state) {
+            assert(pattern[testi] == f.get_variable().get_id());
+            testindex += hash_multipliers[testi] * f.get_value();
+            ++testi;
+        }
+        if (testindex != index) {
+            ABORT("Reverse index computation failed");
+        }
+    }
+    return dead;
+}
 }

@@ -191,6 +191,8 @@ public:
 
     // Returns true iff op has an effect on a variable in the pattern.
     bool is_operator_relevant(const OperatorProxy &op) const;
+
+    std::vector<std::vector<FactProxy>> get_dead_ends() const;
 };
 }
 
