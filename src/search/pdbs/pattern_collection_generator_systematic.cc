@@ -258,6 +258,7 @@ void PatternCollectionGeneratorSystematic::build_patterns_naive(
     PatternCollection next_patterns;
     bool done = false;
     for (size_t i = 0; i < max_pattern_size; ++i) {
+        cout << "Generating patterns of size " << i << endl;
         for (const Pattern &current_pattern : current_patterns) {
             int max_var = -1;
             if (i > 0)
@@ -267,7 +268,8 @@ void PatternCollectionGeneratorSystematic::build_patterns_naive(
                 pattern.push_back(var);
                 next_patterns.push_back(pattern);
                 patterns->push_back(pattern);
-                done = handle_pattern(pattern);
+                if (handle_pattern)
+                    done = handle_pattern(pattern);
                 if (done) break;
             }
             if (done) break;
