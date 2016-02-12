@@ -1,4 +1,4 @@
-#include "deadend_detection_heuristic.h"
+#include "dead_end_detection_heuristic.h"
 
 #include "pattern_database.h"
 #include "pattern_generator.h"
