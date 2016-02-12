@@ -269,7 +269,7 @@ private:
         T_VALUE
     };
     typedef std::queue<Token> TokenQueue;
-    typedef std::queue<std::pair<Node::Type, std::string> > DataQueue;
+    typedef std::queue<std::pair<Node::Type, std::string>> DataQueue;
 
     void tokenize(std::istream &stream, TokenQueue &tokens, DataQueue &data);
     Node assemble(TokenQueue &tokens, DataQueue &data);
