@@ -367,8 +367,8 @@ void PatternDatabase::compute_reachable_states(const vector<AbstractOperator> &o
         reachable[index] = true;
 
         // Assume that this state is pruned and no successors are generated for it
-//        if (distances[index] == numeric_limits<int>::max())
-//            continue;
+        if (distances[index] == numeric_limits<int>::max())
+            continue;
 
         vector<const AbstractOperator *> applicable_operators;
         progression_match_tree.get_applicable_operators(index, applicable_operators);
