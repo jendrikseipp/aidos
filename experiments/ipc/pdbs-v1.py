@@ -30,7 +30,15 @@ def get_domain_dir():
     path = os.path.dirname(path)
     return os.path.join(path, "unsolvable-pddl-tasks")
 
-suite = suites.build_suite(get_domain_dir(), [
+exp = IssueExperiment(
+    revisions=revisions,
+    configs=configs,
+    suite=[],
+    test_suite=[],
+    email="florian.pommerening@unibas.ch",
+)
+
+exp.add_suite(get_domain_dir(), [
     "3unsat",
     "bottleneck",
     "unsat-mystery",
@@ -40,14 +48,6 @@ suite = suites.build_suite(get_domain_dir(), [
     "unsat-tiles",
     "unsat-tpp",
 ])
-
-exp = IssueExperiment(
-    revisions=revisions,
-    configs=configs,
-    suite=suite,
-    test_suite=suites.build_suite(get_domain_dir(), ["bottleneck:bottleneck-prob-4-1.pddl"]),
-    email="florian.pommerening@unibas.ch",
-)
 
 exp.add_comparison_table_step()
 
