@@ -5,6 +5,10 @@
 
 #include "../heuristic.h"
 
+namespace utils {
+class CountdownTimer;
+}
+
 namespace pdbs {
 class DeadEndTreeNode;
 
@@ -27,7 +31,9 @@ public:
 
 class PDBDeadendDetectionHeuristic : public Heuristic {
     int max_deadends;
-    void add_pattern_deadends(const Pattern &pattern);
+    bool add_pattern_deadends(const Pattern &pattern,
+                              const utils::CountdownTimer &timer,
+                              const State &initial_state);
     DeadEndCollection deadend_collection;
 protected:
     virtual int compute_heuristic(const GlobalState &state) override;

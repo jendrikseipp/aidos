@@ -146,21 +146,22 @@ PDBDeadendDetectionHeuristic::PDBDeadendDetectionHeuristic(const options::Option
     utils::CountdownTimer timer(opts.get<int>("max_time"));
     State initial_state = task_proxy.get_initial_state();
     pattern_generator->generate(task, [&](const Pattern &pattern) {
-        add_pattern_deadends(pattern);
-        bool memory_exhausted = deadend_collection.size() >= max_deadends;
-        bool initial_state_recognized = deadend_collection.recognizes(initial_state);
-        return memory_exhausted || initial_state_recognized || timer.is_expired();
+        return add_pattern_deadends(pattern, timer, initial_state);
     });
     cout << "Found " << deadend_collection.size() << " dead ends in " << timer << endl;
 }
 
-void PDBDeadendDetectionHeuristic::add_pattern_deadends(const Pattern &pattern) {
+bool PDBDeadendDetectionHeuristic::add_pattern_deadends(
+    const Pattern &pattern, const utils::CountdownTimer &timer, const State &initial_state) {
     PatternDatabase pdb(task_proxy, pattern, false, true);
     for (const vector<FactProxy> &dead : pdb.get_dead_ends()) {
         if (!deadend_collection.recognizes(dead)) {
             deadend_collection.add(dead);
         }
     }
+    bool memory_exhausted = deadend_collection.size() >= max_deadends;
+    bool initial_state_recognized = pdb.get_value(initial_state) == numeric_limits<int>::max();
+    return memory_exhausted || initial_state_recognized || timer.is_expired();
 }
 
 int PDBDeadendDetectionHeuristic::compute_heuristic(const GlobalState &global_state) {
