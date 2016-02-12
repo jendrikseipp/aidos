@@ -181,7 +181,7 @@ static Heuristic *_parse(OptionParser &parser) {
     parser.add_option<shared_ptr<PatternCollectionGenerator>>(
         "patterns",
         "pattern generation method",
-        "systematic(1000)");
+        "ordered_systematic(infinity)");
 
     parser.add_option<int>(
         "max_time",
@@ -191,7 +191,7 @@ static Heuristic *_parse(OptionParser &parser) {
     parser.add_option<int>(
         "max_dead_ends",
         "maximal number of dead ends stored before starting the search",
-        "1000000");
+        "10000000");
 
     Heuristic::add_options_to_parser(parser);
 
