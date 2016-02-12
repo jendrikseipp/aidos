@@ -58,21 +58,23 @@ public:
         VariableProxy current_var = current_fact.get_variable();
         int current_value = current_fact.get_value();
         DeadEndTreeNode **successor;
+        int next_index = index;
         if (var_id == current_var.get_id()) {
             successor = &value_successors[current_value];
+            ++next_index;
         } else {
             successor = &ignore_successor;
         }
 
         if (*successor) {
-            (*successor)->add(partial_state, index + 1);
+            (*successor)->add(partial_state, next_index);
         } else {
             if (index == static_cast<int>(partial_state.size()) - 1) {
                 *successor = new DeadEndTreeLeafNode();
             } else {
-                VariableProxy next_var = partial_state[index + 1].get_variable();
+                VariableProxy next_var = partial_state[next_index].get_variable();
                 *successor = new DeadEndTreeSwitchNode(next_var);
-                (*successor)->add(partial_state, index + 1);
+                (*successor)->add(partial_state, next_index);
             }
         }
     }
