@@ -155,7 +155,7 @@ PDBDeadendDetectionHeuristic::PDBDeadendDetectionHeuristic(const options::Option
 }
 
 void PDBDeadendDetectionHeuristic::add_pattern_deadends(const Pattern &pattern) {
-    PatternDatabase pdb(task_proxy, pattern);
+    PatternDatabase pdb(task_proxy, pattern, false, true);
     for (const vector<FactProxy> &dead : pdb.get_dead_ends()) {
         if (!deadend_collection.recognizes(dead)) {
             deadend_collection.add(dead);

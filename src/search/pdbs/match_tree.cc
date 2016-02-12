@@ -77,20 +77,19 @@ MatchTree::~MatchTree() {
 }
 
 void MatchTree::insert_recursive(
-    const AbstractOperator &op, int pre_index, Node **edge_from_parent) {
+    const AbstractOperator &op, const vector<pair<int, int>> &preconditions,
+    int pre_index, Node **edge_from_parent) {
     if (*edge_from_parent == 0) {
         // We don't exist yet: create a new node.
         *edge_from_parent = new Node();
     }
 
-    const vector<pair<int, int>> &regression_preconditions =
-        op.get_regression_preconditions();
     Node *node = *edge_from_parent;
-    if (pre_index == static_cast<int>(regression_preconditions.size())) {
+    if (pre_index == static_cast<int>(preconditions.size())) {
         // All preconditions have been checked, insert op.
         node->applicable_operators.push_back(&op);
     } else {
-        const pair<int, int> &var_val = regression_preconditions[pre_index];
+        const pair<int, int> &var_val = preconditions[pre_index];
         int pattern_var_id = var_val.first;
         int var_id = pattern[pattern_var_id];
         VariableProxy var = task_proxy.get_variables()[var_id];
@@ -125,12 +124,13 @@ void MatchTree::insert_recursive(
             edge_to_child = &node->star_successor;
         }
 
-        insert_recursive(op, pre_index, edge_to_child);
+        insert_recursive(op, preconditions, pre_index, edge_to_child);
     }
 }
 
-void MatchTree::insert(const AbstractOperator &op) {
-    insert_recursive(op, 0, &root);
+void MatchTree::insert(const AbstractOperator &op,
+                       const vector<pair<int, int>> &preconditions) {
+    insert_recursive(op, preconditions, 0, &root);
 }
 
 void MatchTree::get_applicable_operators_recursive(

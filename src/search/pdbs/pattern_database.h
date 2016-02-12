@@ -28,6 +28,12 @@ class AbstractOperator {
     std::vector<std::pair<int, int>> regression_preconditions;
 
     /*
+      Preconditions for progression search, corresponds to normal
+      preconditions and prevail conditions of concrete operators.
+    */
+    std::vector<std::pair<int, int>> progression_preconditions;
+
+    /*
       Effect of the operator during regression search on a given
       abstract state number.
     */
@@ -52,6 +58,14 @@ public:
     */
     const std::vector<std::pair<int, int>> &get_regression_preconditions() const {
         return regression_preconditions;
+    }
+
+    /*
+      Returns variable value pairs which represent the preconditions of
+      the abstract operator in a progression search
+    */
+    const std::vector<std::pair<int, int>> &get_progression_preconditions() const {
+        return progression_preconditions;
     }
 
     /*
@@ -83,6 +97,7 @@ class PatternDatabase {
       dead-ends are represented by numeric_limits<int>::max()
     */
     std::vector<int> distances;
+    std::vector<bool> reachable;
 
     // multipliers for each variable for perfect hash function
     std::vector<std::size_t> hash_multipliers;
@@ -121,7 +136,7 @@ class PatternDatabase {
       cost partitioning. If left empty, default operator costs are used.
     */
     void create_pdb(
-        const std::vector<int> &operator_costs = std::vector<int>());
+        const std::vector<int> &operator_costs, bool compute_reachability);
 
     /*
       Sets the pattern for the PDB and initializes hash_multipliers and
@@ -149,6 +164,9 @@ class PatternDatabase {
       (distances) during search.
     */
     std::size_t hash_index(const State &state) const;
+
+
+    void compute_reachable_states(const std::vector<AbstractOperator> &operators);
 public:
     /*
       Important: It is assumed that the pattern (passed via Options) is
@@ -164,6 +182,7 @@ public:
         const TaskProxy &task_proxy,
         const Pattern &pattern,
         bool dump = false,
+        bool compute_reachability = false,
         const std::vector<int> &operator_costs = std::vector<int>());
     ~PatternDatabase() = default;
 
