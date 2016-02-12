@@ -13,7 +13,7 @@ namespace pdbs {
 class DeadEndTreeNode;
 
 class DeadEndCollection{
-    int num_deadends;
+    int num_dead_ends;
     DeadEndTreeNode *root;
 public:
     DeadEndCollection();
@@ -25,16 +25,16 @@ public:
     bool recognizes(const State &state) const;
 
     int size() {
-        return num_deadends;
+        return num_dead_ends;
     }
 };
 
 class PDBDeadendDetectionHeuristic : public Heuristic {
-    int max_deadends;
-    bool add_pattern_deadends(const Pattern &pattern,
-                              const utils::CountdownTimer &timer,
-                              const State &initial_state);
-    DeadEndCollection deadend_collection;
+    int max_dead_ends;
+    bool add_pattern_dead_ends(const Pattern &pattern,
+                               const utils::CountdownTimer &timer,
+                               const State &initial_state);
+    DeadEndCollection dead_end_collection;
 protected:
     virtual int compute_heuristic(const GlobalState &state) override;
     int compute_heuristic(const State &state) const;

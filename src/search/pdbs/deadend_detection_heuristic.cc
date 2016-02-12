@@ -108,7 +108,7 @@ public:
 };
 
 DeadEndCollection::DeadEndCollection()
-    : num_deadends(0),
+    : num_dead_ends(0),
       root(nullptr) {
 }
 
@@ -121,7 +121,7 @@ void DeadEndCollection::add(const std::vector<FactProxy> &dead){
         root = new DeadEndTreeSwitchNode(dead[0].get_variable());
     }
     root->add(dead);
-    ++num_deadends;
+    ++num_dead_ends;
 }
 
 bool DeadEndCollection::recognizes(const std::vector<FactProxy> &partial_state) const {
@@ -140,26 +140,26 @@ bool DeadEndCollection::recognizes(const State &state) const {
 
 PDBDeadendDetectionHeuristic::PDBDeadendDetectionHeuristic(const options::Options &opts)
     : Heuristic(opts),
-      max_deadends(opts.get<int>("max_deadends")) {
+      max_dead_ends(opts.get<int>("max_dead_ends")) {
     shared_ptr<PatternCollectionGenerator> pattern_generator =
         opts.get<shared_ptr<PatternCollectionGenerator>>("patterns");
     utils::CountdownTimer timer(opts.get<int>("max_time"));
     State initial_state = task_proxy.get_initial_state();
     pattern_generator->generate(task, [&](const Pattern &pattern) {
-        return add_pattern_deadends(pattern, timer, initial_state);
+        return add_pattern_dead_ends(pattern, timer, initial_state);
     });
-    cout << "Found " << deadend_collection.size() << " dead ends in " << timer << endl;
+    cout << "Found " << dead_end_collection.size() << " dead ends in " << timer << endl;
 }
 
-bool PDBDeadendDetectionHeuristic::add_pattern_deadends(
+bool PDBDeadendDetectionHeuristic::add_pattern_dead_ends(
     const Pattern &pattern, const utils::CountdownTimer &timer, const State &initial_state) {
     PatternDatabase pdb(task_proxy, pattern, false, true);
     for (const vector<FactProxy> &dead : pdb.get_dead_ends()) {
-        if (!deadend_collection.recognizes(dead)) {
-            deadend_collection.add(dead);
+        if (!dead_end_collection.recognizes(dead)) {
+            dead_end_collection.add(dead);
         }
     }
-    bool memory_exhausted = deadend_collection.size() >= max_deadends;
+    bool memory_exhausted = dead_end_collection.size() >= max_dead_ends;
     bool initial_state_recognized = pdb.get_value(initial_state) == numeric_limits<int>::max();
     return memory_exhausted || initial_state_recognized || timer.is_expired();
 }
@@ -170,7 +170,7 @@ int PDBDeadendDetectionHeuristic::compute_heuristic(const GlobalState &global_st
 }
 
 int PDBDeadendDetectionHeuristic::compute_heuristic(const State &state) const {
-    if (deadend_collection.recognizes(state)) {
+    if (dead_end_collection.recognizes(state)) {
         return DEAD_END;
     } else {
         return 0;
@@ -189,7 +189,7 @@ static Heuristic *_parse(OptionParser &parser) {
         "900");
 
     parser.add_option<int>(
-        "max_deadends",
+        "max_dead_ends",
         "maximal number of dead ends stored before starting the search",
         "1000000");
 
