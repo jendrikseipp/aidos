@@ -29,7 +29,7 @@ public:
     }
 };
 
-class PDBDeadendDetectionHeuristic : public Heuristic {
+class PDBDeadEndDetectionHeuristic : public Heuristic {
     int max_dead_ends;
     bool add_pattern_dead_ends(const Pattern &pattern,
                                const utils::CountdownTimer &timer,
@@ -39,8 +39,8 @@ protected:
     virtual int compute_heuristic(const GlobalState &state) override;
     int compute_heuristic(const State &state) const;
 public:
-    explicit PDBDeadendDetectionHeuristic(const options::Options &opts);
-    virtual ~PDBDeadendDetectionHeuristic() = default;
+    explicit PDBDeadEndDetectionHeuristic(const options::Options &opts);
+    virtual ~PDBDeadEndDetectionHeuristic() = default;
 };
 }
 

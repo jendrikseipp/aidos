@@ -138,7 +138,7 @@ bool DeadEndCollection::recognizes(const State &state) const {
     return false;
 }
 
-PDBDeadendDetectionHeuristic::PDBDeadendDetectionHeuristic(const options::Options &opts)
+PDBDeadEndDetectionHeuristic::PDBDeadEndDetectionHeuristic(const options::Options &opts)
     : Heuristic(opts),
       max_dead_ends(opts.get<int>("max_dead_ends")) {
     shared_ptr<PatternCollectionGenerator> pattern_generator =
@@ -151,7 +151,7 @@ PDBDeadendDetectionHeuristic::PDBDeadendDetectionHeuristic(const options::Option
     cout << "Found " << dead_end_collection.size() << " dead ends in " << timer << endl;
 }
 
-bool PDBDeadendDetectionHeuristic::add_pattern_dead_ends(
+bool PDBDeadEndDetectionHeuristic::add_pattern_dead_ends(
     const Pattern &pattern, const utils::CountdownTimer &timer, const State &initial_state) {
     PatternDatabase pdb(task_proxy, pattern, false, true);
     for (const vector<FactProxy> &dead : pdb.get_dead_ends()) {
@@ -164,12 +164,12 @@ bool PDBDeadendDetectionHeuristic::add_pattern_dead_ends(
     return memory_exhausted || initial_state_recognized || timer.is_expired();
 }
 
-int PDBDeadendDetectionHeuristic::compute_heuristic(const GlobalState &global_state) {
+int PDBDeadEndDetectionHeuristic::compute_heuristic(const GlobalState &global_state) {
     State state = convert_global_state(global_state);
     return compute_heuristic(state);
 }
 
-int PDBDeadendDetectionHeuristic::compute_heuristic(const State &state) const {
+int PDBDeadEndDetectionHeuristic::compute_heuristic(const State &state) const {
     if (dead_end_collection.recognizes(state)) {
         return DEAD_END;
     } else {
@@ -199,7 +199,7 @@ static Heuristic *_parse(OptionParser &parser) {
     if (parser.dry_run())
         return nullptr;
 
-    return new PDBDeadendDetectionHeuristic(opts);
+    return new PDBDeadEndDetectionHeuristic(opts);
 }
 
 static Plugin<Heuristic> _plugin("deadpdbs", _parse);
