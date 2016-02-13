@@ -23,7 +23,7 @@ configs = [
         "deadpdbs-ordered-systematic",
         ["--search", "astar(deadpdbs(patterns=ordered_systematic()))"]),
 ]
-revisions = ["8b3cc2f75507"]
+revisions = ["1a616110157e"]
 
 def get_domain_dir():
     path = os.path.abspath(common_setup.get_repo_base())
