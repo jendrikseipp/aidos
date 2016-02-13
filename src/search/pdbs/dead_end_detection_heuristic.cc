@@ -161,6 +161,13 @@ bool PDBDeadEndDetectionHeuristic::add_pattern_dead_ends(
     }
     bool memory_exhausted = dead_end_collection.size() >= max_dead_ends;
     bool initial_state_recognized = pdb.get_value(initial_state) == numeric_limits<int>::max();
+    if (initial_state_recognized) {
+        cout << "Initial state recognised as dead end by pattern [";
+        for (int v : pattern) {
+            cout << v << ", ";
+        }
+        cout << "]" << endl;
+    }
     return memory_exhausted || initial_state_recognized || timer.is_expired();
 }
 

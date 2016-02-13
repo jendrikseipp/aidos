@@ -95,7 +95,7 @@ void PatternCollectionGeneratorSystematic::compute_connection_points(
 
     // Handle rule 1.
     for (int var : pattern) {
-        const vector<int> &pred = cg.get_predecessors(var);
+        const vector<int> &pred = cg.get_successors(var);
         candidates.insert(pred.begin(), pred.end());
     }
 
@@ -228,7 +228,6 @@ void PatternCollectionGeneratorSystematic::build_patterns(
 
         vector<int> neighbors;
         compute_connection_points(cg, pattern1, neighbors);
-
         for (int neighbor_var : neighbors) {
             const auto &candidates = sga_patterns_by_var[neighbor_var];
             for (const Pattern *p_pattern2 : candidates) {
@@ -258,7 +257,7 @@ void PatternCollectionGeneratorSystematic::build_patterns_naive(
     PatternCollection next_patterns;
     bool done = false;
     for (size_t i = 0; i < max_pattern_size; ++i) {
-        cout << "Generating patterns of size " << i << endl;
+        cout << "Generating patterns of size " << i+1 << endl;
         for (const Pattern &current_pattern : current_patterns) {
             int max_var = -1;
             if (i > 0)
