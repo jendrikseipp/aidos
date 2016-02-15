@@ -13,15 +13,16 @@
 using namespace std;
 
 namespace merge_and_shrink {
-FactoredTransitionSystem::FactoredTransitionSystem(
-    unique_ptr<Labels> labels,
+FactoredTransitionSystem::FactoredTransitionSystem(unique_ptr<Labels> labels,
     vector<unique_ptr<TransitionSystem>> &&transition_systems,
     vector<unique_ptr<HeuristicRepresentation>> &&heuristic_representations,
-    vector<unique_ptr<Distances>> &&distances)
+    vector<unique_ptr<Distances>> &&distances,
+    bool only_dead_end_detection)
     : labels(move(labels)),
       transition_systems(move(transition_systems)),
       heuristic_representations(move(heuristic_representations)),
       distances(move(distances)),
+      only_dead_end_detection(only_dead_end_detection),
       final_index(-1),
       solvable(true) {
     for (size_t i = 0; i < this->transition_systems.size(); ++i) {
@@ -39,6 +40,7 @@ FactoredTransitionSystem::FactoredTransitionSystem(FactoredTransitionSystem &&ot
       transition_systems(move(other.transition_systems)),
       heuristic_representations(move(other.heuristic_representations)),
       distances(move(other.distances)),
+      only_dead_end_detection(move(other.only_dead_end_detection)),
       final_index(move(other.final_index)),
       solvable(move(other.solvable)) {
     /*
@@ -186,6 +188,9 @@ void FactoredTransitionSystem::finalize(int index) {
             assert(!distances[i]);
         }
         transition_systems[final_index] = nullptr;
+        if (only_dead_end_detection) {
+            distances[final_index] = nullptr;
+        }
     } else {
         /*
           If an index is given, this means that the specific transition system
@@ -196,7 +201,7 @@ void FactoredTransitionSystem::finalize(int index) {
         final_index = index;
         for (size_t i = 0; i < transition_systems.size(); ++i) {
             transition_systems[i] = nullptr;
-            if (static_cast<int>(i) != index) {
+            if (static_cast<int>(i) != index || only_dead_end_detection) {
                 distances[i] = nullptr;
             }
         }
@@ -206,6 +211,7 @@ void FactoredTransitionSystem::finalize(int index) {
 
 int FactoredTransitionSystem::get_cost(const State &state) const {
     assert(is_finalized());
+    assert(!only_dead_end_detection);
     assert(distances[final_index]->are_distances_computed());
     int abs_state = heuristic_representations[final_index]->get_abstract_state(state);
 
@@ -216,23 +222,33 @@ int FactoredTransitionSystem::get_cost(const State &state) const {
     return cost;
 }
 
+bool FactoredTransitionSystem::is_dead_end(const State &state) const {
+    assert(is_finalized());
+    assert(only_dead_end_detection);
+    int abs_state = heuristic_representations[final_index]->get_abstract_state(state);
+
+    return abs_state == TransitionSystem::PRUNED_STATE;
+}
+
 void FactoredTransitionSystem::statistics(int index,
                                           const utils::Timer &timer) const {
     assert(is_index_valid(index));
     const TransitionSystem &ts = *transition_systems[index];
     ts.statistics();
-    // TODO: Turn the following block into Distances::statistics()?
-    cout << ts.tag();
-    const Distances &dist = *distances[index];
-    if (!dist.are_distances_computed()) {
-        cout << "distances not computed";
-    } else if (is_solvable()) {
-        cout << "init h=" << dist.get_goal_distance(ts.get_init_state())
-             << ", max f=" << dist.get_max_f()
-             << ", max g=" << dist.get_max_g()
-             << ", max h=" << dist.get_max_h();
-    } else {
-        cout << "transition system is unsolvable";
+    if (!only_dead_end_detection) {
+        // TODO: Turn the following block into Distances::statistics()?
+        cout << ts.tag();
+        const Distances &dist = *distances[index];
+        if (!dist.are_distances_computed()) {
+            cout << "distances not computed";
+        } else if (is_solvable()) {
+            cout << "init h=" << dist.get_goal_distance(ts.get_init_state())
+                 << ", max f=" << dist.get_max_f()
+                 << ", max g=" << dist.get_max_g()
+                 << ", max h=" << dist.get_max_h();
+        } else {
+            cout << "transition system is unsolvable";
+        }
     }
     cout << " [t=" << timer << "]" << endl;
 }
