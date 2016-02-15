@@ -92,7 +92,7 @@ void ShrinkBucketBased::compute_abstraction(
 }
 
 void ShrinkBucketBased::compute_equivalence_relation(
-    const FactoredTransitionSystem &fts,
+    FactoredTransitionSystem &fts,
     int index,
     int target,
     StateEquivalenceRelation &equivalence_relation) const {
