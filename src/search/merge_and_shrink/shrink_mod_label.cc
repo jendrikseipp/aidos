@@ -81,7 +81,7 @@ void ShrinkModLabel::compute_equivalence_relation(
     fts.recompute_distances(index);
 
     // (2) goal-label pruning
-    // TODO
+    fts.get_ts(index).prune_transitions_of_goal_states();
 
     // (3) bisimulation
     ShrinkBisimulation::compute_equivalence_relation(

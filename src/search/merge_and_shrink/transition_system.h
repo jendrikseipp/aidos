@@ -151,6 +151,8 @@ private:
     // Statistics and output
     int compute_total_transitions() const;
     std::string get_description() const;
+
+    bool all_goal_variables_incorporated() const;
 public:
     TransitionSystem(
         int num_variables,
@@ -195,6 +197,7 @@ public:
 
     void label_inheritance(
         const Utils::DynamicBitset<unsigned short> &irrelevant_labels_in_all_other_ts);
+    void prune_transitions_of_goal_states();
 
     TSConstIterator begin() const {
         return TSConstIterator(*label_equivalence_relation,

@@ -5,6 +5,7 @@
 #include "label_equivalence_relation.h"
 #include "labels.h"
 
+#include "../globals.h"
 #include "../task_proxy.h"
 
 #include "../utils/collections.h"
@@ -505,6 +506,38 @@ void TransitionSystem::label_inheritance(const Bitset &irrelevant_labels_in_all_
         normalize_given_transitions(transitions);
     }
     compute_locally_equivalent_labels();
+}
+
+bool TransitionSystem::all_goal_variables_incorporated() const {
+    // HACK!
+    for (const pair<int, int> goal : g_goal) {
+        int goal_var = goal.first;
+        bool goal_included = false;
+        for (int var : incorporated_variables) {
+            if (var == goal_var) {
+                goal_included = true;
+                break;
+            }
+        }
+        if (!goal_included) {
+            return false;
+        }
+    }
+    return true;
+}
+
+void TransitionSystem::prune_transitions_of_goal_states() {
+    if (all_goal_variables_incorporated()) {
+        for (vector<Transition> &transitions : transitions_by_group_id) {
+            for (vector<Transition>::iterator it = transitions.begin(); it != transitions.end(); ) {
+                if (goal_states[it->src]) {
+                    it = transitions.erase(it);
+                } else {
+                    ++it;
+                }
+            }
+        }
+    }
 }
 
 string TransitionSystem::tag() const {
