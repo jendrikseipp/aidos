@@ -74,14 +74,18 @@ void ShrinkModLabel::compute_equivalence_relation(
     int index,
     int target,
     StateEquivalenceRelation &equivalence_relation) const {
+    TransitionSystem &ts = fts.get_ts(index);
+
     // (1) label inheritance
     Bitset irrelevant_labels_in_all_other_ts =
         compute_irrelevant_in_all_other_ts_labels(fts, index);
-    fts.get_ts(index).label_inheritance(irrelevant_labels_in_all_other_ts);
+    ts.label_inheritance(irrelevant_labels_in_all_other_ts);
     fts.recompute_distances(index);
 
     // (2) goal-label pruning
-    fts.get_ts(index).prune_transitions_of_goal_states();
+    if (ts.all_goal_variables_incorporated()) {
+        ts.prune_transitions_of_goal_states();
+    }
 
     // (3) bisimulation
     ShrinkBisimulation::compute_equivalence_relation(

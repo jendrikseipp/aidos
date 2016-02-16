@@ -527,14 +527,12 @@ bool TransitionSystem::all_goal_variables_incorporated() const {
 }
 
 void TransitionSystem::prune_transitions_of_goal_states() {
-    if (all_goal_variables_incorporated()) {
-        for (vector<Transition> &transitions : transitions_by_group_id) {
-            for (vector<Transition>::iterator it = transitions.begin(); it != transitions.end(); ) {
-                if (goal_states[it->src]) {
-                    it = transitions.erase(it);
-                } else {
-                    ++it;
-                }
+    for (vector<Transition> &transitions : transitions_by_group_id) {
+        for (vector<Transition>::iterator it = transitions.begin(); it != transitions.end(); ) {
+            if (goal_states[it->src]) {
+                it = transitions.erase(it);
+            } else {
+                ++it;
             }
         }
     }
