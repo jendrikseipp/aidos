@@ -56,6 +56,9 @@ public:
     const TransitionSystem &get_ts(int index) const {
         return *transition_systems[index];
     }
+    TransitionSystem &get_ts(int index) {
+        return *transition_systems[index];
+    }
     const Distances &get_dist(int index) const {
         return *distances[index];
     }

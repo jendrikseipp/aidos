@@ -14,6 +14,11 @@
 class State;
 class TaskProxy;
 
+namespace Utils {
+    template <typename Block>
+    class DynamicBitset;
+}
+
 namespace merge_and_shrink {
 class Distances;
 class HeuristicRepresentation;
@@ -187,6 +192,9 @@ public:
     void apply_label_reduction(
         const std::vector<std::pair<int, std::vector<int>>> &label_mapping,
         bool only_equivalent_labels);
+
+    void label_inheritance(
+        const Utils::DynamicBitset<unsigned short> &irrelevant_labels_in_all_other_ts);
 
     TSConstIterator begin() const {
         return TSConstIterator(*label_equivalence_relation,

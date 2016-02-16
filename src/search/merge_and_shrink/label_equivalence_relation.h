@@ -99,6 +99,7 @@ public:
     // Moves all labels from one goup into the other
     void move_group_into_group(int from_group_id, int to_group_id);
     int add_label_group(const std::vector<int> &new_labels);
+    void reset();
 
     bool is_empty_group(int group_id) const {
         return grouped_labels[group_id].empty();
@@ -115,6 +116,8 @@ public:
     const LabelGroup &get_group(int group_id) const {
         return grouped_labels.at(group_id);
     }
+
+    bool is_current_label(int label_no) const;
 };
 }
 

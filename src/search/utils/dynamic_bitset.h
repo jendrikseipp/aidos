@@ -117,6 +117,13 @@ public:
         return false;
     }
 
+    DynamicBitset& operator&=(const DynamicBitset& rhs) {
+        assert(size() == rhs.size());
+        for (std::size_t i = 0; i < blocks.size(); ++i)
+            blocks[i] &= rhs.blocks[i];
+        return *this;
+    }
+
     bool is_subset_of(const DynamicBitset &other) const {
         assert(size() == other.size());
         for (std::size_t i = 0; i < blocks.size(); ++i) {

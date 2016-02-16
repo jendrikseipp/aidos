@@ -418,6 +418,7 @@ fast_downward_plugin(
         merge_and_shrink/shrink_bisimulation.cc
         merge_and_shrink/shrink_bucket_based.cc
         merge_and_shrink/shrink_fh.cc
+        merge_and_shrink/shrink_mod_label.cc
         merge_and_shrink/shrink_random.cc
         merge_and_shrink/shrink_strategy.cc
         merge_and_shrink/transition_system.cc

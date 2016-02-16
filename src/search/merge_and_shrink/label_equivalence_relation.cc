@@ -84,4 +84,22 @@ int LabelEquivalenceRelation::add_label_group(const vector<int> &new_labels) {
     }
     return new_group_id;
 }
+
+void LabelEquivalenceRelation::reset() {
+    grouped_labels.clear();
+    label_to_positions.clear();
+
+    int num_labels = labels.get_size();
+    for (int label_no = 0; label_no < num_labels; ++label_no) {
+        if (labels.is_current_label(label_no)) {
+            add_label_group({label_no});
+        } else {
+            add_label_group({});
+        }
+    }
+}
+
+bool LabelEquivalenceRelation::is_current_label(int label_no) const {
+    return labels.is_current_label(label_no);
+}
 }

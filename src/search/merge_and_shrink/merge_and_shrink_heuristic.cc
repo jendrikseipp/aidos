@@ -160,9 +160,11 @@ void MergeAndShrinkHeuristic::build_transition_system(const utils::Timer &timer)
         fts->finalize();
         // TODO: after adopting the task interface everywhere, change this
         // back to compute_heuristic(task_proxy.get_initial_state())
-        cout << "initial h value: "
-             << fts->get_cost(task_proxy.get_initial_state())
-             << endl;
+        if (!only_dead_end_detection) {
+            cout << "initial h value: "
+                 << fts->get_cost(task_proxy.get_initial_state())
+                 << endl;
+        }
     } else {
         cout << "Abstract problem is unsolvable!" << endl;
     }
