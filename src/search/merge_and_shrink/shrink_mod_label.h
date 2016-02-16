@@ -3,13 +3,17 @@
 
 #include "shrink_bisimulation.h"
 
-namespace options {
-class Options;
+namespace Utils {
+    template <typename Block>
+    class DynamicBitset;
 }
 
 namespace merge_and_shrink {
 class ShrinkModLabel : public ShrinkBisimulation {
 protected:
+    Utils::DynamicBitset<unsigned short> compute_irrelevant_in_all_other_ts_labels(
+        const FactoredTransitionSystem &fts,
+        int excluded_ts_index) const;
     virtual void compute_equivalence_relation(
         FactoredTransitionSystem &fts,
         int index,

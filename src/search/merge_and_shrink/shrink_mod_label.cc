@@ -28,9 +28,9 @@ ShrinkModLabel::ShrinkModLabel(const Options &opts)
 ShrinkModLabel::~ShrinkModLabel() {
 }
 
-Bitset compute_irrelevant_in_all_other_ts_labels(
+Bitset ShrinkModLabel::compute_irrelevant_in_all_other_ts_labels(
     const FactoredTransitionSystem &fts,
-    int excluded_ts_index) {
+    int excluded_ts_index) const {
     int num_ts = fts.get_size();
     int num_labels = fts.get_labels().get_size();
     Bitset irrelevant_labels_in_all_other_ts(num_labels);
