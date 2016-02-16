@@ -482,9 +482,9 @@ void TransitionSystem::label_inheritance(const Bitset &irrelevant_labels_in_all_
                             // add src -> target(inherited_trans) with label(inherited_trans)
                             int trans_target = inherited_trans.first;
                             int trans_label = inherited_trans.second;
-                            transitions_by_group_id[
-                                label_equivalence_relation->get_group_id(trans_label)].
-                                    push_back(Transition(src, trans_target));
+                            int group_id = label_equivalence_relation->get_group_id(trans_label);
+                            assert(trans_label == group_id);
+                            transitions_by_group_id[group_id].push_back(Transition(src, trans_target));
                         }
 
                         // Mark src as goal state if target is a goal state.
