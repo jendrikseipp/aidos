@@ -97,6 +97,11 @@ void FactoredTransitionSystem::compute_distances_and_prune(int index) {
     assert(is_component_valid(index));
 }
 
+void FactoredTransitionSystem::recompute_distances(int index) {
+    distances[index]->clear_distances();
+    distances[index]->compute_distances();
+}
+
 void FactoredTransitionSystem::apply_label_reduction(
     const vector<pair<int, vector<int>>> &label_mapping,
     int combinable_index) {

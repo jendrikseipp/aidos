@@ -78,6 +78,7 @@ void ShrinkModLabel::compute_equivalence_relation(
     Bitset irrelevant_labels_in_all_other_ts =
         compute_irrelevant_in_all_other_ts_labels(fts, index);
     fts.get_ts(index).label_inheritance(irrelevant_labels_in_all_other_ts);
+    fts.recompute_distances(index);
 
     // (2) goal-label pruning
     // TODO

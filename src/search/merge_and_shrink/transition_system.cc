@@ -485,6 +485,11 @@ void TransitionSystem::label_inheritance(const Bitset &irrelevant_labels_in_all_
                                 label_equivalence_relation->get_group_id(trans_label)].
                                     push_back(Transition(src, trans_target));
                         }
+
+                        // Mark src as goal state if target is a goal state.
+                        if (goal_states[target]) {
+                            goal_states[src] = true;
+                        }
                     }
                 }
 
