@@ -32,6 +32,7 @@ set(CORE_SOURCES
         root_task.cc
         sampling.cc
         scalar_evaluator.cc
+        scc.cc
         search_engine.cc
         search_node_info.cc
         search_progress.cc
@@ -418,6 +419,7 @@ fast_downward_plugin(
         merge_and_shrink/shrink_bisimulation.cc
         merge_and_shrink/shrink_bucket_based.cc
         merge_and_shrink/shrink_fh.cc
+        merge_and_shrink/shrink_mod_label_approx.cc
         merge_and_shrink/shrink_mod_label.cc
         merge_and_shrink/shrink_random.cc
         merge_and_shrink/shrink_strategy.cc
