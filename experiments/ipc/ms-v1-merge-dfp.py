@@ -13,44 +13,44 @@ import platform
 
 configs = [
     IssueConfig(
-        "sccs-reg-nto-pba-modlabelb50k",
-        ["--search", "astar(merge_and_shrink(shrink_strategy=shrink_mod_label(max_states=50000,threshold=1,greedy=false),merge_strategy=merge_dfp(,atomic_ts_order=regular,product_ts_order=new_to_old,atomic_before_product=false),label_reduction=exact(before_shrinking=true,before_merging=false),only_dead_end_detection=false))"]),
+        "sccs-reg-nto-pba-modlabelapproxb50k",
+        ["--search", "astar(merge_and_shrink(shrink_strategy=shrink_mod_label_approx(max_states=50000,threshold=1,greedy=false),merge_strategy=merge_dfp(,atomic_ts_order=regular,product_ts_order=new_to_old,atomic_before_product=false),label_reduction=exact(before_shrinking=true,before_merging=false),only_dead_end_detection=false))"]),
     IssueConfig(
-        "sccs-inv-nto-pba-modlabelb50k",
-        ["--search", "astar(merge_and_shrink(shrink_strategy=shrink_mod_label(max_states=50000,threshold=1,greedy=false),merge_strategy=merge_dfp(,atomic_ts_order=inverse,product_ts_order=new_to_old,atomic_before_product=false),label_reduction=exact(before_shrinking=true,before_merging=false),only_dead_end_detection=false))"]),
+        "sccs-inv-nto-pba-modlabelapproxb50k",
+        ["--search", "astar(merge_and_shrink(shrink_strategy=shrink_mod_label_approx(max_states=50000,threshold=1,greedy=false),merge_strategy=merge_dfp(,atomic_ts_order=inverse,product_ts_order=new_to_old,atomic_before_product=false),label_reduction=exact(before_shrinking=true,before_merging=false),only_dead_end_detection=false))"]),
     IssueConfig(
-        "sccs-rnd-nto-pba-modlabelb50k",
-        ["--search", "astar(merge_and_shrink(shrink_strategy=shrink_mod_label(max_states=50000,threshold=1,greedy=false),merge_strategy=merge_dfp(,atomic_ts_order=random,product_ts_order=new_to_old,atomic_before_product=false),label_reduction=exact(before_shrinking=true,before_merging=false),only_dead_end_detection=false))"]),
+        "sccs-rnd-nto-pba-modlabelapproxb50k",
+        ["--search", "astar(merge_and_shrink(shrink_strategy=shrink_mod_label_approx(max_states=50000,threshold=1,greedy=false),merge_strategy=merge_dfp(,atomic_ts_order=random,product_ts_order=new_to_old,atomic_before_product=false),label_reduction=exact(before_shrinking=true,before_merging=false),only_dead_end_detection=false))"]),
     IssueConfig(
-        "sccs-reg-otn-pba-modlabelb50k",
-        ["--search", "astar(merge_and_shrink(shrink_strategy=shrink_mod_label(max_states=50000,threshold=1,greedy=false),merge_strategy=merge_dfp(,atomic_ts_order=regular,product_ts_order=old_to_new,atomic_before_product=false),label_reduction=exact(before_shrinking=true,before_merging=false),only_dead_end_detection=false))"]),
+        "sccs-reg-otn-pba-modlabelapproxb50k",
+        ["--search", "astar(merge_and_shrink(shrink_strategy=shrink_mod_label_approx(max_states=50000,threshold=1,greedy=false),merge_strategy=merge_dfp(,atomic_ts_order=regular,product_ts_order=old_to_new,atomic_before_product=false),label_reduction=exact(before_shrinking=true,before_merging=false),only_dead_end_detection=false))"]),
     IssueConfig(
-        "sccs-inv-otn-pba-modlabelb50k",
-        ["--search", "astar(merge_and_shrink(shrink_strategy=shrink_mod_label(max_states=50000,threshold=1,greedy=false),merge_strategy=merge_dfp(,atomic_ts_order=inverse,product_ts_order=old_to_new,atomic_before_product=false),label_reduction=exact(before_shrinking=true,before_merging=false),only_dead_end_detection=false))"]),
+        "sccs-inv-otn-pba-modlabelapproxb50k",
+        ["--search", "astar(merge_and_shrink(shrink_strategy=shrink_mod_label_approx(max_states=50000,threshold=1,greedy=false),merge_strategy=merge_dfp(,atomic_ts_order=inverse,product_ts_order=old_to_new,atomic_before_product=false),label_reduction=exact(before_shrinking=true,before_merging=false),only_dead_end_detection=false))"]),
     IssueConfig(
-        "sccs-rnd-otn-pba-modlabelb50k",
-        ["--search", "astar(merge_and_shrink(shrink_strategy=shrink_mod_label(max_states=50000,threshold=1,greedy=false),merge_strategy=merge_dfp(,atomic_ts_order=random,product_ts_order=old_to_new,atomic_before_product=false),label_reduction=exact(before_shrinking=true,before_merging=false),only_dead_end_detection=false))"]),
+        "sccs-rnd-otn-pba-modlabelapproxb50k",
+        ["--search", "astar(merge_and_shrink(shrink_strategy=shrink_mod_label_approx(max_states=50000,threshold=1,greedy=false),merge_strategy=merge_dfp(,atomic_ts_order=random,product_ts_order=old_to_new,atomic_before_product=false),label_reduction=exact(before_shrinking=true,before_merging=false),only_dead_end_detection=false))"]),
     IssueConfig(
-        "sccs-reg-nto-abp-modlabelb50k",
-        ["--search", "astar(merge_and_shrink(shrink_strategy=shrink_mod_label(max_states=50000,threshold=1,greedy=false),merge_strategy=merge_dfp(,atomic_ts_order=regular,product_ts_order=new_to_old,atomic_before_product=true),label_reduction=exact(before_shrinking=true,before_merging=false),only_dead_end_detection=false))"]),
+        "sccs-reg-nto-abp-modlabelapproxb50k",
+        ["--search", "astar(merge_and_shrink(shrink_strategy=shrink_mod_label_approx(max_states=50000,threshold=1,greedy=false),merge_strategy=merge_dfp(,atomic_ts_order=regular,product_ts_order=new_to_old,atomic_before_product=true),label_reduction=exact(before_shrinking=true,before_merging=false),only_dead_end_detection=false))"]),
     IssueConfig(
-        "sccs-inv-nto-abp-modlabelb50k",
-        ["--search", "astar(merge_and_shrink(shrink_strategy=shrink_mod_label(max_states=50000,threshold=1,greedy=false),merge_strategy=merge_dfp(,atomic_ts_order=inverse,product_ts_order=new_to_old,atomic_before_product=true),label_reduction=exact(before_shrinking=true,before_merging=false),only_dead_end_detection=false))"]),
+        "sccs-inv-nto-abp-modlabelapproxb50k",
+        ["--search", "astar(merge_and_shrink(shrink_strategy=shrink_mod_label_approx(max_states=50000,threshold=1,greedy=false),merge_strategy=merge_dfp(,atomic_ts_order=inverse,product_ts_order=new_to_old,atomic_before_product=true),label_reduction=exact(before_shrinking=true,before_merging=false),only_dead_end_detection=false))"]),
     IssueConfig(
-        "sccs-rnd-nto-abp-modlabelb50k",
-        ["--search", "astar(merge_and_shrink(shrink_strategy=shrink_mod_label(max_states=50000,threshold=1,greedy=false),merge_strategy=merge_dfp(,atomic_ts_order=random,product_ts_order=new_to_old,atomic_before_product=true),label_reduction=exact(before_shrinking=true,before_merging=false),only_dead_end_detection=false))"]),
+        "sccs-rnd-nto-abp-modlabelapproxb50k",
+        ["--search", "astar(merge_and_shrink(shrink_strategy=shrink_mod_label_approx(max_states=50000,threshold=1,greedy=false),merge_strategy=merge_dfp(,atomic_ts_order=random,product_ts_order=new_to_old,atomic_before_product=true),label_reduction=exact(before_shrinking=true,before_merging=false),only_dead_end_detection=false))"]),
     IssueConfig(
-        "sccs-reg-otn-abp-modlabelb50k",
-        ["--search", "astar(merge_and_shrink(shrink_strategy=shrink_mod_label(max_states=50000,threshold=1,greedy=false),merge_strategy=merge_dfp(,atomic_ts_order=regular,product_ts_order=old_to_new,atomic_before_product=true),label_reduction=exact(before_shrinking=true,before_merging=false),only_dead_end_detection=false))"]),
+        "sccs-reg-otn-abp-modlabelapproxb50k",
+        ["--search", "astar(merge_and_shrink(shrink_strategy=shrink_mod_label_approx(max_states=50000,threshold=1,greedy=false),merge_strategy=merge_dfp(,atomic_ts_order=regular,product_ts_order=old_to_new,atomic_before_product=true),label_reduction=exact(before_shrinking=true,before_merging=false),only_dead_end_detection=false))"]),
     IssueConfig(
-        "sccs-inv-otn-abp-modlabelb50k",
-        ["--search", "astar(merge_and_shrink(shrink_strategy=shrink_mod_label(max_states=50000,threshold=1,greedy=false),merge_strategy=merge_dfp(,atomic_ts_order=inverse,product_ts_order=old_to_new,atomic_before_product=true),label_reduction=exact(before_shrinking=true,before_merging=false),only_dead_end_detection=false))"]),
+        "sccs-inv-otn-abp-modlabelapproxb50k",
+        ["--search", "astar(merge_and_shrink(shrink_strategy=shrink_mod_label_approx(max_states=50000,threshold=1,greedy=false),merge_strategy=merge_dfp(,atomic_ts_order=inverse,product_ts_order=old_to_new,atomic_before_product=true),label_reduction=exact(before_shrinking=true,before_merging=false),only_dead_end_detection=false))"]),
     IssueConfig(
-        "sccs-rnd-otn-abp-modlabelb50k",
-        ["--search", "astar(merge_and_shrink(shrink_strategy=shrink_mod_label(max_states=50000,threshold=1,greedy=false),merge_strategy=merge_dfp(,atomic_ts_order=random,product_ts_order=old_to_new,atomic_before_product=true),label_reduction=exact(before_shrinking=true,before_merging=false),only_dead_end_detection=false))"]),
+        "sccs-rnd-otn-abp-modlabelapproxb50k",
+        ["--search", "astar(merge_and_shrink(shrink_strategy=shrink_mod_label_approx(max_states=50000,threshold=1,greedy=false),merge_strategy=merge_dfp(,atomic_ts_order=random,product_ts_order=old_to_new,atomic_before_product=true),label_reduction=exact(before_shrinking=true,before_merging=false),only_dead_end_detection=false))"]),
     IssueConfig(
-        "sccs-allrnd-modlabelb50k",
-        ["--search", "astar(merge_and_shrink(shrink_strategy=shrink_mod_label(max_states=50000,threshold=1,greedy=false),merge_strategy=merge_dfp(,randomized_order=true),label_reduction=exact(before_shrinking=true,before_merging=false),only_dead_end_detection=false))"]),
+        "sccs-allrnd-modlabelapproxb50k",
+        ["--search", "astar(merge_and_shrink(shrink_strategy=shrink_mod_label_approx(max_states=50000,threshold=1,greedy=false),merge_strategy=merge_dfp(,randomized_order=true),label_reduction=exact(before_shrinking=true,before_merging=false),only_dead_end_detection=false))"]),
 ]
 revisions = ["573c8e4a055d"]
 
