@@ -101,7 +101,7 @@ void ShrinkModLabelApprox::shrink_own_label_goal_paths(
     int index,
     const Bitset &irrelevant_labels_in_all_other_ts) const {
     const TransitionSystem &ts = fts.get_ts(index);
-    if (ts.all_goal_variables_incorporated()) {
+    if (all_goal_variables_incorporated(ts)) {
         // First, collapse all goal states into a single one.
         int num_states = ts.get_size();
         StateEquivalenceRelation equivalence_relation;

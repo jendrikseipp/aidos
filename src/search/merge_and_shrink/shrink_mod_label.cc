@@ -5,6 +5,7 @@
 #include "factored_transition_system.h"
 #include "transition_system.h"
 
+#include "../globals.h"
 #include "../option_parser.h"
 #include "../plugin.h"
 
@@ -69,6 +70,25 @@ Bitset ShrinkModLabel::compute_irrelevant_in_all_other_ts_labels(
     return irrelevant_labels_in_all_other_ts;
 }
 
+bool ShrinkModLabel::all_goal_variables_incorporated(
+    const TransitionSystem &ts) const {
+    // HACK!
+    for (const pair<int, int> goal : g_goal) {
+        int goal_var = goal.first;
+        bool goal_included = false;
+        for (int var : ts.get_incorporated_variables()) {
+            if (var == goal_var) {
+                goal_included = true;
+                break;
+            }
+        }
+        if (!goal_included) {
+            return false;
+        }
+    }
+    return true;
+}
+
 void ShrinkModLabel::compute_equivalence_relation(
     FactoredTransitionSystem &fts,
     int index,
@@ -83,7 +103,7 @@ void ShrinkModLabel::compute_equivalence_relation(
     fts.recompute_distances(index);
 
     // (2) goal-label pruning
-    if (ts.all_goal_variables_incorporated()) {
+    if (all_goal_variables_incorporated(ts)) {
         ts.prune_transitions_of_goal_states();
     }
 

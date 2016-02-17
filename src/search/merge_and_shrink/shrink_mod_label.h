@@ -14,6 +14,8 @@ protected:
     Utils::DynamicBitset<unsigned short> compute_irrelevant_in_all_other_ts_labels(
         const FactoredTransitionSystem &fts,
         int excluded_ts_index) const;
+    bool all_goal_variables_incorporated(
+        const TransitionSystem &ts) const;
     virtual void compute_equivalence_relation(
         FactoredTransitionSystem &fts,
         int index,

@@ -195,7 +195,6 @@ public:
 
     void label_inheritance(
         const Utils::DynamicBitset<unsigned short> &irrelevant_labels_in_all_other_ts);
-    bool all_goal_variables_incorporated() const;
     void prune_transitions_of_goal_states();
 
     TSConstIterator begin() const {
@@ -244,6 +243,10 @@ public:
 
     bool is_goal_relevant() const {  // used by merge_dfp
         return goal_relevant;
+    }
+
+    const std::vector<int> &get_incorporated_variables() const {
+        return incorporated_variables;
     }
 };
 }
