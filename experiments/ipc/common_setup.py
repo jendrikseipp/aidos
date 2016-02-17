@@ -121,7 +121,7 @@ class IssueExperiment(FastDownwardExperiment):
         "expansions",
         "expansions_until_last_jump",
         "generated",
-        "memory",
+        "raw_memory",
         "quality",
         "run_dir",
         "score_evaluations",
