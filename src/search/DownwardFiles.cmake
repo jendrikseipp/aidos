@@ -486,6 +486,7 @@ fast_downward_plugin(
         potentials/potential_optimizer.cc
         potentials/sample_based_potential_heuristics.cc
         potentials/single_potential_heuristics.cc
+        potentials/unsolvable_all_states_potential_heuristic.cc
         potentials/util.cc
     DEPENDS LP_SOLVER
 )
