@@ -7,6 +7,7 @@
 #include "../plugin.h"
 
 #include "../utils/countdown_timer.h"
+#include "../utils/logging.h"
 
 #include <memory>
 
@@ -117,6 +118,7 @@ DeadEndCollection::~DeadEndCollection() {
 }
 
 void DeadEndCollection::add(const std::vector<FactProxy> &dead){
+    assert(!dead.empty());
     if (!root) {
         root = new DeadEndTreeSwitchNode(dead[0].get_variable());
     }
@@ -125,10 +127,7 @@ void DeadEndCollection::add(const std::vector<FactProxy> &dead){
 }
 
 bool DeadEndCollection::recognizes(const std::vector<FactProxy> &partial_state) const {
-    if (root) {
-        return root->contains(partial_state);
-    }
-    return false;
+    return root && root->contains(partial_state);
 }
 
 bool DeadEndCollection::recognizes(const State &state) const {
@@ -162,11 +161,7 @@ bool PDBDeadEndDetectionHeuristic::add_pattern_dead_ends(
     bool memory_exhausted = dead_end_collection.size() >= max_dead_ends;
     bool initial_state_recognized = pdb.get_value(initial_state) == numeric_limits<int>::max();
     if (initial_state_recognized) {
-        cout << "Initial state recognised as dead end by pattern [";
-        for (int v : pattern) {
-            cout << v << ", ";
-        }
-        cout << "]" << endl;
+        cout << "Initial state recognised as dead end by pattern " << pattern << endl;
     }
     return memory_exhausted || initial_state_recognized || timer.is_expired();
 }
