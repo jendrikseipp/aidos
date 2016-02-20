@@ -1,168 +1,28 @@
 #!/usr/bin/env python
 
+from task import parse_task, write_task
+from dtg import DTG
+from projection import project
 
-def read_line(infile):
-    return next(infile).strip()
-
-
-def read_number(infile):
-    return int(read_line(infile))
+task = parse_task("output")
 
 
-def check_magic(infile, magic):
-    assert read_line(infile) == magic
+i = 0
+for var_id, var in enumerate(task.variables):
+    if var_id not in task.goals:
+        dtg = DTG(task, var_id)
+        if not dtg.is_resource:
+            # DTG is no DAG
+            continue
+        if dtg.resource_availability <= 2:
+            # boring
+            continue
+        print "RESOURCE", var_id, var.facts[0], dtg.resource_availability
+        projected_task = project(task, dtg)
+        print "  Operators reduced from %s to %s" % (len(task.operators), len(projected_task.operators))
+        write_task(projected_task, "output.resource%s" % i)
+        print "  Task written to 'output.resource%s'" % i
+        i += 1
 
 
-def read_text_block(infile, name):
-    lines = [read_line(infile)]
-    assert lines[0] == "begin_" + name
-    while True:
-        line = read_line(infile)
-        lines.append(line)
-        if line == "end_" + name:
-            break
-    return "\n".join(lines)
-
-def read_partial_state(infile):
-    values = {}
-    for _ in xrange(read_number(infile)):
-        var, val = read_line(infile).split()
-        values[int(var)] = val
-    return values
-
-def write_line(line, outfile):
-    outfile.write("%s\n" % line)
-
-def write_partial_state(values, outfile):
-    write_line(len(values), outfile)
-    for var, val in sorted(values.items()):
-        write_line("%s %s" % (var, val), outfile)
-
-
-
-class Operator(object):
-    def __init__(self, infile):
-        self.read(infile)
-
-    def read(self, infile):
-        check_magic(infile, "begin_operator")
-        self.name = read_line(infile)
-        self.prevail = read_partial_state(infile)
-        self.effects = []
-        for _ in xrange(read_number(infile)):
-            effect_line = read_line(infile).split()
-            assert len(effect_line) == 4, "Effect conditions not supported"
-            n, var, pre, post = map(int, effect_line)
-            self.effects.append((var, pre, post))
-        self.cost = read_number(infile)
-        check_magic(infile, "end_operator")
-
-    def write(self, outfile):
-        write_line("begin_operator", outfile)
-        write_line(self.name, outfile)
-        write_partial_state(self.prevail, outfile)
-
-        write_line(len(self.effects), outfile)
-        for var, pre, post in self.effects:
-            write_line("0 %s %s %s" % (var, pre, post), outfile)
-
-        write_line(self.cost, outfile)
-        write_line("end_operator", outfile)
-
-
-class Variable(object):
-    def __init__(self, infile):
-        self.read(infile)
-
-    def read(self, infile):
-        check_magic(infile, "begin_variable")
-        self.name = read_line(infile)
-        self.axiom_layer = read_number(infile)
-        self.facts = []
-        for _ in xrange(read_number(infile)):
-            self.facts.append(read_line(infile))
-        check_magic(infile, "end_variable")
-
-    def write(self, outfile):
-        write_line("begin_variable", outfile)
-        write_line(self.name, outfile)
-        write_line(self.axiom_layer, outfile)
-        write_line(len(self.facts), outfile)
-        for fact in self.facts:
-            write_line(fact, outfile)
-        write_line("end_variable", outfile)
-
-
-class Task(object):
-    def __init__(self, infile):
-        self.read(infile)
-
-    def read(self, infile):
-        self.version = read_text_block(infile, "version")
-        self.metric = read_text_block(infile, "metric")
-
-        self.variables = []
-        for i in xrange(read_number(infile)):
-            self.variables.append(Variable(infile))
-
-        self.mutexes = []
-        for _ in xrange(read_number(infile)):
-            self.mutexes.append(read_text_block(infile, "mutex_group"))
-
-        self.initial_state = []
-        check_magic(infile, "begin_state");
-        for _ in xrange(len(self.variables)):
-            self.initial_state.append(read_number(infile))
-        check_magic(infile, "end_state");
-
-        check_magic(infile, "begin_goal");
-        self.goals = read_partial_state(infile)
-        check_magic(infile, "end_goal");
-
-        self.operators = []
-        for i in xrange(read_number(infile)):
-            self.operators.append(Operator(infile))
-
-        assert read_number(infile) == 0, "Axioms not supported"
-        # Rest is ignored by planner
-        self.rest_of_file = "0\nbegin_SG\nend_SG\nbegin_DTG"
-
-    def write(self, outfile):
-        write_line(self.version, outfile)
-        write_line(self.metric, outfile)
-
-        write_line(len(self.variables), outfile)
-        for var in self.variables:
-            var.write(outfile)
-
-        write_line(len(self.mutexes), outfile)
-        for mutex in self.mutexes:
-            write_line(mutex, outfile)
-
-        write_line("begin_state", outfile)
-        for val in self.initial_state:
-            write_line(val, outfile)
-        write_line("end_state", outfile)
-
-        write_line("begin_goal", outfile)
-        write_partial_state(self.goals, outfile)
-        write_line("end_goal", outfile)
-
-        write_line(len(self.operators), outfile)
-        for op in self.operators:
-            op.write(outfile)
-
-        write_line(self.rest_of_file, outfile)
-
-
-
-def parse_task(filename):
-    with open(filename) as infile:
-        return Task(infile)
-
-def write_task(task, filename):
-    with open(filename, "w") as outfile:
-        return task.write(outfile)
-
-
-write_task(parse_task("output"), "output.copy")
+write_task(task, "output.copy")
