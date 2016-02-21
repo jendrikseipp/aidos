@@ -24,7 +24,7 @@ def read_partial_state(infile):
     values = {}
     for _ in xrange(read_number(infile)):
         var, val = read_line(infile).split()
-        values[int(var)] = val
+        values[int(var)] = int(val)
     return values
 
 def write_line(line, outfile):
@@ -38,10 +38,10 @@ def write_partial_state(values, outfile):
 
 
 class Operator(object):
-    def __init__(self, name="", prevail={}, preposts={}, cost=0):
+    def __init__(self, name="", prevail=None, preposts=None, cost=0):
         self.name = name
-        self.prevail = prevail
-        self.preposts = preposts
+        self.prevail = prevail or {}
+        self.preposts = preposts or {}
         self.cost = cost
 
     def read(self, infile):
