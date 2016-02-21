@@ -10,16 +10,6 @@ def check_magic(infile, magic):
     assert read_line(infile) == magic
 
 
-def read_text_block(infile, name):
-    lines = [read_line(infile)]
-    assert lines[0] == "begin_" + name
-    while True:
-        line = read_line(infile)
-        lines.append(line)
-        if line == "end_" + name:
-            break
-    return "\n".join(lines)
-
 def read_partial_state(infile):
     values = {}
     for _ in xrange(read_number(infile)):
@@ -70,6 +60,20 @@ class Operator(object):
         write_line(self.cost, outfile)
         write_line("end_operator", outfile)
 
+class Mutex(object):
+    def __init__(self, facts=None):
+        self.facts = facts or {}
+
+    def read(self, infile):
+        check_magic(infile, "begin_mutex_group")
+        self.facts = read_partial_state(infile)
+        check_magic(infile, "end_mutex_group")
+        return self
+
+    def write(self, outfile):
+        write_line("begin_mutex_group", outfile)
+        write_partial_state(self.facts, outfile)
+        write_line("end_mutex_group", outfile)
 
 class Variable(object):
     def __init__(self, infile):
@@ -95,15 +99,15 @@ class Variable(object):
 
 
 class Task(object):
-    def __init__(self, version=None, metric=None, variables=[],
-                 mutexes=[], initial_state=[], goals={}, operators=[]):
+    def __init__(self, version=None, metric=None, variables=None,
+                 mutexes=None, initial_state=None, goals=None, operators=None):
         self.version = version
         self.metric = metric
-        self.variables = variables
-        self.mutexes = mutexes
-        self.initial_state = initial_state
-        self.goals = goals
-        self.operators = operators
+        self.variables = variables or []
+        self.mutexes = mutexes or []
+        self.initial_state = initial_state or []
+        self.goals = goals or {}
+        self.operators = operators or []
 
 
     def read(self, infile):
@@ -121,7 +125,7 @@ class Task(object):
 
         self.mutexes = []
         for _ in xrange(read_number(infile)):
-            self.mutexes.append(read_text_block(infile, "mutex_group"))
+            self.mutexes.append(Mutex().read(infile))
 
         self.initial_state = []
         check_magic(infile, "begin_state");
@@ -157,7 +161,7 @@ class Task(object):
 
         write_line(len(self.mutexes), outfile)
         for mutex in self.mutexes:
-            write_line(mutex, outfile)
+            mutex.write(outfile)
 
         write_line("begin_state", outfile)
         for val in self.initial_state:

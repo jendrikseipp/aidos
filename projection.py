@@ -14,6 +14,9 @@ def project_operator(op, resource, var_translation):
     cost = resource.get_operator_cost(op)
     return Operator(name=name, prevail=prevail, preposts=preposts, cost=cost)
 
+def project_mutex(mutex, var_translation):
+    return Mutex(project_dict(mutex.facts, var_translation))
+
 def filter_operators(operators):
     ops_by_changes = dict()
     for op in operators:
@@ -28,7 +31,6 @@ def filter_operators(operators):
     return [op for c, op in sorted(ops_by_changes.items())]
 
 def project(task, resource):
-    del_var_id = resource.var_id
     var_translation = range(len(task.variables))
     var_translation[resource.var_id] = None
     for i in xrange(resource.var_id + 1, len(task.variables)):
@@ -43,8 +45,9 @@ def project(task, resource):
     # Variables
     variables = [v for i, v in enumerate(task.variables) if i != resource.var_id]
 
-    # Mutexes ignored for now (just don't use them)
-    mutexes = list(task.mutexes)
+    # Mutexes
+    mutexes = [project_mutex(mutex, resource, var_translation)
+                     for mutex in task.mutexes]
 
     # Initial state
     initial_state = list(task.initial_state)

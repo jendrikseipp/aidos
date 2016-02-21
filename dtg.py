@@ -22,8 +22,11 @@ class DTG(object):
 
     def get_operator_cost(self, op):
         assert self.is_resource
-        pre, post = op.preposts.get(self.var_id, (0,0))
-        return self.nodes[pre].topological_order - self.nodes[post].topological_order
+        if self.var_id in op.preposts:
+            pre, post = op.preposts[self.var_id]
+            return self.nodes[pre].topological_order - self.nodes[post].topological_order
+        else:
+            return 0
 
 
 def _dfs(node, next_id):
