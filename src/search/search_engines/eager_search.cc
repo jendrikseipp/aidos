@@ -22,6 +22,7 @@ using namespace std;
 namespace eager_search {
 EagerSearch::EagerSearch(const Options &opts)
     : SearchEngine(opts),
+      f_bound(opts.get<int>("f_bound")),
       reopen_closed_nodes(opts.get<bool>("reopen_closed")),
       use_multi_path_dependence(opts.get<bool>("mpd")),
       open_list(opts.get<shared_ptr<OpenListFactory>>("open")->
@@ -34,7 +35,8 @@ EagerSearch::EagerSearch(const Options &opts)
 void EagerSearch::initialize() {
     cout << "Conducting best first search"
          << (reopen_closed_nodes ? " with" : " without")
-         << " reopening closed nodes, (real) bound = " << bound
+         << " reopening closed nodes, (real) g bound = " << bound
+         << ", f bound = " << f_bound
          << endl;
     if (use_multi_path_dependence)
         cout << "Using multi-path dependence (LM-A*)" << endl;
@@ -171,6 +173,18 @@ SearchStatus EagerSearch::step() {
                 statistics.inc_dead_ends();
                 continue;
             }
+
+            bool f_value_too_high = false;
+            for (Heuristic *heuristic : heuristics ) {
+                if (eval_context.is_heuristic_infinite(heuristic) ||
+                    succ_g + eval_context.get_heuristic_value(heuristic) > f_bound) {
+                    f_value_too_high = true;
+                    break;
+                }
+            }
+            if (f_value_too_high)
+                continue;
+
             succ_node.open(node, op);
 
             open_list->insert(eval_context, succ_state.get_id());
@@ -342,6 +356,10 @@ static SearchEngine *_parse(OptionParser &parser) {
     parser.add_list_option<Heuristic *>(
         "preferred",
         "use preferred operators of these heuristics", "[]");
+    parser.add_option<int>(
+        "f_bound",
+        "inclusive bound on f values",
+        "infinity");
 
     add_pruning_option(parser);
     SearchEngine::add_options_to_parser(parser);
@@ -379,6 +397,10 @@ static SearchEngine *_parse_astar(OptionParser &parser) {
     parser.add_option<ScalarEvaluator *>("eval", "evaluator for h-value");
     parser.add_option<bool>("mpd",
                             "use multi-path dependence (LM-A*)", "false");
+    parser.add_option<int>(
+        "f_bound",
+        "inclusive bound on f values",
+        "infinity");
 
     add_pruning_option(parser);
     SearchEngine::add_options_to_parser(parser);
@@ -459,6 +481,7 @@ static SearchEngine *_parse_greedy(OptionParser &parser) {
         opts.set("mpd", false);
         ScalarEvaluator *evaluator = nullptr;
         opts.set("f_eval", evaluator);
+        opts.set("f_bound", numeric_limits<int>::max());
         engine = new EagerSearch(opts);
     }
     return engine;
