@@ -162,11 +162,36 @@ def run_sat(configs, executable, sas_file, plan_manager, final_config,
             yield exitcode
 
 
+def run_unsolvable_resource_detection(
+        executable, args, sas_file, plan_manager, run_time, memory):
+    from .resources import detect
+    from . import plan_manager
+    projected_sas_file = sas_file.rstrip("/") + ".projected"
+    f_bound = detect.project_out_largest_resource(sas_file, projected_sas_file)
+    for index, arg in enumerate(args):
+        if arg == "--search":
+            search = args[index + 1]
+            assert "f_bound=F_BOUND" in search
+            args[index + 1] = search.replace("f_bound=F_BOUND", "f_bound=%d" % f_bound)
+    dummy_plan_manager = plan_manager.PlanManager("projected_sas_plan")
+    exitcode = run_search(
+        executable, args, projected_sas_file, dummy_plan_manager, run_time, memory)
+    exitcode_mapping = {
+        returncodes.EXIT_PLAN_FOUND: returncodes.EXIT_TIMEOUT,
+    }
+    return exitcode_mapping.get(exitcode, exitcode)
+
+
 def run_opt(configs, executable, sas_file, plan_manager, timeout, memory):
     for pos, (relative_time, args) in enumerate(configs):
         run_time = compute_run_time(timeout, configs, pos)
-        exitcode = run_search(executable, args, sas_file, plan_manager,
-                              run_time, memory)
+        if any("f_bound" in x for x in args):
+            exitcode = run_unsolvable_resource_detection(
+                executable, args, sas_file, plan_manager, run_time, memory)
+        else:
+            exitcode = run_search(
+                executable, args, sas_file, plan_manager, run_time, memory)
+
         yield exitcode
 
         if exitcode in [returncodes.EXIT_PLAN_FOUND, returncodes.EXIT_UNSOLVABLE]:
