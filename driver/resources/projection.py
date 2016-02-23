@@ -1,4 +1,4 @@
-from task import Task, Operator
+from task import Task, Operator, Mutex
 
 
 def project_dict(dictionary, var_translation):
@@ -46,8 +46,7 @@ def project(task, resource):
     variables = [v for i, v in enumerate(task.variables) if i != resource.var_id]
 
     # Mutexes
-    mutexes = [project_mutex(mutex, resource, var_translation)
-                     for mutex in task.mutexes]
+    mutexes = [project_mutex(mutex, var_translation) for mutex in task.mutexes]
 
     # Initial state
     initial_state = list(task.initial_state)
