@@ -168,6 +168,8 @@ def run_unsolvable_resource_detection(
     from . import plan_manager
     projected_sas_file = sas_file.rstrip("/") + ".projected"
     f_bound = detect.project_out_largest_resource(sas_file, projected_sas_file)
+    if f_bound is None:
+        return returncodes.EXIT_TIMEOUT
     for index, arg in enumerate(args):
         if arg == "--search":
             search = args[index + 1]
@@ -255,6 +257,6 @@ def run(portfolio, executable, sas_file, plan_manager, time, memory):
         exitcodes = run_sat(
             configs, executable, sas_file, plan_manager, final_config,
             final_config_builder, timeout, memory)
-    exitcode = returncodes.generate_portfolio_exitcode(exitcodes)
+    exitcode = returncodes.generate_portfolio_exitcode(list(exitcodes))
     if exitcode != 0:
         raise subprocess.CalledProcessError(exitcode, ["run-portfolio", portfolio])

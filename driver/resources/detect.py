@@ -26,6 +26,8 @@ def project_out_largest_resource(input_filename, output_filename):
     for resource in resources:
         if best is None or resource.resource_availability > best.resource_availability:
             best = resource
+    if best is None or best.resource_availability < 5:
+        return None
     projected_task = project(task, best)
     print "Resource projection reduced number of operators from %s to %s" % (
             len(task.operators), len(projected_task.operators))
