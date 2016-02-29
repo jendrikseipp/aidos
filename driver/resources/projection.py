@@ -7,11 +7,10 @@ def project_dict(dictionary, var_translation):
                     if var_translation[var] is not None])
 
 
-def project_operator(op, resource, var_translation):
+def project_operator(op, resource, var_translation, cost):
     name = op.name
     prevail = project_dict(op.prevail, var_translation)
     preposts = project_dict(op.preposts, var_translation)
-    cost = resource.get_operator_cost(op)
     return Operator(name=name, prevail=prevail, preposts=preposts, cost=cost)
 
 def project_mutex(mutex, var_translation):
@@ -30,7 +29,7 @@ def filter_operators(operators):
             ops_by_changes[changes] = op
     return [op for c, op in sorted(ops_by_changes.items())]
 
-def project(task, resource):
+def project(task, resource, op_costs):
     var_translation = range(len(task.variables))
     var_translation[resource.var_id] = None
     for i in xrange(resource.var_id + 1, len(task.variables)):
@@ -57,8 +56,8 @@ def project(task, resource):
     goals = project_dict(task.goals, var_translation)
 
     # Operators
-    operators = [project_operator(op, resource, var_translation)
-                     for op in task.operators]
+    operators = [project_operator(op, resource, var_translation, cost)
+                     for op, cost in zip(task.operators, op_costs)]
     operators = filter_operators(operators)
 
     return Task(version=version, metric=metric, variables=variables,

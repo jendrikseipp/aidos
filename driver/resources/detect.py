@@ -3,6 +3,7 @@
 from task import parse_task, write_task
 from dtg import DTG
 from projection import project
+from resourcecost import find_operator_costs
 
 
 
@@ -28,12 +29,14 @@ def project_out_largest_resource(input_filename, output_filename):
             best = resource
     if best is None or best.resource_availability < 5:
         return None
-    projected_task = project(task, best)
+
+    op_costs, limit = find_operator_costs(task, best)
+    projected_task = project(task, best, op_costs)
     print "Resource projection reduced number of operators from %s to %s" % (
             len(task.operators), len(projected_task.operators))
     write_task(projected_task, output_filename)
     print "Resource projected task written to '%s'" % output_filename
-    return best.resource_availability
+    return limit
 
 if __name__ == "__main__":
     limit = project_out_largest_resource("output", "output.resource")
