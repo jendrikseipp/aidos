@@ -70,7 +70,7 @@ public:
         if (*successor) {
             (*successor)->add(partial_state, next_index);
         } else {
-            if (index == static_cast<int>(partial_state.size()) - 1) {
+            if (next_index == static_cast<int>(partial_state.size())) {
                 *successor = new DeadEndTreeLeafNode();
             } else {
                 VariableProxy next_var = partial_state[next_index].get_variable();
