@@ -732,7 +732,7 @@ Node Parser::assemble(TokenQueue &tokens, DataQueue &data) {
 }
 
 void Parser::jumpToNext(char c, std::istream &stream) {
-    while (!stream.eof() && static_cast<char>(stream.get()) != c) ;
+    while (!stream.eof() && static_cast<char>(stream.get()) != c);
     stream.unget();
 }
 void Parser::jumpToCommentEnd(std::istream &stream) {
