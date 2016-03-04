@@ -16,6 +16,7 @@ def find_operator_equivalence_classes(task, var_id):
 def find_operator_costs(task, resource):
     try:
         c = cplex.Cplex()
+        c.parameters.threads.set(1)
         c.objective.set_sense(c.objective.sense.maximize)
 
         operator_equivalence_classes = find_operator_equivalence_classes(task, resource.var_id)
