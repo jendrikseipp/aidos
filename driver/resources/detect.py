@@ -34,6 +34,9 @@ def project_out_largest_resource(input_filename, output_filename):
     projected_task = project(task, best, op_costs)
     print "Resource projection reduced number of operators from %s to %s" % (
             len(task.operators), len(projected_task.operators))
+    for operator in projected_task.operators:
+        if operator.cost != 0:
+            print "{}: {}".format(operator.name, operator.cost)
     write_task(projected_task, output_filename)
     print "Resource projected task written to '%s'" % output_filename
     return limit
