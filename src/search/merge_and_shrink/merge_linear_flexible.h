@@ -12,9 +12,18 @@ class OptionParser;
 
 namespace merge_and_shrink {
 class MergeLinearFlexible : public MergeStrategy {
-    std::vector<std::string> components;
+    const std::vector<std::string> components;
     std::vector<int> variable_order;
+    std::vector<int> remaining_variables;
+    std::vector<bool> is_goal_variable;
+    std::vector<bool> is_causal_predecessor;
     bool need_first_index;
+    std::vector<int> variable_to_scc_index;
+
+    std::vector<int> select_next_vars(
+        std::string current_component,
+        std::vector<int> &variable_indices);
+    void set_variable(TaskProxy &task_proxy, int next_variable_index);
 protected:
     virtual void dump_strategy_specific_options() const override;
 public:
@@ -24,7 +33,6 @@ public:
 
     virtual std::pair<int, int> get_next(FactoredTransitionSystem &fts) override;
     virtual std::string name() const override;
-    static void add_options_to_parser(options::OptionParser &parser);
 };
 }
 
