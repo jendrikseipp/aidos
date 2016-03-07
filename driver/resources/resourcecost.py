@@ -24,7 +24,7 @@ def find_operator_costs(task, resource):
         c.variables.add(names=["v%s" % i for i in xrange(len(resource.nodes))])
         c.variables.add(names=["vG"])
         c.variables.add(names=["o%s" % i for i in xrange(len(operator_equivalence_classes))],
-                        obj=[1.0 for _ in xrange(len(operator_equivalence_classes))])
+                        obj=[len(ops) for ops in operator_equivalence_classes])
 
         init = resource.initial_value
         c.linear_constraints.add(lin_expr=[[["v%s" % init], [1.0]]], senses="E", rhs=[0.0])
