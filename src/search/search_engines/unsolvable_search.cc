@@ -18,7 +18,9 @@ namespace unsolvable_search {
 UnsolvableSearch::UnsolvableSearch(const Options &opts)
     : SearchEngine(opts),
       heuristics(opts.get_list<Heuristic *>("heuristics")),
-      pruning_method(opts.get<shared_ptr<PruningMethod>>("pruning")) {
+      pruning_method(opts.get<shared_ptr<PruningMethod>>("pruning")),
+      max_g(0) {
+    assert(cost_type == ONE);
 }
 
 bool UnsolvableSearch::is_dead_end(const GlobalState &global_state) {
@@ -64,6 +66,12 @@ SearchStatus UnsolvableSearch::step() {
         return FAILED;
     }
     SearchNode node = n.first;
+
+    const int g = node.get_g();
+    if (g > max_g) {
+        print_checkpoint_line(g);
+        max_g = g;
+    }
 
     GlobalState s = node.get_state();
     if (check_goal_and_set_plan(s))
@@ -158,6 +166,9 @@ static SearchEngine *_parse(OptionParser &parser) {
     add_pruning_option(parser);
     SearchEngine::add_options_to_parser(parser);
     Options opts = parser.parse();
+
+    // Ignore cost_type value given on the command line.
+    opts.set<int>("cost_type", static_cast<int>(ONE));
 
     opts.verify_list_non_empty<Heuristic *>("heuristics");
 

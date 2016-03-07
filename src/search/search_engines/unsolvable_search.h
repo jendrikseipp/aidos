@@ -21,6 +21,7 @@ class UnsolvableSearch : public SearchEngine {
     std::deque<StateID> queue;
     std::vector<Heuristic *> heuristics;
     std::shared_ptr<PruningMethod> pruning_method;
+    int max_g;
 
     std::pair<SearchNode, bool> fetch_next_node();
     void print_checkpoint_line(int g) const;
