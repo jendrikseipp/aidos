@@ -234,6 +234,14 @@ fast_downward_plugin(
 )
 
 fast_downward_plugin(
+    NAME BREADTH_FIRST_SEARCH
+    HELP "Breadth-first search algorithm"
+    SOURCES
+        search_engines/breadth_first_search.cc
+    DEPENDS SEARCH_COMMON NULL_PRUNING_METHOD
+)
+
+fast_downward_plugin(
     NAME EAGER_SEARCH
     HELP "Eager search algorithm"
     SOURCES
