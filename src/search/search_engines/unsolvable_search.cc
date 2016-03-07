@@ -2,7 +2,6 @@
 
 #include "search_common.h"
 
-#include "../evaluation_context.h"
 #include "../globals.h"
 #include "../heuristic.h"
 #include "../option_parser.h"
@@ -10,53 +9,41 @@
 #include "../pruning_method.h"
 #include "../successor_generator.h"
 
-#include "../open_lists/open_list_factory.h"
-
 #include <cassert>
 #include <cstdlib>
-#include <memory>
-#include <set>
 
 using namespace std;
 
 namespace unsolvable_search {
 UnsolvableSearch::UnsolvableSearch(const Options &opts)
     : SearchEngine(opts),
-      open_list(opts.get<shared_ptr<OpenListFactory>>("open")->
-                create_state_open_list()),
+      heuristics(opts.get_list<Heuristic *>("heuristics")),
       pruning_method(opts.get<shared_ptr<PruningMethod>>("pruning")) {
 }
 
+bool UnsolvableSearch::is_dead_end(const GlobalState &global_state) {
+    statistics.inc_evaluated_states();
+    for (Heuristic *heuristic : heuristics) {
+        if (heuristic->is_dead_end(global_state)) {
+            return true;
+        }
+    }
+    return false;
+}
+
 void UnsolvableSearch::initialize() {
-    cout << "Conducting best first search, (real) bound = " << bound
+    cout << "Conducting unsolvable search, (real) bound = " << bound
          << endl;
-    assert(open_list);
-
-    set<Heuristic *> hset;
-    open_list->get_involved_heuristics(hset);
-
-    heuristics.assign(hset.begin(), hset.end());
-    assert(!heuristics.empty());
 
     const GlobalState &initial_state = g_initial_state();
-    // Note: we consider the initial state as reached by a preferred
-    // operator.
-    EvaluationContext eval_context(initial_state, 0, true, &statistics);
 
-    statistics.inc_evaluated_states();
-
-    if (open_list->is_dead_end(eval_context)) {
+    if (is_dead_end(initial_state)) {
         cout << "Initial state is a dead end." << endl;
     } else {
-        if (search_progress.check_progress(eval_context))
-            print_checkpoint_line(0);
         SearchNode node = search_space.get_node(initial_state);
         node.open_initial();
-
-        open_list->insert(eval_context, initial_state.get_id());
+        queue.push_back(initial_state.get_id());
     }
-
-    print_initial_h_values(eval_context);
 }
 
 void UnsolvableSearch::print_checkpoint_line(int g) const {
@@ -112,26 +99,14 @@ SearchStatus UnsolvableSearch::step() {
                 heuristic->reach_state(s, *op, succ_state);
             }
 
-            // Careful: succ_node.get_g() is not available here yet,
-            // hence the stupid computation of succ_g.
-            // TODO: Make this less fragile.
-            int succ_g = node.get_g() + get_adjusted_cost(*op);
-
-            EvaluationContext eval_context(
-                succ_state, succ_g, false, &statistics);
-            statistics.inc_evaluated_states();
-
-            if (open_list->is_dead_end(eval_context)) {
+            if (is_dead_end(succ_state)) {
                 succ_node.mark_as_dead_end();
                 statistics.inc_dead_ends();
                 continue;
             }
             succ_node.open(node, op);
 
-            open_list->insert(eval_context, succ_state.get_id());
-            if (search_progress.check_progress(eval_context)) {
-                print_checkpoint_line(succ_node.get_g());
-            }
+            queue.push_back(succ_state.get_id());
         }
     }
     return IN_PROGRESS;
@@ -139,13 +114,14 @@ SearchStatus UnsolvableSearch::step() {
 
 pair<SearchNode, bool> UnsolvableSearch::fetch_next_node() {
     while (true) {
-        if (open_list->empty()) {
+        if (queue.empty()) {
             cout << "Completely explored state space -- no solution!" << endl;
             // HACK! HACK! we do this because SearchNode has no default/copy constructor
             SearchNode dummy_node = search_space.get_node(g_initial_state());
             return make_pair(dummy_node, false);
         }
-        StateID id = open_list->remove_min();
+        StateID id = queue.front();
+        queue.pop_front();
         // TODO is there a way we can avoid creating the state here and then
         //      recreate it outside of this function with node.get_state()?
         //      One way would be to store GlobalState objects inside SearchNodes
@@ -163,10 +139,6 @@ pair<SearchNode, bool> UnsolvableSearch::fetch_next_node() {
     }
 }
 
-void UnsolvableSearch::dump_search_space() const {
-    search_space.dump();
-}
-
 /* TODO: merge this into SearchEngine::add_options_to_parser when all search
          engines support pruning. */
 static void add_pruning_option(OptionParser &parser) {
@@ -181,11 +153,13 @@ static void add_pruning_option(OptionParser &parser) {
 static SearchEngine *_parse(OptionParser &parser) {
     parser.document_synopsis("Breadth-first search", "");
 
-    parser.add_option<shared_ptr<OpenListFactory>>("open", "open list");
+    parser.add_list_option<Heuristic *>("heuristics", "list of heuristics");
 
     add_pruning_option(parser);
     SearchEngine::add_options_to_parser(parser);
     Options opts = parser.parse();
+
+    opts.verify_list_non_empty<Heuristic *>("heuristics");
 
     if (parser.dry_run()) {
         return nullptr;

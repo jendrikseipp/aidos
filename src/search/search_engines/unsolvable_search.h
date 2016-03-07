@@ -3,8 +3,7 @@
 
 #include "../search_engine.h"
 
-#include "../open_lists/open_list.h"
-
+#include <deque>
 #include <memory>
 #include <vector>
 
@@ -19,12 +18,13 @@ class Options;
 
 namespace unsolvable_search {
 class UnsolvableSearch : public SearchEngine {
-    std::unique_ptr<StateOpenList> open_list;
+    std::deque<StateID> queue;
     std::vector<Heuristic *> heuristics;
     std::shared_ptr<PruningMethod> pruning_method;
 
     std::pair<SearchNode, bool> fetch_next_node();
     void print_checkpoint_line(int g) const;
+    bool is_dead_end(const GlobalState &global_state);
 
 protected:
     virtual void initialize() override;
@@ -35,8 +35,6 @@ public:
     virtual ~UnsolvableSearch() = default;
 
     virtual void print_statistics() const override;
-
-    void dump_search_space() const;
 };
 }
 
