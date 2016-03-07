@@ -34,7 +34,7 @@ bool UnsolvableSearch::is_dead_end(const GlobalState &global_state) {
 }
 
 void UnsolvableSearch::initialize() {
-    cout << "Conducting unsolvable search, (real) bound = " << bound
+    cout << "Conducting unsolvable search, unit-cost bound = " << bound
          << endl;
 
     const GlobalState &initial_state = g_initial_state();
@@ -83,7 +83,7 @@ SearchStatus UnsolvableSearch::step() {
     pruning_method->prune_operators(s, applicable_ops);
 
     for (const GlobalOperator *op : applicable_ops) {
-        if ((node.get_real_g() + op->get_cost()) >= bound)
+        if (g + 1 >= bound)
             continue;
 
         GlobalState succ_state = g_state_registry->get_successor_state(s, *op);
@@ -96,9 +96,6 @@ SearchStatus UnsolvableSearch::step() {
             continue;
 
         if (succ_node.is_new()) {
-            // We have not seen this state before.
-            // Evaluate and create a new node.
-
             /*
               Note: we must call reach_state for each heuristic, so
               don't break out of the for loop early.
