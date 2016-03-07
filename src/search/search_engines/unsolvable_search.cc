@@ -1,4 +1,4 @@
-#include "breadth_first_search.h"
+#include "unsolvable_search.h"
 
 #include "search_common.h"
 
@@ -19,15 +19,15 @@
 
 using namespace std;
 
-namespace breadth_first_search {
-BreadthFirstSearch::BreadthFirstSearch(const Options &opts)
+namespace unsolvable_search {
+UnsolvableSearch::UnsolvableSearch(const Options &opts)
     : SearchEngine(opts),
       open_list(opts.get<shared_ptr<OpenListFactory>>("open")->
                 create_state_open_list()),
       pruning_method(opts.get<shared_ptr<PruningMethod>>("pruning")) {
 }
 
-void BreadthFirstSearch::initialize() {
+void UnsolvableSearch::initialize() {
     cout << "Conducting best first search, (real) bound = " << bound
          << endl;
     assert(open_list);
@@ -59,19 +59,19 @@ void BreadthFirstSearch::initialize() {
     print_initial_h_values(eval_context);
 }
 
-void BreadthFirstSearch::print_checkpoint_line(int g) const {
+void UnsolvableSearch::print_checkpoint_line(int g) const {
     cout << "[g=" << g << ", ";
     statistics.print_basic_statistics();
     cout << "]" << endl;
 }
 
-void BreadthFirstSearch::print_statistics() const {
+void UnsolvableSearch::print_statistics() const {
     statistics.print_detailed_statistics();
     search_space.print_statistics();
     pruning_method->print_statistics();
 }
 
-SearchStatus BreadthFirstSearch::step() {
+SearchStatus UnsolvableSearch::step() {
     pair<SearchNode, bool> n = fetch_next_node();
     if (!n.second) {
         return FAILED;
@@ -137,7 +137,7 @@ SearchStatus BreadthFirstSearch::step() {
     return IN_PROGRESS;
 }
 
-pair<SearchNode, bool> BreadthFirstSearch::fetch_next_node() {
+pair<SearchNode, bool> UnsolvableSearch::fetch_next_node() {
     while (true) {
         if (open_list->empty()) {
             cout << "Completely explored state space -- no solution!" << endl;
@@ -163,7 +163,7 @@ pair<SearchNode, bool> BreadthFirstSearch::fetch_next_node() {
     }
 }
 
-void BreadthFirstSearch::dump_search_space() const {
+void UnsolvableSearch::dump_search_space() const {
     search_space.dump();
 }
 
@@ -190,8 +190,8 @@ static SearchEngine *_parse(OptionParser &parser) {
     if (parser.dry_run()) {
         return nullptr;
     }
-    return new BreadthFirstSearch(opts);
+    return new UnsolvableSearch(opts);
 }
 
-static Plugin<SearchEngine> _plugin("breadth_first", _parse);
+static Plugin<SearchEngine> _plugin("unsolvable_search", _parse);
 }

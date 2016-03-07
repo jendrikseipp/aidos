@@ -234,10 +234,10 @@ fast_downward_plugin(
 )
 
 fast_downward_plugin(
-    NAME BREADTH_FIRST_SEARCH
-    HELP "Breadth-first search algorithm"
+    NAME UNSOLVABLE_SEARCH
+    HELP "Unsolvable search algorithm"
     SOURCES
-        search_engines/breadth_first_search.cc
+        search_engines/unsolvable_search.cc
     DEPENDS SEARCH_COMMON NULL_PRUNING_METHOD
 )
 

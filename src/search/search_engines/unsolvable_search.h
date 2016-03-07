@@ -1,5 +1,5 @@
-#ifndef SEARCH_ENGINES_BREADTH_FIRST_SEARCH_H
-#define SEARCH_ENGINES_BREADTH_FIRST_SEARCH_H
+#ifndef SEARCH_ENGINES_UNSOLVABLE_SEARCH_H
+#define SEARCH_ENGINES_UNSOLVABLE_SEARCH_H
 
 #include "../search_engine.h"
 
@@ -17,8 +17,8 @@ namespace options {
 class Options;
 }
 
-namespace breadth_first_search {
-class BreadthFirstSearch : public SearchEngine {
+namespace unsolvable_search {
+class UnsolvableSearch : public SearchEngine {
     std::unique_ptr<StateOpenList> open_list;
     std::vector<Heuristic *> heuristics;
     std::shared_ptr<PruningMethod> pruning_method;
@@ -31,8 +31,8 @@ protected:
     virtual SearchStatus step() override;
 
 public:
-    explicit BreadthFirstSearch(const options::Options &opts);
-    virtual ~BreadthFirstSearch() = default;
+    explicit UnsolvableSearch(const options::Options &opts);
+    virtual ~UnsolvableSearch() = default;
 
     virtual void print_statistics() const override;
 
