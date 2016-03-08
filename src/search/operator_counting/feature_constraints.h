@@ -115,7 +115,7 @@ class FeatureConstraints : public ConstraintGenerator {
     mutable int num_ignored_features;
 
     lp::LPConstraint get_constraint(const Feature &feature, double infinity) const;
-    void add_feature_if_incosistent_with_goal(
+    void add_feature_if_inconsistent_with_goal(
         std::unordered_set<Feature> &features, Feature &&feature) const;
     std::unordered_set<Feature> construct_features(int size);
     void find_features();

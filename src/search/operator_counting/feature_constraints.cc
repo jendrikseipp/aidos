@@ -119,7 +119,7 @@ FeatureConstraints::FeatureConstraints(const options::Options &opts)
       num_ignored_features(0) {
 }
 
-void FeatureConstraints::add_feature_if_incosistent_with_goal(
+void FeatureConstraints::add_feature_if_inconsistent_with_goal(
     unordered_set<Feature> &features, Feature &&feature) const {
     if (feature.is_consistent_with(explicit_goals)) {
         ++num_ignored_features;
@@ -159,7 +159,7 @@ unordered_set<Feature> FeatureConstraints::construct_features(int size) {
                     move(prevail_combo.begin(), prevail_combo.end(), back_inserter(combo));
                     sort(combo.begin(), combo.end());
                     Feature feature(move(combo));
-                    add_feature_if_incosistent_with_goal(features, move(feature));
+                    add_feature_if_inconsistent_with_goal(features, move(feature));
                 }
             }
         }
