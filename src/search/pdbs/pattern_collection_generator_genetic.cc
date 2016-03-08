@@ -273,7 +273,7 @@ void PatternCollectionGeneratorGenetic::genetic_algorithm(
 }
 
 PatternCollectionInformation PatternCollectionGeneratorGenetic::generate(
-    shared_ptr<AbstractTask> task) {
+    shared_ptr<AbstractTask> task, function<bool(const Pattern &)> /*handle_pattern*/) {
     utils::Timer timer;
     genetic_algorithm(task);
     cout << "Pattern generation (Edelkamp) time: " << timer << endl;

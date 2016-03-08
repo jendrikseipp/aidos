@@ -25,7 +25,8 @@ AbstractOperator::AbstractOperator(const vector<pair<int, int>> &prev_pairs,
                                    int cost,
                                    const vector<size_t> &hash_multipliers)
     : cost(cost),
-      regression_preconditions(prev_pairs) {
+      regression_preconditions(prev_pairs),
+      progression_preconditions(prev_pairs) {
     regression_preconditions.insert(regression_preconditions.end(),
                                     eff_pairs.begin(),
                                     eff_pairs.end());
@@ -35,6 +36,18 @@ AbstractOperator::AbstractOperator(const vector<pair<int, int>> &prev_pairs,
         assert(regression_preconditions[i].first !=
                regression_preconditions[i - 1].first);
     }
+
+    progression_preconditions.insert(progression_preconditions.end(),
+                                     pre_pairs.begin(),
+                                     pre_pairs.end());
+    // Sort preconditions for MatchTree construction.
+    sort(progression_preconditions.begin(), progression_preconditions.end());
+    for (size_t i = 1; i < progression_preconditions.size(); ++i) {
+        assert(progression_preconditions[i].first !=
+               progression_preconditions[i - 1].first);
+    }
+
+
     hash_effect = 0;
     assert(pre_pairs.size() == eff_pairs.size());
     for (size_t i = 0; i < pre_pairs.size(); ++i) {
@@ -69,6 +82,7 @@ PatternDatabase::PatternDatabase(
     const TaskProxy &task_proxy,
     const Pattern &pattern,
     bool dump,
+    bool compute_reachability,
     const vector<int> &operator_costs)
     : task_proxy(task_proxy),
       pattern(pattern) {
@@ -86,7 +100,7 @@ PatternDatabase::PatternDatabase(
         VariableProxy var = task_proxy.get_variables()[pattern_var_id];
         num_states *= var.get_domain_size();
     }
-    create_pdb(operator_costs);
+    create_pdb(operator_costs, compute_reachability);
     if (dump)
         cout << "PDB construction time: " << timer << endl;
 }
@@ -178,7 +192,8 @@ void PatternDatabase::build_abstract_operators(
                  operators);
 }
 
-void PatternDatabase::create_pdb(const std::vector<int> &operator_costs) {
+void PatternDatabase::create_pdb(const std::vector<int> &operator_costs,
+                                 bool compute_reachability) {
     VariablesProxy vars = task_proxy.get_variables();
     vector<int> variable_to_index(vars.size(), -1);
     for (size_t i = 0; i < pattern.size(); ++i) {
@@ -197,10 +212,10 @@ void PatternDatabase::create_pdb(const std::vector<int> &operator_costs) {
         build_abstract_operators(op, op_cost, variable_to_index, operators);
     }
 
-    // build the match tree
-    MatchTree match_tree(task_proxy, pattern, hash_multipliers);
+    // build regression match tree
+    MatchTree regression_match_tree(task_proxy, pattern, hash_multipliers);
     for (const AbstractOperator &op : operators) {
-        match_tree.insert(op);
+        regression_match_tree.insert(op, op.get_regression_preconditions());
     }
 
     // compute abstract goal var-val pairs
@@ -238,7 +253,7 @@ void PatternDatabase::create_pdb(const std::vector<int> &operator_costs) {
 
         // regress abstract_state
         vector<const AbstractOperator *> applicable_operators;
-        match_tree.get_applicable_operators(state_index, applicable_operators);
+        regression_match_tree.get_applicable_operators(state_index, applicable_operators);
         for (const AbstractOperator *op : applicable_operators) {
             size_t predecessor = state_index + op->get_hash_effect();
             int alternative_cost = distances[state_index] + op->get_cost();
@@ -247,6 +262,10 @@ void PatternDatabase::create_pdb(const std::vector<int> &operator_costs) {
                 pq.push(alternative_cost, predecessor);
             }
         }
+    }
+
+    if (compute_reachability) {
+        compute_reachable_states(operators);
     }
 }
 
@@ -302,5 +321,61 @@ bool PatternDatabase::is_operator_relevant(const OperatorProxy &op) const {
         }
     }
     return false;
+}
+
+vector<vector<FactProxy>> PatternDatabase::get_dead_ends() const {
+    vector<vector<FactProxy>> dead;
+    VariablesProxy vars = task_proxy.get_variables();
+    for (size_t index = 0; index < distances.size(); ++index) {
+        if (distances[index] != numeric_limits<int>::max())
+            continue;
+        if (!reachable.empty() && !reachable[index]) {
+            continue;
+        }
+        // Reverse index to partial state
+        vector<FactProxy> partial_state;
+        int remaining_index = index;
+        for (int i = pattern.size() - 1; i >= 0; --i) {
+            VariableProxy var = vars[pattern[i]];
+            int value = remaining_index / hash_multipliers[i];
+            partial_state.push_back(var.get_fact(value));
+            remaining_index -= value * hash_multipliers[i];
+        }
+        reverse(partial_state.begin(), partial_state.end());
+        dead.push_back(partial_state);
+    }
+    return dead;
+}
+
+void PatternDatabase::compute_reachable_states(const vector<AbstractOperator> &operators) {
+    // build progression match tree
+    MatchTree progression_match_tree(task_proxy, pattern, hash_multipliers);
+    for (const AbstractOperator &op : operators) {
+        progression_match_tree.insert(op, op.get_progression_preconditions());
+    }
+
+    // reachbility analysis
+    vector<int> queue;
+    reachable = vector<bool>(num_states, false);
+    int initial_state_id = hash_index(task_proxy.get_initial_state());
+    queue.push_back(initial_state_id);
+    while(!queue.empty()) {
+        int index = queue.back();
+        queue.pop_back();
+        if (reachable[index])
+            continue;
+        reachable[index] = true;
+
+        // Assume that this state is pruned and no successors are generated for it
+        if (distances[index] == numeric_limits<int>::max())
+            continue;
+
+        vector<const AbstractOperator *> applicable_operators;
+        progression_match_tree.get_applicable_operators(index, applicable_operators);
+        for (const AbstractOperator *op : applicable_operators) {
+            int successor = index - op->get_hash_effect();
+            queue.push_back(successor);
+        }
+    }
 }
 }

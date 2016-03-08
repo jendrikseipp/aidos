@@ -4,6 +4,7 @@
 #include "pattern_collection_information.h"
 #include "types.h"
 
+#include <functional>
 #include <memory>
 
 class AbstractTask;
@@ -11,7 +12,9 @@ class AbstractTask;
 namespace pdbs {
 class PatternCollectionGenerator {
 public:
-    virtual PatternCollectionInformation generate(std::shared_ptr<AbstractTask> task) = 0;
+    virtual PatternCollectionInformation generate(
+        std::shared_ptr<AbstractTask> task,
+        std::function<bool(const Pattern &)> handle_pattern = nullptr) = 0;
 };
 
 class PatternGenerator {

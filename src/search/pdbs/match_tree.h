@@ -20,6 +20,7 @@ class MatchTree {
     std::vector<size_t> hash_multipliers;
     Node *root;
     void insert_recursive(const AbstractOperator &op,
+                          const std::vector<std::pair<int, int>> &preconditions,
                           int pre_index,
                           Node **edge_from_parent);
     void get_applicable_operators_recursive(
@@ -34,7 +35,8 @@ public:
     ~MatchTree();
     /* Insert an abstract operator into the match tree, creating or
        enlarging it. */
-    void insert(const AbstractOperator &op);
+    void insert(const AbstractOperator &op,
+                const std::vector<std::pair<int, int>> &preconditions);
 
     /*
       Extracts all applicable abstract operators for the abstract state given

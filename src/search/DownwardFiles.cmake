@@ -465,6 +465,7 @@ fast_downward_plugin(
     SOURCES
         pdbs/canonical_pdbs.cc
         pdbs/canonical_pdbs_heuristic.cc
+        pdbs/dead_end_detection_heuristic.cc
         pdbs/dominance_pruning.cc
         pdbs/incremental_canonical_pdbs.cc
         pdbs/match_tree.cc
@@ -476,6 +477,7 @@ fast_downward_plugin(
         pdbs/pattern_collection_generator_genetic.cc
         pdbs/pattern_collection_generator_hillclimbing.cc
         pdbs/pattern_collection_generator_manual.cc
+        pdbs/pattern_collection_generator_ordered_systematic.cc
         pdbs/pattern_collection_generator_systematic.cc
         pdbs/pattern_generator_greedy.cc
         pdbs/pattern_generator_manual.cc
