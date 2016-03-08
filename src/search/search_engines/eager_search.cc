@@ -359,7 +359,8 @@ static SearchEngine *_parse(OptionParser &parser) {
     parser.add_option<int>(
         "f_bound",
         "inclusive bound on f values",
-        "infinity");
+        "infinity",
+        Bounds("0", "infinity"));
 
     add_pruning_option(parser);
     SearchEngine::add_options_to_parser(parser);
@@ -400,7 +401,8 @@ static SearchEngine *_parse_astar(OptionParser &parser) {
     parser.add_option<int>(
         "f_bound",
         "inclusive bound on f values",
-        "infinity");
+        "infinity",
+        Bounds("0", "infinity"));
 
     add_pruning_option(parser);
     SearchEngine::add_options_to_parser(parser);
