@@ -142,7 +142,7 @@ PDBDeadEndDetectionHeuristic::PDBDeadEndDetectionHeuristic(const options::Option
       max_dead_ends(opts.get<int>("max_dead_ends")) {
     shared_ptr<PatternCollectionGenerator> pattern_generator =
         opts.get<shared_ptr<PatternCollectionGenerator>>("patterns");
-    utils::CountdownTimer timer(opts.get<int>("max_time"));
+    utils::CountdownTimer timer(opts.get<double>("max_time"));
     State initial_state = task_proxy.get_initial_state();
     pattern_generator->generate(task, [&](const Pattern &pattern) {
         return add_pattern_dead_ends(pattern, timer, initial_state);
@@ -185,15 +185,17 @@ static Heuristic *_parse(OptionParser &parser) {
         "pattern generation method",
         "ordered_systematic(infinity)");
 
-    parser.add_option<int>(
+    parser.add_option<double>(
         "max_time",
         "maximal time used to search for dead ends",
-        "900");
+        "900",
+        Bounds("0", "infinity"));
 
     parser.add_option<int>(
         "max_dead_ends",
         "maximal number of dead ends stored before starting the search",
-        "10000000");
+        "10000000",
+        Bounds("0", "infinity"));
 
     Heuristic::add_options_to_parser(parser);
 
