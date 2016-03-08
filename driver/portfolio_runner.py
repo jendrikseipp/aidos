@@ -163,7 +163,7 @@ def run_sat(configs, executable, sas_file, plan_manager, final_config,
 
 
 def run_unsolvable_resource_detection(
-        executable, args, sas_file, plan_manager, run_time, memory):
+        executable, args, sas_file, run_time, memory):
     from .resources import detect
     from . import plan_manager
     projected_sas_file = sas_file.rstrip("/") + ".projected"
@@ -187,9 +187,9 @@ def run_unsolvable_resource_detection(
 def run_opt(configs, executable, sas_file, plan_manager, timeout, memory):
     for pos, (relative_time, args) in enumerate(configs):
         run_time = compute_run_time(timeout, configs, pos)
-        if any("f_bound" in x for x in args):
+        if any("f_bound=F_BOUND" in x for x in args):
             exitcode = run_unsolvable_resource_detection(
-                executable, args, sas_file, plan_manager, run_time, memory)
+                executable, args, sas_file, run_time, memory)
         else:
             exitcode = run_search(
                 executable, args, sas_file, plan_manager, run_time, memory)
