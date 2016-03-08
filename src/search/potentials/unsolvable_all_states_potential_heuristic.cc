@@ -20,9 +20,8 @@ UnsolvableAllStatesPotentialHeuristic::UnsolvableAllStatesPotentialHeuristic(
       lp_solver(lp::LPSolverType(opts.get_enum("lpsolver"))) {
     construct_lp();
     lp_solver.solve();
-    if (lp_solver.has_optimal_solution()) {
-        potential_function = extract_potential_function();
-    }
+    assert(lp_solver.has_optimal_solution());
+    potential_function = extract_potential_function();
 }
 
 UnsolvableAllStatesPotentialHeuristic::~UnsolvableAllStatesPotentialHeuristic() {
@@ -72,7 +71,6 @@ void UnsolvableAllStatesPotentialHeuristic::construct_lp() {
             var_to_precondition[pre.get_variable().get_id()] = pre.get_value();
         }
         lp::LPConstraint constraint(-lp_solver.get_infinity(), 0);
-        vector<pair<int, int>> coefficients;
         for (EffectProxy effect : op.get_effects()) {
             VariableProxy var = effect.get_fact().get_variable();
             int var_id = var.get_id();
@@ -90,13 +88,10 @@ void UnsolvableAllStatesPotentialHeuristic::construct_lp() {
             int pre_lp = lp_var_ids[var_id][pre];
             int post_lp = lp_var_ids[var_id][post];
             assert(pre_lp != post_lp);
-            coefficients.emplace_back(pre_lp, 1);
-            coefficients.emplace_back(post_lp, -1);
+            constraint.insert(pre_lp, 1);
+            constraint.insert(post_lp, -1);
         }
-        //sort(coefficients.begin(), coefficients.end());
-        for (const auto &coeff : coefficients)
-            constraint.insert(coeff.first, coeff.second);
-        lp_constraints.push_back(constraint);
+        lp_constraints.push_back(move(constraint));
     }
 
     /* Create full goal state. Use value |dom(V)| as "undefined" value
@@ -163,9 +158,7 @@ unique_ptr<PotentialFunction>
 
 int UnsolvableAllStatesPotentialHeuristic::compute_heuristic(
     const GlobalState &global_state) {
-    if (!potential_function) {
-        return DEAD_END;
-    }
+    assert(potential_function);
     State state = task_proxy.convert_global_state(global_state);
     int h = potential_function->get_value(state);
     if (h >= 1) {
