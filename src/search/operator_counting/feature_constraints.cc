@@ -18,7 +18,6 @@ ostream &operator<<(std::ostream &os, const Fact &fact) {
 }
 
 namespace operator_counting {
-
 static const int NONE = -1;
 
 struct ExplicitOperator {
@@ -154,7 +153,7 @@ unordered_set<Feature> FeatureConstraints::construct_features(int size) {
                 // Note that we could directly use effect_combo if num_prevails = 0.
                 const int num_prevails = size - num_chosen_effects;
                 for (vector<Fact> &prevail_combo : combos.get_combinations(
-                        prevail_conditions, num_prevails)) {
+                         prevail_conditions, num_prevails)) {
                     vector<Fact> combo = effect_combo;
                     combo.reserve(size);
                     move(prevail_combo.begin(), prevail_combo.end(), back_inserter(combo));
@@ -208,13 +207,6 @@ void FeatureConstraints::initialize_constraints(
     verify_no_conditional_effects(task_proxy);
 
     int num_vars = task_proxy.get_variables().size();
-    initial_state.reserve(num_vars);
-    for (FactProxy fact : task_proxy.get_initial_state()) {
-        int var_id = fact.get_variable().get_id();
-        int value = fact.get_value();
-        initial_state.emplace_back(value);
-        initial_state_facts.emplace_back(var_id, value);
-    }
     for (OperatorProxy op : task_proxy.get_operators()) {
         explicit_ops.emplace_back(op, num_vars);
     }

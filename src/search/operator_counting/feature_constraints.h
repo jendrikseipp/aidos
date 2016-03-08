@@ -51,7 +51,7 @@ class Combinations {
     }
 
 public:
-    std::vector<std::vector<T>> &&get_combinations(
+    std::vector<std::vector<T>> && get_combinations(
         const std::vector<T> &sequence, int k) {
         assert(k >= 0);
         combinations.clear();
@@ -91,7 +91,6 @@ public:
 };
 
 std::ostream &operator<<(std::ostream &os, const Feature &feature);
-
 }
 
 namespace std {
@@ -105,13 +104,10 @@ struct hash<operator_counting::Feature> {
 }
 
 namespace operator_counting {
-
 class FeatureConstraints : public ConstraintGenerator {
     const int max_size;
     int constraint_offset;
 
-    std::vector<int> initial_state;
-    std::vector<Fact> initial_state_facts;
     std::vector<ExplicitOperator> explicit_ops;
     std::vector<int> explicit_goals;
     std::vector<Feature> features;
