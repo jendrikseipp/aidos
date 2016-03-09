@@ -153,7 +153,7 @@ unique_ptr<PotentialFunction>
         fact_potentials[fact.get_variable().get_id()][fact.get_value()] =
             solution[get_lp_var_id(fact)];
     }
-    return utils::make_unique_ptr<PotentialFunction>(fact_potentials);
+    return utils::make_unique_ptr<PotentialFunction>(move(fact_potentials));
 }
 
 int UnsolvableAllStatesPotentialHeuristic::compute_heuristic(
