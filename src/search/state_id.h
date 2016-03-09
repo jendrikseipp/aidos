@@ -13,13 +13,15 @@ class StateID {
     friend class PerStateInformation;
 
     int value;
-    explicit StateID(int value_)
-        : value(value_) {
-    }
 
     // No implementation to prevent default construction
     StateID();
 public:
+    // HACK: made this public for UnsolvableDFSSearch
+    explicit StateID(int value_)
+        : value(value_) {
+    }
+
     ~StateID() {
     }
 
