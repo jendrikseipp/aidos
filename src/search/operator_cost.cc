@@ -21,6 +21,8 @@ int get_adjusted_action_cost(int cost, OperatorCost cost_type) {
             return 1;
         else
             return cost + 1;
+    case ZERO:
+        return 0;
     default:
         ABORT("Unknown cost type");
     }
@@ -50,6 +52,9 @@ void add_cost_type_option_to_parser(OptionParser &parser) {
         "This is the behaviour known for the heuristics of the LAMA planner. "
         "This is intended to be used by the heuristics, not search engines, "
         "but is supported for both.");
+    cost_types.push_back("ZERO");
+    cost_types_doc.push_back(
+        "all actions have zero cost");
     parser.add_enum_option(
         "cost_type",
         cost_types,
