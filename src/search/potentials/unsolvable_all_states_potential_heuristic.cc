@@ -43,23 +43,26 @@ int UnsolvableAllStatesPotentialHeuristic::get_lp_var_id(
 void UnsolvableAllStatesPotentialHeuristic::construct_lp() {
     VariablesProxy vars = task_proxy.get_variables();
     lp_var_ids.resize(vars.size());
-    int num_lp_vars = 0;
-    for (VariableProxy var : vars) {
-        // Add LP variable for "undefined" value.
-        lp_var_ids[var.get_id()].resize(var.get_domain_size() + 1);
-        for (int val = 0; val < var.get_domain_size() + 1; ++val) {
-            lp_var_ids[var.get_id()][val] = num_lp_vars++;
-        }
-    }
 
     vector<lp::LPVariable> lp_variables;
-    for (int lp_var_id = 0; lp_var_id < num_lp_vars; ++lp_var_id) {
-        // Use dummy coefficient for now. Adapt coefficient below.
-        lp_variables.emplace_back(-lp_solver.get_infinity(), max_potential, 1.0);
-    }
-    for (FactProxy fact : task_proxy.get_variables().get_facts()) {
-        lp_variables[get_lp_var_id(fact)].objective_coefficient =
-            1.0 / fact.get_variable().get_domain_size();
+    for (VariableProxy var : vars) {
+        const int var_id = var.get_id();
+        const int orig_domain_size = var.get_domain_size();
+        // Note the "+1" for "undefined" facts.
+        lp_var_ids[var_id].resize(orig_domain_size + 1);
+        /* Add LP variable for each "real" fact. Set its coefficient to
+           the fraction of syntactic states it appears in. Ignore
+           "undefined" facts here. They're not part of any state. */
+        const double coefficient = 1.0 / orig_domain_size;
+        for (int value = 0; value < orig_domain_size; ++value) {
+            lp_var_ids[var_id][value] = lp_variables.size();
+            lp_variables.emplace_back(
+                -lp_solver.get_infinity(), max_potential, coefficient);
+        }
+        // Add LP variable for "undefined" fact.
+        const int undefined_value = orig_domain_size;
+        lp_var_ids[var_id][undefined_value] = lp_variables.size();
+        lp_variables.emplace_back(-lp_solver.get_infinity(), max_potential, 0.0);
     }
 
     vector<lp::LPConstraint> lp_constraints;
