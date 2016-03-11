@@ -92,7 +92,9 @@ static void add_pruning_option(OptionParser &parser) {
 }
 
 static SearchEngine *_parse(OptionParser &parser) {
-    parser.document_synopsis("Depth-first search with full duplicate detection for showing unsolvability", "");
+    parser.document_synopsis(
+        "Unsolvable depth-first search",
+        "Depth-first search with full duplicate detection for showing unsolvability");
 
     parser.add_list_option<Heuristic *>("heuristics", "list of heuristics");
 
@@ -104,6 +106,7 @@ static SearchEngine *_parse(OptionParser &parser) {
     opts.set<int>("cost_type", static_cast<int>(ONE));
 
     if (opts.get<int>("bound") < numeric_limits<int>::max()) {
+        cerr << "Unsolvable DFS doesn't support g-bound." << endl;
         utils::exit_with(utils::ExitCode::UNSUPPORTED);
     }
 

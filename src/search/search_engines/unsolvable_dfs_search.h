@@ -6,10 +6,8 @@
 #include <memory>
 #include <vector>
 
-class GlobalOperator;
 class Heuristic;
 class PruningMethod;
-class ScalarEvaluator;
 
 namespace options {
 class Options;
