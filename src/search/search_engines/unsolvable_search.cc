@@ -21,6 +21,12 @@ UnsolvableSearch::UnsolvableSearch(const Options &opts)
       pruning_method(opts.get<shared_ptr<PruningMethod>>("pruning")),
       max_g(0) {
     assert(cost_type == ONE);
+    for (Heuristic *heuristic : heuristics) {
+        if (!heuristic->dead_ends_are_reliable()) {
+            cerr << "Unsolvable search only supports safe heuristics." << endl;
+            utils::exit_with(utils::ExitCode::UNSUPPORTED);
+        }
+    }
 }
 
 bool UnsolvableSearch::is_dead_end(const GlobalState &global_state) {
