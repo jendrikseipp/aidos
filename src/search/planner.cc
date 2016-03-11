@@ -47,7 +47,7 @@ int main(int argc, const char **argv) {
     cout << "Search time: " << search_timer << endl;
     cout << "Total time: " << utils::g_timer << endl;
 
-    if (engine->found_solution()) {
+    if (engine->get_status() == SOLVED) {
         utils::exit_with(ExitCode::PLAN_FOUND);
     } else {
         utils::exit_with(ExitCode::UNSOLVED_INCOMPLETE);
