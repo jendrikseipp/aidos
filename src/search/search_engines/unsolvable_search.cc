@@ -69,7 +69,7 @@ void UnsolvableSearch::print_statistics() const {
 SearchStatus UnsolvableSearch::step() {
     pair<SearchNode, bool> n = fetch_next_node();
     if (!n.second) {
-        return FAILED;
+        return UNSOLVABLE;
     }
     SearchNode node = n.first;
 

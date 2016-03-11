@@ -49,6 +49,8 @@ int main(int argc, const char **argv) {
 
     if (engine->get_status() == SOLVED) {
         utils::exit_with(ExitCode::PLAN_FOUND);
+    } else if (engine->get_status() == UNSOLVABLE) {
+        utils::exit_with(ExitCode::UNSOLVABLE);
     } else {
         utils::exit_with(ExitCode::UNSOLVED_INCOMPLETE);
     }

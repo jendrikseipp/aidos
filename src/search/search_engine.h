@@ -16,7 +16,7 @@ class OptionParser;
 class Options;
 }
 
-enum SearchStatus {IN_PROGRESS, TIMEOUT, FAILED, SOLVED};
+enum SearchStatus {IN_PROGRESS, TIMEOUT, FAILED, SOLVED, UNSOLVABLE};
 
 class SearchEngine {
 public:

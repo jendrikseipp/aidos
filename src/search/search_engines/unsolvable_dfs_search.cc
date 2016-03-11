@@ -57,7 +57,7 @@ void UnsolvableDFSSearch::print_statistics() const {
 SearchStatus UnsolvableDFSSearch::step() {
     if (current_state_id == static_cast<int>(g_state_registry->size())) {
         // We checked all states in the registry without finding a goal.
-        return FAILED;
+        return UNSOLVABLE;
     }
 
     GlobalState s = g_state_registry->lookup_state(StateID(current_state_id));
