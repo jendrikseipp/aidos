@@ -99,6 +99,11 @@ SearchStatus UnsolvableSearch::step() {
             /*
               Note: we must call reach_state for each heuristic, so
               don't break out of the for loop early.
+
+              If we ever support path-dependent heuristics, we could
+              merge this loop with the loop in is_dead_end to avoid
+              calling reach_state of the second heuristic if the first
+              one reports a dead end.
             */
             for (Heuristic *heuristic : heuristics) {
                 heuristic->reach_state(s, *op, succ_state);
