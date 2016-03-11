@@ -135,6 +135,14 @@ string Heuristic::get_description() const {
     return description;
 }
 
+bool Heuristic::is_dead_end(const GlobalState &global_state) {
+    if (!initialized) {
+        initialize();
+        initialized = true;
+    }
+    return compute_heuristic(global_state) == DEAD_END;
+}
+
 
 static PluginTypePlugin<Heuristic> _type_plugin(
     "Heuristic",
