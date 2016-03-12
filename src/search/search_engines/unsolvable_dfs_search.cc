@@ -31,7 +31,9 @@ UnsolvableDFSSearch::UnsolvableDFSSearch(const Options &opts)
 bool UnsolvableDFSSearch::is_dead_end(const GlobalState &global_state) {
     statistics.inc_evaluated_states();
     for (Heuristic *heuristic : heuristics) {
+        statistics.inc_evaluations();
         if (heuristic->is_dead_end(global_state)) {
+            statistics.inc_dead_ends();
             return true;
         }
     }
@@ -61,9 +63,10 @@ SearchStatus UnsolvableDFSSearch::step() {
     }
 
     GlobalState s = g_state_registry->lookup_state(StateID(current_state_id));
+    statistics.inc_expanded();
     /* Next time we'll look at the next state that was created in the registry.
        This results in a depth-first order. */
-    current_state_id++;
+    ++current_state_id;
 
     if (!is_dead_end(s)) {
         if (test_goal(s)) {

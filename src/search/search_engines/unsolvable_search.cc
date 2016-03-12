@@ -32,7 +32,9 @@ UnsolvableSearch::UnsolvableSearch(const Options &opts)
 bool UnsolvableSearch::is_dead_end(const GlobalState &global_state) {
     statistics.inc_evaluated_states();
     for (Heuristic *heuristic : heuristics) {
+        statistics.inc_evaluations();
         if (heuristic->is_dead_end(global_state)) {
+            statistics.inc_dead_ends();
             return true;
         }
     }
