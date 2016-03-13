@@ -193,10 +193,6 @@ public:
         const std::vector<std::pair<int, std::vector<int>>> &label_mapping,
         bool only_equivalent_labels);
 
-    void label_inheritance(
-        const utils::DynamicBitset<unsigned short> &irrelevant_labels_in_all_other_ts);
-    void prune_transitions_of_goal_states();
-
     TSConstIterator begin() const {
         return TSConstIterator(*label_equivalence_relation,
                                transitions_by_group_id,
