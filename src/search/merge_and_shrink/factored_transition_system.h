@@ -25,7 +25,6 @@ class FactoredTransitionSystem {
     std::vector<std::unique_ptr<TransitionSystem>> transition_systems;
     std::vector<std::unique_ptr<HeuristicRepresentation>> heuristic_representations;
     std::vector<std::unique_ptr<Distances>> distances;
-    bool only_dead_end_detection;
     int final_index;
     bool solvable;
     // TODO: add something like "current_index"? for shrink classes e.g.
@@ -43,8 +42,7 @@ public:
         std::unique_ptr<Labels> labels,
         std::vector<std::unique_ptr<TransitionSystem>> &&transition_systems,
         std::vector<std::unique_ptr<HeuristicRepresentation>> &&heuristic_representations,
-        std::vector<std::unique_ptr<Distances>> &&distances,
-        bool only_dead_end_detection);
+        std::vector<std::unique_ptr<Distances>> &&distances);
     FactoredTransitionSystem(FactoredTransitionSystem &&other);
     ~FactoredTransitionSystem();
 
@@ -73,7 +71,6 @@ public:
         return solvable;
     }
     int get_cost(const State &state) const;
-    bool is_dead_end(const State &state) const;
     void statistics(int index, const utils::Timer &timer) const;
     void dump(int index) const;
 

@@ -31,7 +31,6 @@ MergeAndShrinkHeuristic::MergeAndShrinkHeuristic(const Options &opts)
       merge_strategy(opts.get<shared_ptr<MergeStrategy>>("merge_strategy")),
       shrink_strategy(opts.get<shared_ptr<ShrinkStrategy>>("shrink_strategy")),
       label_reduction(nullptr),
-      only_dead_end_detection(opts.get<bool>("only_dead_end_detection")),
       starting_peak_memory(-1),
       fts(nullptr) {
     /*
@@ -106,7 +105,7 @@ void MergeAndShrinkHeuristic::build_transition_system(const utils::Timer &timer)
     //       allocates memory.
 
     fts = utils::make_unique_ptr<FactoredTransitionSystem>(
-        create_factored_transition_system(task_proxy, only_dead_end_detection));
+        create_factored_transition_system(task_proxy));
     cout << endl;
 
     int final_index = -1; // TODO: get rid of this
@@ -160,11 +159,9 @@ void MergeAndShrinkHeuristic::build_transition_system(const utils::Timer &timer)
         fts->finalize();
         // TODO: after adopting the task interface everywhere, change this
         // back to compute_heuristic(task_proxy.get_initial_state())
-        if (!only_dead_end_detection) {
-            cout << "initial h value: "
-                 << fts->get_cost(task_proxy.get_initial_state())
-                 << endl;
-        }
+        cout << "initial h value: "
+             << fts->get_cost(task_proxy.get_initial_state())
+             << endl;
     } else {
         cout << "Abstract problem is unsolvable!" << endl;
     }
@@ -192,18 +189,10 @@ void MergeAndShrinkHeuristic::initialize() {
 
 int MergeAndShrinkHeuristic::compute_heuristic(const GlobalState &global_state) {
     State state = convert_global_state(global_state);
-    if (only_dead_end_detection) {
-        if (fts->is_dead_end(state)) {
-            return DEAD_END;
-        } else {
-            return 0;
-        }
-    } else {
-        int cost = fts->get_cost(state);
-        if (cost == -1)
-            return DEAD_END;
-        return cost;
-    }
+    int cost = fts->get_cost(state);
+    if (cost == -1)
+        return DEAD_END;
+    return cost;
 }
 
 static Heuristic *_parse(OptionParser &parser) {
@@ -274,11 +263,6 @@ static Heuristic *_parse(OptionParser &parser) {
         "one 'option' to use label_reduction. Also note the interaction "
         "with shrink strategies.",
         OptionParser::NONE);
-
-    parser.add_option<bool>(
-        "only_dead_end_detection",
-        "do not compute heuristic estimates",
-        "false");
 
     Heuristic::add_options_to_parser(parser);
     Options opts = parser.parse();
