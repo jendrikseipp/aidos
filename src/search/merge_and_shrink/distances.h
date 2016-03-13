@@ -53,9 +53,7 @@ class Distances {
     int max_g;
     int max_h;
 
-public: // public for modlabel shrinking
     void clear_distances();
-private:
     int get_num_states() const;
     bool is_unit_cost() const;
 

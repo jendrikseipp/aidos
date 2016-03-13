@@ -62,7 +62,6 @@ public:
     const Distances &get_dist(int index) const {
         return *distances[index];
     }
-    void recompute_distances(int index);
 
     // Methods for the merge-and-shrink main loop
     void apply_label_reduction(
