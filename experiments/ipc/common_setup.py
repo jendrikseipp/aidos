@@ -127,7 +127,7 @@ class IssueExperiment(FastDownwardExperiment):
         "expansions",
         "expansions_until_last_jump",
         "generated",
-        "raw_memory",
+        "memory",
         "quality",
         "run_dir",
         "score_evaluations",
@@ -218,6 +218,7 @@ class IssueExperiment(FastDownwardExperiment):
 
         if is_test_run():
             kwargs["environment"] = LocalEnvironment(processes=processes)
+            suite = test_suite or self.DEFAULT_TEST_SUITE
         elif "environment" not in kwargs:
             kwargs["environment"] = MaiaEnvironment(
                 priority=grid_priority, email=email)

@@ -95,7 +95,7 @@ void PatternCollectionGeneratorSystematic::compute_connection_points(
 
     // Handle rule 1.
     for (int var : pattern) {
-        const vector<int> &pred = cg.get_predecessors(var);
+        const vector<int> &pred = cg.get_successors(var);
         candidates.insert(pred.begin(), pred.end());
     }
 
@@ -112,14 +112,19 @@ void PatternCollectionGeneratorSystematic::compute_connection_points(
     result.assign(candidates.begin(), candidates.end());
 }
 
-void PatternCollectionGeneratorSystematic::enqueue_pattern_if_new(
-    const Pattern &pattern) {
-    if (pattern_set.insert(pattern).second)
+bool PatternCollectionGeneratorSystematic::enqueue_pattern_if_new(
+    const Pattern &pattern, function<bool(const Pattern &)> handle_pattern) {
+    if (pattern_set.insert(pattern).second) {
         patterns->push_back(pattern);
+        if (handle_pattern) {
+            return handle_pattern(pattern);
+        }
+    }
+    return false;
 }
 
-void PatternCollectionGeneratorSystematic::build_sga_patterns(
-    TaskProxy task_proxy, const CausalGraph &cg) {
+bool PatternCollectionGeneratorSystematic::build_sga_patterns(
+    TaskProxy task_proxy, const CausalGraph &cg, function<bool(const Pattern &)> handle_pattern) {
     assert(max_pattern_size >= 1);
     assert(pattern_set.empty());
     assert(patterns && patterns->empty());
@@ -143,7 +148,10 @@ void PatternCollectionGeneratorSystematic::build_sga_patterns(
         int var_id = goal.get_variable().get_id();
         Pattern goal_pattern;
         goal_pattern.push_back(var_id);
-        enqueue_pattern_if_new(goal_pattern);
+        if (enqueue_pattern_if_new(goal_pattern, handle_pattern)) {
+            pattern_set.clear();
+            return true;
+        }
     }
 
     /*
@@ -163,23 +171,27 @@ void PatternCollectionGeneratorSystematic::build_sga_patterns(
             Pattern new_pattern(pattern);
             new_pattern.push_back(neighbor_var_id);
             sort(new_pattern.begin(), new_pattern.end());
-
-            enqueue_pattern_if_new(new_pattern);
+            if (enqueue_pattern_if_new(new_pattern, handle_pattern)) {
+                pattern_set.clear();
+                return true;
+            }
         }
     }
 
     pattern_set.clear();
+    return false;
 }
 
 void PatternCollectionGeneratorSystematic::build_patterns(
-    TaskProxy task_proxy) {
+    TaskProxy task_proxy, function<bool(const Pattern &)> handle_pattern) {
     int num_variables = task_proxy.get_variables().size();
     const CausalGraph &cg = task_proxy.get_causal_graph();
+    bool done = false;
 
     // Generate SGA (single-goal-ancestor) patterns.
     // They are generated into the patterns variable,
     // so we swap them from there.
-    build_sga_patterns(task_proxy, cg);
+    build_sga_patterns(task_proxy, cg, handle_pattern);
     PatternCollection sga_patterns;
     patterns->swap(sga_patterns);
 
@@ -197,8 +209,10 @@ void PatternCollectionGeneratorSystematic::build_patterns(
     }
 
     // Enqueue the SGA patterns.
-    for (const Pattern &pattern : sga_patterns)
-        enqueue_pattern_if_new(pattern);
+    for (const Pattern &pattern : sga_patterns) {
+        done = enqueue_pattern_if_new(pattern, handle_pattern);
+        if (done) break;
+    }
 
 
     cout << "Found " << sga_patterns.size() << " SGA patterns." << endl;
@@ -214,7 +228,6 @@ void PatternCollectionGeneratorSystematic::build_patterns(
 
         vector<int> neighbors;
         compute_connection_points(cg, pattern1, neighbors);
-
         for (int neighbor_var : neighbors) {
             const auto &candidates = sga_patterns_by_var[neighbor_var];
             for (const Pattern *p_pattern2 : candidates) {
@@ -224,10 +237,13 @@ void PatternCollectionGeneratorSystematic::build_patterns(
                 if (patterns_are_disjoint(pattern1, pattern2)) {
                     Pattern new_pattern;
                     compute_union_pattern(pattern1, pattern2, new_pattern);
-                    enqueue_pattern_if_new(new_pattern);
+                    done = enqueue_pattern_if_new(new_pattern, handle_pattern);
+                    if (done) break;
                 }
             }
+            if (done) break;
         }
+        if (done) break;
     }
 
     pattern_set.clear();
@@ -235,11 +251,13 @@ void PatternCollectionGeneratorSystematic::build_patterns(
 }
 
 void PatternCollectionGeneratorSystematic::build_patterns_naive(
-    TaskProxy task_proxy) {
+    TaskProxy task_proxy, function<bool(const Pattern &)> handle_pattern) {
     int num_variables = task_proxy.get_variables().size();
     PatternCollection current_patterns(1);
     PatternCollection next_patterns;
+    bool done = false;
     for (size_t i = 0; i < max_pattern_size; ++i) {
+        cout << "Generating patterns of size " << i+1 << endl;
         for (const Pattern &current_pattern : current_patterns) {
             int max_var = -1;
             if (i > 0)
@@ -249,24 +267,29 @@ void PatternCollectionGeneratorSystematic::build_patterns_naive(
                 pattern.push_back(var);
                 next_patterns.push_back(pattern);
                 patterns->push_back(pattern);
+                if (handle_pattern)
+                    done = handle_pattern(pattern);
+                if (done) break;
             }
+            if (done) break;
         }
         next_patterns.swap(current_patterns);
         next_patterns.clear();
+        if (done) break;
     }
 
     cout << "Found " << patterns->size() << " patterns." << endl;
 }
 
 PatternCollectionInformation PatternCollectionGeneratorSystematic::generate(
-    shared_ptr<AbstractTask> task) {
+    shared_ptr<AbstractTask> task, function<bool(const Pattern &)> handle_pattern) {
     TaskProxy task_proxy(*task);
     patterns = make_shared<PatternCollection>();
     pattern_set.clear();
     if (only_interesting_patterns) {
-        build_patterns(task_proxy);
+        build_patterns(task_proxy, handle_pattern);
     } else {
-        build_patterns_naive(task_proxy);
+        build_patterns_naive(task_proxy, handle_pattern);
     }
     return PatternCollectionInformation(task, patterns);
 }

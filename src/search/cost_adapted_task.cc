@@ -44,6 +44,8 @@ int CostAdaptedTask::get_operator_cost(int index, bool is_axiom) const {
             return 1;
         else
             return original_cost + 1;
+    case ZERO:
+        return 0;
     default:
         cerr << "Unknown cost type" << endl;
         utils::exit_with(ExitCode::CRITICAL_ERROR);

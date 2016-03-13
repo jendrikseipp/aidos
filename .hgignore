@@ -1,5 +1,5 @@
 \.pyc$
-^experiments/ipc/
+^experiments/ipc/data/
 ^experiments/issue[0-9]*/data/
 ^experiments/issue[0-9]*/.*.-microbenchmark/\.obj/
 ^experiments/issue[0-9]*/.*.-microbenchmark/benchmark$
@@ -7,3 +7,5 @@
 ^misc/autodoc/downward-xmlrpc\.secret$
 ^builds/
 ^src/CMakeLists.txt.user$
+syntax: glob
+experiments/ipc/data

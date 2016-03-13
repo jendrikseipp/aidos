@@ -244,6 +244,22 @@ fast_downward_plugin(
 )
 
 fast_downward_plugin(
+    NAME UNSOLVABLE_SEARCH
+    HELP "Unsolvable search algorithm"
+    SOURCES
+        search_engines/unsolvable_search.cc
+    DEPENDS SEARCH_COMMON NULL_PRUNING_METHOD
+)
+
+fast_downward_plugin(
+    NAME UNSOLVABLE_DFS_SEARCH
+    HELP "Unsolvable DFS search algorithm"
+    SOURCES
+        search_engines/unsolvable_dfs_search.cc
+    DEPENDS SEARCH_COMMON NULL_PRUNING_METHOD
+)
+
+fast_downward_plugin(
     NAME EAGER_SEARCH
     HELP "Eager search algorithm"
     SOURCES
@@ -394,7 +410,7 @@ fast_downward_plugin(
         cegar/abstract_search.cc
         cegar/abstract_state.cc
         cegar/additive_cartesian_heuristic.cc
-        cegar/cartesian_heuristic.cc
+        cegar/cartesian_heuristic_function.cc
         cegar/domains.cc
         cegar/refinement_hierarchy.cc
         cegar/split_selector.cc
@@ -470,6 +486,7 @@ fast_downward_plugin(
     SOURCES
         pdbs/canonical_pdbs.cc
         pdbs/canonical_pdbs_heuristic.cc
+        pdbs/dead_end_detection_heuristic.cc
         pdbs/dominance_pruning.cc
         pdbs/incremental_canonical_pdbs.cc
         pdbs/match_tree.cc
@@ -481,6 +498,7 @@ fast_downward_plugin(
         pdbs/pattern_collection_generator_genetic.cc
         pdbs/pattern_collection_generator_hillclimbing.cc
         pdbs/pattern_collection_generator_manual.cc
+        pdbs/pattern_collection_generator_ordered_systematic.cc
         pdbs/pattern_collection_generator_systematic.cc
         pdbs/pattern_generator_greedy.cc
         pdbs/pattern_generator_manual.cc
@@ -503,6 +521,7 @@ fast_downward_plugin(
         potentials/potential_optimizer.cc
         potentials/sample_based_potential_heuristics.cc
         potentials/single_potential_heuristics.cc
+        potentials/unsolvable_all_states_potential_heuristic.cc
         potentials/util.cc
     DEPENDS LP_SOLVER
 )

@@ -95,6 +95,8 @@ public:
     bool is_h_dirty(GlobalState &state) {
         return heuristic_cache[state].dirty;
     }
+
+    bool is_dead_end(const GlobalState &global_state);
 };
 
 #endif
