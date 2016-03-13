@@ -2,6 +2,9 @@ set(PLANNER_SOURCES
         planner.cc
 )
 
+# See http://www.fast-downward.org/ForDevelopers/AddingSourceFiles
+# for general information on adding source files and CMake plugins.
+#
 # If you're adding a file to the codebase which *isn't* a plugin, add
 # it to the following list. We assume that every *.cc file has a
 # corresponding *.h file and add headers to the project automatically.
@@ -398,7 +401,7 @@ fast_downward_plugin(
         cegar/subtask_generators.cc
         cegar/utils.cc
         cegar/utils_landmarks.cc
-    DEPENDS EXTRA_TASKS
+    DEPENDS ADDITIVE_HEURISTIC EXTRA_TASKS LANDMARKS
 )
 
 fast_downward_plugin(
