@@ -5,6 +5,7 @@
 #include "factored_transition_system.h"
 #include "transition_system.h"
 
+#include "../globals.h"
 #include "../option_parser.h"
 #include "../plugin.h"
 #include "../scc.h"
@@ -25,10 +26,70 @@ namespace merge_and_shrink {
 using Bitset = utils::DynamicBitset<unsigned short>;
 
 ShrinkModLabelApprox::ShrinkModLabelApprox(const Options &opts)
-    : ShrinkModLabel(opts) {
+    : ShrinkBisimulation(opts) {
 }
 
 ShrinkModLabelApprox::~ShrinkModLabelApprox() {
+}
+
+Bitset ShrinkModLabelApprox::compute_irrelevant_in_all_other_ts_labels(
+    const FactoredTransitionSystem &fts,
+    int excluded_ts_index) const {
+    int num_ts = fts.get_size();
+    int num_labels = fts.get_labels().get_size();
+    Bitset irrelevant_labels_in_all_other_ts(num_labels);
+    irrelevant_labels_in_all_other_ts.set();
+    for (int ts_index = 0; ts_index < num_ts; ++ts_index) {
+        if (fts.is_active(ts_index) && ts_index != excluded_ts_index) {
+            Bitset irrelevant_labels(num_labels);
+            const TransitionSystem &ts = fts.get_ts(ts_index);
+            for (const GroupAndTransitions &gat : ts) {
+                const vector<Transition> &transitions = gat.transitions;
+                bool group_relevant = false;
+                if (static_cast<int>(transitions.size()) == ts.get_size()) {
+                    /*
+                      A label group is irrelevant in the earlier notion if it has
+                      exactly a self loop transition for every state.
+                    */
+                    for (size_t i = 0; i < transitions.size(); ++i) {
+                        if (transitions[i].target != transitions[i].src) {
+                            group_relevant = true;
+                            break;
+                        }
+                    }
+                } else {
+                    group_relevant = true;
+                }
+                if (!group_relevant) {
+                    const LabelGroup &label_group = gat.label_group;
+                    for (int label_no : label_group) {
+                        irrelevant_labels.set(label_no);
+                    }
+                }
+            }
+            irrelevant_labels_in_all_other_ts &= irrelevant_labels;
+        }
+    }
+    return irrelevant_labels_in_all_other_ts;
+}
+
+bool ShrinkModLabelApprox::all_goal_variables_incorporated(
+    const TransitionSystem &ts) const {
+    // HACK!
+    for (const pair<int, int> goal : g_goal) {
+        int goal_var = goal.first;
+        bool goal_included = false;
+        for (int var : ts.get_incorporated_variables()) {
+            if (var == goal_var) {
+                goal_included = true;
+                break;
+            }
+        }
+        if (!goal_included) {
+            return false;
+        }
+    }
+    return true;
 }
 
 void ShrinkModLabelApprox::shrink_own_label_cycles(
@@ -186,7 +247,7 @@ void ShrinkModLabelApprox::compute_equivalence_relation(
     }
 
     // (3) bisimulation
-    ShrinkModLabel::ShrinkBisimulation::compute_equivalence_relation(
+    ShrinkBisimulation::compute_equivalence_relation(
         fts, index, target, equivalence_relation);
 }
 
@@ -195,7 +256,7 @@ string ShrinkModLabelApprox::name() const {
 }
 
 void ShrinkModLabelApprox::dump_strategy_specific_options() const {
-    ShrinkModLabel::dump_strategy_specific_options();
+    ShrinkBisimulation::dump_strategy_specific_options();
 }
 
 static shared_ptr<ShrinkStrategy>_parse(OptionParser &parser) {
