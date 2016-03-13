@@ -7,11 +7,11 @@ namespace merge_and_shrink {
 class ShrinkModLabelApprox : public ShrinkModLabel {
     void shrink_own_label_cycles(FactoredTransitionSystem &fts,
         int index,
-        const Utils::DynamicBitset<unsigned short> &irrelevant_labels_in_all_other_ts) const;
+        const utils::DynamicBitset<unsigned short> &irrelevant_labels_in_all_other_ts) const;
     void shrink_own_label_goal_paths(
         FactoredTransitionSystem &fts,
         int index,
-        const Utils::DynamicBitset<unsigned short> &irrelevant_labels_in_all_other_ts) const;
+        const utils::DynamicBitset<unsigned short> &irrelevant_labels_in_all_other_ts) const;
 protected:
     virtual void compute_equivalence_relation(
         FactoredTransitionSystem &fts,

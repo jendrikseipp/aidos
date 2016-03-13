@@ -22,7 +22,7 @@
 using namespace std;
 
 namespace merge_and_shrink {
-using Bitset = Utils::DynamicBitset<unsigned short>;
+using Bitset = utils::DynamicBitset<unsigned short>;
 
 ShrinkModLabelApprox::ShrinkModLabelApprox(const Options &opts)
     : ShrinkModLabel(opts) {

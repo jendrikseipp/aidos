@@ -14,7 +14,7 @@
 class State;
 class TaskProxy;
 
-namespace Utils {
+namespace utils {
     template <typename Block>
     class DynamicBitset;
 }
@@ -194,7 +194,7 @@ public:
         bool only_equivalent_labels);
 
     void label_inheritance(
-        const Utils::DynamicBitset<unsigned short> &irrelevant_labels_in_all_other_ts);
+        const utils::DynamicBitset<unsigned short> &irrelevant_labels_in_all_other_ts);
     void prune_transitions_of_goal_states();
 
     TSConstIterator begin() const {

@@ -3,7 +3,7 @@
 
 #include "shrink_bisimulation.h"
 
-namespace Utils {
+namespace utils {
     template <typename Block>
     class DynamicBitset;
 }
@@ -11,7 +11,7 @@ namespace Utils {
 namespace merge_and_shrink {
 class ShrinkModLabel : public ShrinkBisimulation {
 protected:
-    Utils::DynamicBitset<unsigned short> compute_irrelevant_in_all_other_ts_labels(
+    utils::DynamicBitset<unsigned short> compute_irrelevant_in_all_other_ts_labels(
         const FactoredTransitionSystem &fts,
         int excluded_ts_index) const;
     bool all_goal_variables_incorporated(

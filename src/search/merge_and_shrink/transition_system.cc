@@ -27,7 +27,7 @@ using namespace std;
 using utils::ExitCode;
 
 namespace merge_and_shrink {
-using Bitset = Utils::DynamicBitset<unsigned short>;
+using Bitset = utils::DynamicBitset<unsigned short>;
 std::ostream &operator<<(std::ostream &os, const Transition &trans) {
     os << trans.src << "->" << trans.target;
     return os;
