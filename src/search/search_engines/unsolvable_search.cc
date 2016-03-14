@@ -1,4 +1,4 @@
-#include "unsolvable_dfs_search.h"
+#include "unsolvable_search.h"
 
 #include "search_common.h"
 
@@ -15,7 +15,7 @@
 using namespace std;
 
 namespace unsolvable_search {
-UnsolvableDFSSearch::UnsolvableDFSSearch(const Options &opts)
+UnsolvableSearch::UnsolvableSearch(const Options &opts)
     : SearchEngine(opts),
       heuristics(opts.get_list<Heuristic *>("heuristics")),
       pruning_method(opts.get<shared_ptr<PruningMethod>>("pruning")) {
@@ -28,7 +28,7 @@ UnsolvableDFSSearch::UnsolvableDFSSearch(const Options &opts)
     }
 }
 
-bool UnsolvableDFSSearch::is_dead_end(const GlobalState &global_state) {
+bool UnsolvableSearch::is_dead_end(const GlobalState &global_state) {
     statistics.inc_evaluated_states();
     for (Heuristic *heuristic : heuristics) {
         statistics.inc_evaluations();
@@ -40,7 +40,7 @@ bool UnsolvableDFSSearch::is_dead_end(const GlobalState &global_state) {
     return false;
 }
 
-void UnsolvableDFSSearch::initialize() {
+void UnsolvableSearch::initialize() {
     cout << "Conducting unsolvable DFS search" << endl;
     assert(g_state_registry->size() == 0);
     /* Generate the initial state (we don't need the result,
@@ -50,13 +50,13 @@ void UnsolvableDFSSearch::initialize() {
     current_state_id = 0;
 }
 
-void UnsolvableDFSSearch::print_statistics() const {
+void UnsolvableSearch::print_statistics() const {
     statistics.print_detailed_statistics();
     search_space.print_statistics();
     pruning_method->print_statistics();
 }
 
-SearchStatus UnsolvableDFSSearch::step() {
+SearchStatus UnsolvableSearch::step() {
     if (current_state_id == static_cast<int>(g_state_registry->size())) {
         // We checked all states in the registry without finding a goal.
         return UNSOLVABLE;
@@ -124,7 +124,7 @@ static SearchEngine *_parse(OptionParser &parser) {
     if (parser.dry_run()) {
         return nullptr;
     }
-    return new UnsolvableDFSSearch(opts);
+    return new UnsolvableSearch(opts);
 }
 
 static Plugin<SearchEngine> _plugin("unsolvable_dfs_search", _parse);

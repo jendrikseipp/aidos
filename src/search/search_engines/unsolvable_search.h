@@ -1,5 +1,5 @@
-#ifndef SEARCH_ENGINES_UNSOLVABLE_DFS_SEARCH_H
-#define SEARCH_ENGINES_UNSOLVABLE_DFS_SEARCH_H
+#ifndef SEARCH_ENGINES_UNSOLVABLE_SEARCH_H
+#define SEARCH_ENGINES_UNSOLVABLE_SEARCH_H
 
 #include "../search_engine.h"
 
@@ -20,7 +20,7 @@ namespace unsolvable_search {
     Doesn't produce log lines for new g values
     Doesn't generate a plan file for solvable tasks
 */
-class UnsolvableDFSSearch : public SearchEngine {
+class UnsolvableSearch : public SearchEngine {
     int current_state_id;
     std::vector<Heuristic *> heuristics;
     std::shared_ptr<PruningMethod> pruning_method;
@@ -32,8 +32,8 @@ protected:
     virtual SearchStatus step() override;
 
 public:
-    explicit UnsolvableDFSSearch(const options::Options &opts);
-    virtual ~UnsolvableDFSSearch() = default;
+    explicit UnsolvableSearch(const options::Options &opts);
+    virtual ~UnsolvableSearch() = default;
 
     virtual void print_statistics() const override;
 };
