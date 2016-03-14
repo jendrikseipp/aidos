@@ -244,17 +244,9 @@ fast_downward_plugin(
 
 fast_downward_plugin(
     NAME UNSOLVABLE_SEARCH
-    HELP "Unsolvable search algorithm"
+    HELP "Search algorithm for proving unsolvability"
     SOURCES
         search_engines/unsolvable_search.cc
-    DEPENDS SEARCH_COMMON NULL_PRUNING_METHOD
-)
-
-fast_downward_plugin(
-    NAME UNSOLVABLE_DFS_SEARCH
-    HELP "Unsolvable DFS search algorithm"
-    SOURCES
-        search_engines/unsolvable_dfs_search.cc
     DEPENDS SEARCH_COMMON NULL_PRUNING_METHOD
 )
 

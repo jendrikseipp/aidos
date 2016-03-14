@@ -18,8 +18,7 @@ namespace unsolvable_search {
 UnsolvableSearch::UnsolvableSearch(const Options &opts)
     : SearchEngine(opts),
       heuristics(opts.get_list<Heuristic *>("heuristics")),
-      pruning_method(opts.get<shared_ptr<PruningMethod>>("pruning")),
-      max_g(0) {
+      pruning_method(opts.get<shared_ptr<PruningMethod>>("pruning")) {
     assert(cost_type == ONE);
     for (Heuristic *heuristic : heuristics) {
         if (!heuristic->dead_ends_are_reliable()) {
@@ -42,24 +41,13 @@ bool UnsolvableSearch::is_dead_end(const GlobalState &global_state) {
 }
 
 void UnsolvableSearch::initialize() {
-    cout << "Conducting unsolvable search, unit-cost bound = " << bound
-         << endl;
-
-    const GlobalState &initial_state = g_initial_state();
-
-    if (is_dead_end(initial_state)) {
-        cout << "Initial state is a dead end." << endl;
-    } else {
-        SearchNode node = search_space.get_node(initial_state);
-        node.open_initial();
-        queue.push_back(initial_state.get_id());
-    }
-}
-
-void UnsolvableSearch::print_checkpoint_line(int g) const {
-    cout << "[g=" << g << ", ";
-    statistics.print_basic_statistics();
-    cout << "]" << endl;
+    cout << "Conducting unsolvable DFS search" << endl;
+    assert(g_state_registry->size() == 0);
+    /* Generate the initial state (we don't need the result,
+       but the state has to be created in the registry). */
+    g_state_registry->get_initial_state();
+    // The initial state has id 0, so we'll start there.
+    current_state_id = 0;
 }
 
 void UnsolvableSearch::print_statistics() const {
@@ -69,92 +57,36 @@ void UnsolvableSearch::print_statistics() const {
 }
 
 SearchStatus UnsolvableSearch::step() {
-    pair<SearchNode, bool> n = fetch_next_node();
-    if (!n.second) {
+    if (current_state_id == static_cast<int>(g_state_registry->size())) {
+        // We checked all states in the registry without finding a goal.
         return UNSOLVABLE;
     }
-    SearchNode node = n.first;
 
-    const int g = node.get_g();
-    if (g > max_g) {
-        print_checkpoint_line(g);
-        max_g = g;
-    }
+    GlobalState s = g_state_registry->lookup_state(StateID(current_state_id));
+    statistics.inc_expanded();
+    /* Next time we'll look at the next state that was created in the registry.
+       This results in a depth-first order. */
+    ++current_state_id;
 
-    GlobalState s = node.get_state();
-    if (check_goal_and_set_plan(s))
-        return SOLVED;
+    if (!is_dead_end(s)) {
+        if (test_goal(s)) {
+            cout << "Solution found!" << endl;
+            return SOLVED;
+        }
 
-    vector<const GlobalOperator *> applicable_ops;
-    g_successor_generator->generate_applicable_ops(s, applicable_ops);
+        vector<const GlobalOperator *> applicable_ops;
+        g_successor_generator->generate_applicable_ops(s, applicable_ops);
 
-    pruning_method->prune_operators(s, applicable_ops);
+        pruning_method->prune_operators(s, applicable_ops);
 
-    for (const GlobalOperator *op : applicable_ops) {
-        if (g + 1 >= bound)
-            continue;
-
-        GlobalState succ_state = g_state_registry->get_successor_state(s, *op);
-        statistics.inc_generated();
-
-        SearchNode succ_node = search_space.get_node(succ_state);
-
-        // Previously encountered dead end. Don't re-evaluate.
-        if (succ_node.is_dead_end())
-            continue;
-
-        if (succ_node.is_new()) {
-            /*
-              Note: we must call reach_state for each heuristic, so
-              don't break out of the for loop early.
-
-              If we ever support path-dependent heuristics, we could
-              merge this loop with the loop in is_dead_end to avoid
-              calling reach_state of the second heuristic if the first
-              one reports a dead end.
-            */
-            for (Heuristic *heuristic : heuristics) {
-                heuristic->reach_state(s, *op, succ_state);
-            }
-
-            if (is_dead_end(succ_state)) {
-                succ_node.mark_as_dead_end();
-                statistics.inc_dead_ends();
-                continue;
-            }
-            succ_node.open(node, op);
-
-            queue.push_back(succ_state.get_id());
+        for (const GlobalOperator *op : applicable_ops) {
+            /* Generate the successor state (we don't need the result,
+               but the state has to be created in the registry). */
+            g_state_registry->get_successor_state(s, *op);
+            statistics.inc_generated();
         }
     }
     return IN_PROGRESS;
-}
-
-pair<SearchNode, bool> UnsolvableSearch::fetch_next_node() {
-    while (true) {
-        if (queue.empty()) {
-            cout << "Completely explored state space -- no solution!" << endl;
-            // HACK! HACK! we do this because SearchNode has no default/copy constructor
-            SearchNode dummy_node = search_space.get_node(g_initial_state());
-            return make_pair(dummy_node, false);
-        }
-        StateID id = queue.front();
-        queue.pop_front();
-        // TODO is there a way we can avoid creating the state here and then
-        //      recreate it outside of this function with node.get_state()?
-        //      One way would be to store GlobalState objects inside SearchNodes
-        //      instead of StateIDs
-        GlobalState s = g_state_registry->lookup_state(id);
-        SearchNode node = search_space.get_node(s);
-
-        if (node.is_closed())
-            continue;
-
-        node.close();
-        assert(!node.is_dead_end());
-        statistics.inc_expanded();
-        return make_pair(node, true);
-    }
 }
 
 /* TODO: merge this into SearchEngine::add_options_to_parser when all search
@@ -169,7 +101,9 @@ static void add_pruning_option(OptionParser &parser) {
 }
 
 static SearchEngine *_parse(OptionParser &parser) {
-    parser.document_synopsis("Breadth-first search", "");
+    parser.document_synopsis(
+        "Unsolvable depth-first search",
+        "Depth-first search with full duplicate detection for showing unsolvability");
 
     parser.add_list_option<Heuristic *>("heuristics", "list of heuristics");
 
@@ -180,6 +114,11 @@ static SearchEngine *_parse(OptionParser &parser) {
     // Ignore cost_type value given on the command line.
     opts.set<int>("cost_type", static_cast<int>(ONE));
 
+    if (opts.get<int>("bound") < numeric_limits<int>::max()) {
+        cerr << "Unsolvable DFS doesn't support g-bound." << endl;
+        utils::exit_with(utils::ExitCode::UNSUPPORTED);
+    }
+
     opts.verify_list_non_empty<Heuristic *>("heuristics");
 
     if (parser.dry_run()) {
@@ -188,5 +127,5 @@ static SearchEngine *_parse(OptionParser &parser) {
     return new UnsolvableSearch(opts);
 }
 
-static Plugin<SearchEngine> _plugin("unsolvable_search", _parse);
+static Plugin<SearchEngine> _plugin("unsolvable_dfs_search", _parse);
 }
