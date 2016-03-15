@@ -57,8 +57,7 @@ public:
         combinations.clear();
         current_combination.clear();
         int n = sequence.size();
-        if (k == 0 || k > n) {
-            combinations.emplace_back();
+        if (k > n) {
             return std::move(combinations);
         }
         add_combinations(sequence, 0, k);
