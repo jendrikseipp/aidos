@@ -114,18 +114,20 @@ static SearchEngine *_parse(OptionParser &parser) {
     // Ignore cost_type value given on the command line.
     opts.set<int>("cost_type", static_cast<int>(ONE));
 
-    if (opts.get<int>("bound") < numeric_limits<int>::max()) {
-        cerr << "Unsolvable DFS doesn't support g-bound." << endl;
-        utils::exit_with(utils::ExitCode::UNSUPPORTED);
-    }
-
     opts.verify_list_non_empty<Heuristic *>("heuristics");
 
     if (parser.dry_run()) {
         return nullptr;
     }
+
+    // Note: Retrieving options doesn't work in dry runs.
+    if (opts.get<int>("bound") < numeric_limits<int>::max()) {
+        cerr << "Unsolvable DFS doesn't support g-bound." << endl;
+        utils::exit_with(utils::ExitCode::UNSUPPORTED);
+    }
+
     return new UnsolvableSearch(opts);
 }
 
-static Plugin<SearchEngine> _plugin("unsolvable_dfs_search", _parse);
+static Plugin<SearchEngine> _plugin("unsolvable_search", _parse);
 }
