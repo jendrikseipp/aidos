@@ -220,6 +220,10 @@ void FeatureConstraints::initialize_constraints(
     for (const Feature &feature : features) {
         constraints.push_back(get_constraint(feature, infinity));
     }
+
+    // Save memory.
+    utils::release_vector_memory(explicit_ops);
+    utils::release_vector_memory(explicit_goals);
 }
 
 bool FeatureConstraints::update_constraints(
