@@ -5,7 +5,9 @@
 #include "../option_parser.h"
 #include "../plugin.h"
 
+#include "../utils/logging.h"
 #include "../utils/markup.h"
+#include "../utils/timer.h"
 
 using namespace std;
 
@@ -21,6 +23,7 @@ OperatorCountingHeuristic::~OperatorCountingHeuristic() {
 }
 
 void OperatorCountingHeuristic::initialize() {
+    utils::Timer timer;
     vector<lp::LPVariable> variables;
     double infinity = lp_solver.get_infinity();
     for (OperatorProxy op : task_proxy.get_operators()) {
@@ -32,6 +35,9 @@ void OperatorCountingHeuristic::initialize() {
         generator->initialize_constraints(task, constraints, infinity);
     }
     lp_solver.load_problem(lp::LPObjectiveSense::MINIMIZE, variables, constraints);
+    g_log << "Time for constructing and loading LP: " << timer << endl;
+    g_log << "LP variables: " << variables.size() << endl;
+    g_log << "LP constraints: " << constraints.size() << endl;
 }
 
 int OperatorCountingHeuristic::compute_heuristic(const GlobalState &global_state) {

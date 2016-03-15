@@ -460,6 +460,7 @@ fast_downward_plugin(
     HELP "Plugin containing the code for operator counting heuristics"
     SOURCES
         operator_counting/constraint_generator.cc
+        operator_counting/feature_constraints.cc
         operator_counting/lm_cut_constraints.cc
         operator_counting/operator_counting_heuristic.cc
         operator_counting/pho_constraints.cc
