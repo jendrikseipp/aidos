@@ -3,6 +3,8 @@
 
 #include "stubborn_sets.h"
 
+#include "../option_parser.h"
+
 namespace stubborn_sets_ec {
 class StubbornSetsEC : public stubborn_sets::StubbornSets {
 private:
@@ -14,10 +16,13 @@ private:
     std::vector<bool> written_vars;
     std::vector<std::vector<bool>> nes_computed;
 
+    bool on_the_fly_interference;
+
     void get_disabled_vars(int op1_no, int op2_no, std::vector<int> &disabled_vars);
     void build_reachability_map();
     void compute_operator_preconditions();
     void compute_conflicts_and_disabling();
+    void compute_disabled_operators(int op_no);
     void compute_disabled_by_o();
     void add_conflicting_and_disabling(int op_no, const GlobalState &state);
     void compute_active_operators(const GlobalState &state);
@@ -28,7 +33,7 @@ protected:
     virtual void initialize_stubborn_set(const GlobalState &state) override;
     virtual void handle_stubborn_operator(const GlobalState &state, int op_no) override;
 public:
-    StubbornSetsEC();
+    StubbornSetsEC(const Options &opts);
     virtual ~StubbornSetsEC() = default;
 };
 }

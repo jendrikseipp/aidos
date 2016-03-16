@@ -86,13 +86,12 @@ void StubbornSetsSimple::add_necessary_enabling_set(Fact fact) {
 
 // Add all operators that interfere with op.
 void StubbornSetsSimple::add_interfering(int op_no) {
+
+    // TODO: move first part to separate function
     if (on_the_fly_interference && interference_relation[op_no].empty()) {
 	int num_operators = g_operators.size();
 	vector<int> &interfere_op = interference_relation[op_no];
         
-	// during the computation of strong stubborn sets, for a given
-	// operator, we always need *all* interfering operators, hence
-	// we compute all of them in turn
 	for (int op2_no = 0; op2_no < num_operators; ++op2_no) {
             if (op_no != op2_no && interfere(op_no, op2_no)) {
                 interfere_op.push_back(op2_no);
