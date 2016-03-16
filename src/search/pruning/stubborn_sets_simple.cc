@@ -37,9 +37,25 @@ static inline Fact find_unsatisfied_precondition(
     return Fact(-1, -1);
 }
 
-StubbornSetsSimple::StubbornSetsSimple() {
-    compute_interference_relation();
+StubbornSetsSimple::StubbornSetsSimple(const Options &opts) :
+    on_the_fly_interference(opts.get<bool>("on-the-fly-interference")) {
+    
     cout << "pruning method: stubborn sets simple" << endl;
+
+    if (!on_the_fly_interference) {
+	cout << "interference computation: precompute entirely" << endl;
+	compute_interference_relation();
+    }
+    else {
+	cout << "interference computation: on-the-fly" << endl;
+	int num_operators = g_operators.size();
+	interference_relation.resize(num_operators);
+
+	for (int i = 0; i < num_operators; ++i) {
+	    vector<int> interfering_operators;
+	    interference_relation.push_back(interfering_operators);
+	}
+    }
 }
 
 void StubbornSetsSimple::compute_interference_relation() {
@@ -70,9 +86,32 @@ void StubbornSetsSimple::add_necessary_enabling_set(Fact fact) {
 
 // Add all operators that interfere with op.
 void StubbornSetsSimple::add_interfering(int op_no) {
-    for (int interferer_no : interference_relation[op_no]) {
-        mark_as_stubborn(interferer_no);
+    if (on_the_fly_interference && interference_relation[op_no].empty()) {
+	int num_operators = g_operators.size();
+	vector<int> &interfere_op = interference_relation[op_no];
+        
+	// during the computation of strong stubborn sets, for a given
+	// operator, we always need *all* interfering operators, hence
+	// we compute all of them in turn
+	for (int op2_no = 0; op2_no < num_operators; ++op2_no) {
+            if (op_no != op2_no && interfere(op_no, op2_no)) {
+                interfere_op.push_back(op2_no);
+            }
+        }
+
+	// mark as processed, but still empty
+	if (interfere_op.empty()) {
+	    interfere_op.push_back(-1);
+	}
+
     }
+    
+    for (int interferer_no : interference_relation[op_no]) {
+	if (interferer_no != -1) {
+	    mark_as_stubborn(interferer_no);
+	}
+    }
+    
 }
 
 void StubbornSetsSimple::initialize_stubborn_set(const GlobalState &state) {
@@ -124,11 +163,18 @@ static shared_ptr<PruningMethod> _parse(OptionParser &parser) {
             "323-331",
             "AAAI Press, 2014"));
 
+    parser.add_option<bool>("on-the-fly-interference",
+                            "on-the-fly-interference-computation",
+                            "false");
+    
+    Options opts = parser.parse();
+
     if (parser.dry_run()) {
         return nullptr;
     }
-
-    return make_shared<StubbornSetsSimple>();
+    else {
+	return make_shared<StubbornSetsSimple>(opts);
+    }
 }
 
 static PluginShared<PruningMethod> _plugin("stubborn_sets_simple", _parse);
