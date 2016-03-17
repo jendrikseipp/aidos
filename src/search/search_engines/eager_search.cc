@@ -33,7 +33,7 @@ EagerSearch::EagerSearch(const Options &opts)
 }
 
 bool EagerSearch::is_f_value_too_high(EvaluationContext &eval_context) const {
-    for (Heuristic *heuristic : heuristics ) {
+    for (Heuristic *heuristic : heuristics) {
         if (eval_context.is_heuristic_infinite(heuristic) ||
             eval_context.get_g_value() + eval_context.get_heuristic_value(heuristic) > f_bound) {
             return true;
