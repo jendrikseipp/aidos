@@ -9,7 +9,6 @@ def find_operator_equivalence_classes(task, var_id):
     for op_id, op in enumerate(task.operators):
         prev = frozenset([(k, v) for k,v in op.prevail.items() if k != var_id])
         preposts = frozenset([(k, v) for k,v in op.preposts.items() if k != var_id])
-        changes = (prev, preposts)
         ops_by_changes[(prev, preposts)].append(op_id)
     return ops_by_changes.values()
 
