@@ -11,7 +11,6 @@ using namespace std;
 
 
 namespace potentials {
-
 static const double max_potential = 1e8;
 
 UnsolvableAllStatesPotentialHeuristic::UnsolvableAllStatesPotentialHeuristic(
@@ -140,7 +139,7 @@ void UnsolvableAllStatesPotentialHeuristic::construct_lp() {
 }
 
 unique_ptr<PotentialFunction>
-    UnsolvableAllStatesPotentialHeuristic::extract_potential_function() const {
+UnsolvableAllStatesPotentialHeuristic::extract_potential_function() const {
     assert(lp_solver.has_optimal_solution());
 
     VariablesProxy vars = task_proxy.get_variables();
