@@ -156,6 +156,8 @@ void StubbornSets::prune_operators(
     if (stubborn_calls >= SAFETY_BELT_SIZE) {
 	
 	double actual_ratio = 1-((double)num_pruned_successors_generated/(double)num_unpruned_successors_generated);
+	cout << "actual pruning ratio: " << actual_ratio << endl;
+
 	if (actual_ratio < pruning_ratio) {
 	    cout << "-- pruning ratio " << actual_ratio << " is lower than " << pruning_ratio << "; switching off pruning" << endl;
 	    por_off = true;
