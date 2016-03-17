@@ -475,6 +475,7 @@ fast_downward_plugin(
         pdbs/canonical_pdbs.cc
         pdbs/canonical_pdbs_heuristic.cc
         pdbs/dead_end_detection_heuristic.cc
+        pdbs/deadend_pdbs_simple_heuristic.cc
         pdbs/dominance_pruning.cc
         pdbs/incremental_canonical_pdbs.cc
         pdbs/match_tree.cc
