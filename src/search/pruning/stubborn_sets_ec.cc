@@ -224,16 +224,17 @@ void StubbornSetsEC::compute_conflicts_and_disabling() {
 
 void StubbornSetsEC::compute_disabled_operators(int op_no) {
     
-    // TODO: currently, it is not checked if disabled remains empty
-    // for some operator
     int num_operators = g_operators.size();
     for (int op2_no = 0; op2_no < num_operators; ++op2_no) {
 	if (op_no != op2_no) {
-	    bool disable = can_disable(op2_no, op_no);
-	    if (disable) {
-		disabled[op2_no].push_back(op_no);
+	    if (can_disable(op_no, op2_no)) {
+		disabled[op_no].push_back(op2_no);
 	    }
 	}
+    }
+    if (disabled[op_no].empty()) {
+	// mark as processed
+	disabled[op_no].push_back(-1);
     }
 }
 
@@ -354,7 +355,7 @@ void StubbornSetsEC::handle_stubborn_operator(const GlobalState &state, int op_n
 	}
 	
 	for (int disabled_op_no : disabled[op_no]) {
-	    if (active_ops[disabled_op_no]) {
+	    if (disabled_op_no != -1 && active_ops[disabled_op_no]) {
                 get_disabled_vars(op_no, disabled_op_no, disabled_vars);
                 if (!disabled_vars.empty()) {     // == can_disable(op1_no, op2_no)
                     bool v_applicable_op_found = false;
