@@ -1,5 +1,5 @@
-#ifndef PDBS_DEADEND_DETECTION_HEURISTIC_H
-#define PDBS_DEADEND_DETECTION_HEURISTIC_H
+#ifndef PDBS_DEAD_END_DETECTION_HEURISTIC_H
+#define PDBS_DEAD_END_DETECTION_HEURISTIC_H
 
 #include "types.h"
 
@@ -12,7 +12,7 @@ class CountdownTimer;
 namespace pdbs {
 class DeadEndTreeNode;
 
-class DeadEndCollection{
+class DeadEndCollection {
     int num_dead_ends;
     DeadEndTreeNode *root;
 public:
