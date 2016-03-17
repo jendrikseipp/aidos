@@ -38,7 +38,8 @@ static inline Fact find_unsatisfied_precondition(
 }
 
 StubbornSetsSimple::StubbornSetsSimple(const Options &opts) :
-    on_the_fly_interference(opts.get<bool>("on-the-fly-interference")) {
+    StubbornSets(opts),
+    on_the_fly_interference(opts.get<bool>("on_the_fly_interference")) {
     
     cout << "pruning method: stubborn sets simple" << endl;
 
@@ -162,9 +163,13 @@ static shared_ptr<PruningMethod> _parse(OptionParser &parser) {
             "323-331",
             "AAAI Press, 2014"));
 
-    parser.add_option<bool>("on-the-fly-interference",
-                            "on-the-fly-interference-computation",
+    parser.add_option<bool>("on_the_fly_interference",
+                            "compute operator interferences on-the-fly",
                             "false");
+
+    parser.add_option<double>("pruning_ratio",
+			      "minimal pruning ratio such that pruning is not switched off",
+			      "1.0");
     
     Options opts = parser.parse();
 

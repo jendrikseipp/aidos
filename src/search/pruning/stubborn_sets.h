@@ -2,6 +2,7 @@
 #define PRUNING_STUBBORN_SETS_H
 
 #include "../abstract_task.h"
+#include "../option_parser.h"
 #include "../pruning_method.h"
 
 namespace stubborn_sets {
@@ -20,6 +21,13 @@ class StubbornSets : public PruningMethod {
       of the operators in the queue).
     */
     std::vector<int> stubborn_queue;
+
+    double pruning_ratio;
+    int stubborn_calls;
+    bool por_off;
+    
+    // number of expansions when pruning ratio is checked
+    const int SAFETY_BELT_SIZE = 1000;
 
     void compute_sorted_operators();
     void compute_achievers();
@@ -41,7 +49,7 @@ protected:
     virtual void initialize_stubborn_set(const GlobalState &state) = 0;
     virtual void handle_stubborn_operator(const GlobalState &state, int op_no) = 0;
 public:
-    StubbornSets();
+    StubbornSets(const Options &opts);
     virtual ~StubbornSets() = default;
 
     /* TODO: move prune_operators, and also the statistics, to the

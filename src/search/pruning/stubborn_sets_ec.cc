@@ -117,7 +117,8 @@ void get_conflicting_vars(const vector<Fact> &facts1,
 }
 
 StubbornSetsEC::StubbornSetsEC(const Options &opts) :
-    on_the_fly_interference(opts.get<bool>("on-the-fly-interference")) {
+    StubbornSets(opts),
+    on_the_fly_interference(opts.get<bool>("on_the_fly_interference")) {
 
     cout << "pruning method: stubborn sets ec" << endl;
 
@@ -400,8 +401,8 @@ static shared_ptr<PruningMethod> _parse(OptionParser &parser) {
             "251-259",
             "AAAI Press 2013"));
     
-    parser.add_option<bool>("on-the-fly-interference",
-                            "on-the-fly-interference-computation",
+    parser.add_option<bool>("on_the_fly_interference",
+                            "compute operator interferences on-the-fly",
                             "false");
     
     Options opts = parser.parse();

@@ -3,8 +3,6 @@
 
 #include "stubborn_sets.h"
 
-#include "../option_parser.h"
-
 namespace stubborn_sets_ec {
 class StubbornSetsEC : public stubborn_sets::StubbornSets {
 private:
@@ -16,6 +14,7 @@ private:
     std::vector<bool> written_vars;
     std::vector<std::vector<bool>> nes_computed;
 
+    // TODO: move to base class
     bool on_the_fly_interference;
 
     void get_disabled_vars(int op1_no, int op2_no, std::vector<int> &disabled_vars);

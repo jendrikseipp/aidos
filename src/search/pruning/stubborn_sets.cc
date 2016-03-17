@@ -53,9 +53,15 @@ vector<Fact> get_sorted_fact_set(const vector<T> &facts) {
     return result;
 }
 
-StubbornSets::StubbornSets()
+StubbornSets::StubbornSets(const Options &opts)
     : num_unpruned_successors_generated(0),
-      num_pruned_successors_generated(0) {
+      num_pruned_successors_generated(0),
+      pruning_ratio(opts.get<double>("pruning_ratio")),
+      stubborn_calls(0),
+      por_off(false) {
+    
+    cout << "minimal pruning ratio to keep pruning: " << pruning_ratio << endl;
+
     verify_no_axioms_no_conditional_effects();
     compute_sorted_operators();
     compute_achievers();
@@ -110,8 +116,14 @@ bool StubbornSets::mark_as_stubborn(int op_no) {
 
 void StubbornSets::prune_operators(
     const GlobalState &state, vector<const GlobalOperator *> &ops) {
+    
+    if (por_off) {
+	return;
+    }
+    
     num_unpruned_successors_generated += ops.size();
-
+    stubborn_calls++;
+    
     // Clear stubborn set from previous call.
     stubborn.clear();
     stubborn.assign(g_operators.size(), false);
@@ -140,6 +152,16 @@ void StubbornSets::prune_operators(
     }
 
     num_pruned_successors_generated += ops.size();
+	    
+    if (stubborn_calls >= SAFETY_BELT_SIZE) {
+	
+	double actual_ratio = 1-((double)num_pruned_successors_generated/(double)num_unpruned_successors_generated);
+	if (actual_ratio < pruning_ratio) {
+	    cout << "-- pruning ratio " << actual_ratio << " is lower than " << pruning_ratio << "; switching off pruning" << endl;
+	    por_off = true;
+	}
+    }
+	    
 }
 
 void StubbornSets::print_statistics() const {
