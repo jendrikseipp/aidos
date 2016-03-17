@@ -211,7 +211,8 @@ void PatternCollectionGeneratorSystematic::build_patterns(
     // Enqueue the SGA patterns.
     for (const Pattern &pattern : sga_patterns) {
         done = enqueue_pattern_if_new(pattern, handle_pattern);
-        if (done) break;
+        if (done)
+            break;
     }
 
 
@@ -238,12 +239,15 @@ void PatternCollectionGeneratorSystematic::build_patterns(
                     Pattern new_pattern;
                     compute_union_pattern(pattern1, pattern2, new_pattern);
                     done = enqueue_pattern_if_new(new_pattern, handle_pattern);
-                    if (done) break;
+                    if (done)
+                        break;
                 }
             }
-            if (done) break;
+            if (done)
+                break;
         }
-        if (done) break;
+        if (done)
+            break;
     }
 
     pattern_set.clear();
@@ -257,7 +261,7 @@ void PatternCollectionGeneratorSystematic::build_patterns_naive(
     PatternCollection next_patterns;
     bool done = false;
     for (size_t i = 0; i < max_pattern_size; ++i) {
-        cout << "Generating patterns of size " << i+1 << endl;
+        cout << "Generating patterns of size " << i + 1 << endl;
         for (const Pattern &current_pattern : current_patterns) {
             int max_var = -1;
             if (i > 0)
@@ -269,13 +273,16 @@ void PatternCollectionGeneratorSystematic::build_patterns_naive(
                 patterns->push_back(pattern);
                 if (handle_pattern)
                     done = handle_pattern(pattern);
-                if (done) break;
+                if (done)
+                    break;
             }
-            if (done) break;
+            if (done)
+                break;
         }
         next_patterns.swap(current_patterns);
         next_patterns.clear();
-        if (done) break;
+        if (done)
+            break;
     }
 
     cout << "Found " << patterns->size() << " patterns." << endl;

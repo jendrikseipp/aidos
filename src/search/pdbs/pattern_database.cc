@@ -359,7 +359,7 @@ void PatternDatabase::compute_reachable_states(const vector<AbstractOperator> &o
     reachable = vector<bool>(num_states, false);
     int initial_state_id = hash_index(task_proxy.get_initial_state());
     queue.push_back(initial_state_id);
-    while(!queue.empty()) {
+    while (!queue.empty()) {
         int index = queue.back();
         queue.pop_back();
         if (reachable[index])

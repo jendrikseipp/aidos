@@ -24,15 +24,15 @@ public:
 
 class DeadEndTreeLeafNode : public DeadEndTreeNode {
 public:
-    virtual void add(const std::vector<FactProxy> &/*partial_state*/, int /*index*/) override {
+    virtual void add(const std::vector<FactProxy> & /*partial_state*/, int /*index*/) override {
         // No need to add, this node already recognizes the dead end.
     }
 
-    virtual bool contains(const std::vector<FactProxy> &/*partial_state*/, int /*index*/) override {
+    virtual bool contains(const std::vector<FactProxy> & /*partial_state*/, int /*index*/) override {
         return true;
     }
 
-    virtual bool contains(const State &/*state*/) override {
+    virtual bool contains(const State & /*state*/) override {
         return true;
     }
 };
@@ -117,7 +117,7 @@ DeadEndCollection::~DeadEndCollection() {
     delete root;
 }
 
-void DeadEndCollection::add(const std::vector<FactProxy> &dead){
+void DeadEndCollection::add(const std::vector<FactProxy> &dead) {
     assert(!dead.empty());
     if (!root) {
         root = new DeadEndTreeSwitchNode(dead[0].get_variable());
@@ -145,8 +145,8 @@ PDBDeadEndDetectionHeuristic::PDBDeadEndDetectionHeuristic(const options::Option
     utils::CountdownTimer timer(opts.get<double>("max_time"));
     State initial_state = task_proxy.get_initial_state();
     pattern_generator->generate(task, [&](const Pattern &pattern) {
-        return add_pattern_dead_ends(pattern, timer, initial_state);
-    });
+            return add_pattern_dead_ends(pattern, timer, initial_state);
+        });
     cout << "Found " << dead_end_collection.size() << " dead ends in " << timer << endl;
 }
 
