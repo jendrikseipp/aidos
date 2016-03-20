@@ -245,17 +245,9 @@ fast_downward_plugin(
 
 fast_downward_plugin(
     NAME UNSOLVABLE_SEARCH
-    HELP "Unsolvable search algorithm"
+    HELP "Search algorithm for proving unsolvability"
     SOURCES
         search_engines/unsolvable_search.cc
-    DEPENDS SEARCH_COMMON NULL_PRUNING_METHOD
-)
-
-fast_downward_plugin(
-    NAME UNSOLVABLE_DFS_SEARCH
-    HELP "Unsolvable DFS search algorithm"
-    SOURCES
-        search_engines/unsolvable_dfs_search.cc
     DEPENDS SEARCH_COMMON NULL_PRUNING_METHOD
 )
 
@@ -471,6 +463,7 @@ fast_downward_plugin(
     HELP "Plugin containing the code for operator counting heuristics"
     SOURCES
         operator_counting/constraint_generator.cc
+        operator_counting/feature_constraints.cc
         operator_counting/lm_cut_constraints.cc
         operator_counting/operator_counting_heuristic.cc
         operator_counting/pho_constraints.cc
@@ -485,6 +478,7 @@ fast_downward_plugin(
         pdbs/canonical_pdbs.cc
         pdbs/canonical_pdbs_heuristic.cc
         pdbs/dead_end_detection_heuristic.cc
+        pdbs/deadend_pdbs_simple_heuristic.cc
         pdbs/dominance_pruning.cc
         pdbs/incremental_canonical_pdbs.cc
         pdbs/match_tree.cc

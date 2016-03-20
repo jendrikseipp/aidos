@@ -3,28 +3,28 @@
 
 #include "../search_engine.h"
 
-#include <deque>
 #include <memory>
 #include <vector>
 
-class GlobalOperator;
 class Heuristic;
 class PruningMethod;
-class ScalarEvaluator;
 
 namespace options {
 class Options;
 }
 
 namespace unsolvable_search {
+/* NOTE:
+    Doesn't support reach_state
+    Doesn't support bound
+    Doesn't produce log lines for new g values
+    Doesn't generate a plan file for solvable tasks
+*/
 class UnsolvableSearch : public SearchEngine {
-    std::deque<StateID> queue;
+    int current_state_id;
     std::vector<Heuristic *> heuristics;
     std::shared_ptr<PruningMethod> pruning_method;
-    int max_g;
 
-    std::pair<SearchNode, bool> fetch_next_node();
-    void print_checkpoint_line(int g) const;
     bool is_dead_end(const GlobalState &global_state);
 
 protected:

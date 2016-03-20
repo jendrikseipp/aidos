@@ -86,5 +86,4 @@ vector<int> DomainAbstractedTask::get_state_values(
     return translate_parent_state(
         parent->get_state_values(ancestor_state_values, ancestor_task));
 }
-
 }

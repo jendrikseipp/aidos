@@ -13,8 +13,6 @@
 using namespace std;
 
 namespace pdbs {
-
-
 PatternCollectionGeneratorOrderedSystematic::PatternCollectionGeneratorOrderedSystematic(const options::Options &opts)
     : pattern_max_size(opts.get<int>("pattern_max_size")) {
 }
@@ -32,15 +30,16 @@ PatternCollectionInformation PatternCollectionGeneratorOrderedSystematic::genera
         opts.set<bool>("only_interesting_patterns", true);
         PatternCollectionGeneratorSystematic generator(opts);
         generator.generate(task, [&](const Pattern &pattern) {
-           if (static_cast<int>(pattern.size()) == pattern_size) {
-               patterns->push_back(pattern);
-               if (handle_pattern) {
-                   done = handle_pattern(pattern);
-               }
-           }
-           return done;
-        });
-        if (done) break;
+                if (static_cast<int>(pattern.size()) == pattern_size) {
+                    patterns->push_back(pattern);
+                    if (handle_pattern) {
+                        done = handle_pattern(pattern);
+                    }
+                }
+                return done;
+            });
+        if (done)
+            break;
     }
     return PatternCollectionInformation(task, patterns);
 }

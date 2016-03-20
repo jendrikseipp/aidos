@@ -32,6 +32,16 @@ EagerSearch::EagerSearch(const Options &opts)
       pruning_method(opts.get<shared_ptr<PruningMethod>>("pruning")) {
 }
 
+bool EagerSearch::is_f_value_too_high(EvaluationContext &eval_context) const {
+    for (Heuristic *heuristic : heuristics) {
+        if (eval_context.is_heuristic_infinite(heuristic) ||
+            eval_context.get_g_value() + eval_context.get_heuristic_value(heuristic) > f_bound) {
+            return true;
+        }
+    }
+    return false;
+}
+
 void EagerSearch::initialize() {
     cout << "Conducting best first search"
          << (reopen_closed_nodes ? " with" : " without")
@@ -69,6 +79,8 @@ void EagerSearch::initialize() {
 
     if (open_list->is_dead_end(eval_context)) {
         cout << "Initial state is a dead end." << endl;
+    } else if (is_f_value_too_high(eval_context)) {
+        cout << "Initial state's h-value is higher than f-bound." << endl;
     } else {
         if (search_progress.check_progress(eval_context))
             print_checkpoint_line(0);
@@ -174,15 +186,7 @@ SearchStatus EagerSearch::step() {
                 continue;
             }
 
-            bool f_value_too_high = false;
-            for (Heuristic *heuristic : heuristics ) {
-                if (eval_context.is_heuristic_infinite(heuristic) ||
-                    succ_g + eval_context.get_heuristic_value(heuristic) > f_bound) {
-                    f_value_too_high = true;
-                    break;
-                }
-            }
-            if (f_value_too_high)
+            if (is_f_value_too_high(eval_context))
                 continue;
 
             succ_node.open(node, op);
