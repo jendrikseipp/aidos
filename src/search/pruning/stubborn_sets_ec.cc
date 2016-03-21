@@ -209,10 +209,10 @@ const std::vector<int> &StubbornSetsEC::get_disabled(int op_no) {
     int num_operators = g_operators.size();
     vector<int> &result = disabled[op_no];
     if (!disabled_computed[op_no]) {
-        for (int disabled_op_no = 0; disabled_op_no < num_operators; ++disabled_op_no) {
-            if (disabled_op_no != op_no) {
-                if (can_disable(op_no, disabled_op_no)) {
-                    result.push_back(disabled_op_no);
+        for (int op2_no = 0; op2_no < num_operators; ++op2_no) {
+            if (op2_no != op_no) {
+                if (can_disable(op_no, op2_no)) {
+                    result.push_back(op2_no);
                 }
             }
         }
