@@ -2,8 +2,11 @@
 #define PRUNING_STUBBORN_SETS_H
 
 #include "../abstract_task.h"
-#include "../option_parser.h"
 #include "../pruning_method.h"
+
+namespace options {
+class Options;
+}
 
 namespace stubborn_sets {
 class StubbornSets : public PruningMethod {
@@ -49,7 +52,7 @@ protected:
     virtual void initialize_stubborn_set(const GlobalState &state) = 0;
     virtual void handle_stubborn_operator(const GlobalState &state, int op_no) = 0;
 public:
-    StubbornSets(const Options &opts);
+    StubbornSets(const options::Options &opts);
     virtual ~StubbornSets() = default;
 
     /* TODO: move prune_operators, and also the statistics, to the

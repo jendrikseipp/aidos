@@ -2,6 +2,7 @@
 
 #include "../global_operator.h"
 #include "../globals.h"
+#include "../option_parser.h"
 
 #include <algorithm>
 #include <cassert>
