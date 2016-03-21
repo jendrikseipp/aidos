@@ -8,7 +8,6 @@
 #include "../task_proxy.h"
 
 #include "../utils/collections.h"
-#include "../utils/dynamic_bitset.h"
 #include "../utils/memory.h"
 #include "../utils/system.h"
 
@@ -27,7 +26,6 @@ using namespace std;
 using utils::ExitCode;
 
 namespace merge_and_shrink {
-using Bitset = utils::DynamicBitset<unsigned short>;
 std::ostream &operator<<(std::ostream &os, const Transition &trans) {
     os << trans.src << "->" << trans.target;
     return os;

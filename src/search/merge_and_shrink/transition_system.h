@@ -14,11 +14,6 @@
 class State;
 class TaskProxy;
 
-namespace utils {
-    template <typename Block>
-    class DynamicBitset;
-}
-
 namespace merge_and_shrink {
 class Distances;
 class HeuristicRepresentation;

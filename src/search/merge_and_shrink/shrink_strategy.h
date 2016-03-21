@@ -56,7 +56,7 @@ protected:
       specified by concrete shrinking strategies.
     */
     virtual void compute_equivalence_relation(
-        FactoredTransitionSystem &fts,
+        const FactoredTransitionSystem &fts,
         int index,
         int target,
         StateEquivalenceRelation &equivalence_relation) const = 0;
