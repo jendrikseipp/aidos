@@ -89,8 +89,8 @@ int main(int argc, const char **argv) {
         cout << "Disabling h2 analysis because it does not currently support axioms" << endl;
     } else if (h2_mutex_time) {
         bool conditional_effects = false;
-        for (size_t i = 0; i < operators.size(); i++) {
-            if (operators[i].has_conditional_effects()) {
+        for (const Operator &op : operators) {
+            if (op.has_conditional_effects()) {
                 conditional_effects = true;
                 break;
             }
@@ -109,8 +109,8 @@ int main(int argc, const char **argv) {
 
         cout << "Change id of operators: " << operators.size() << endl;
         // 1) Change id of values in operators and axioms to remove unreachable facts from variables
-        for (size_t i = 0; i < operators.size(); ++i) {
-            operators[i].remove_unreachable_facts(ordering);
+        for (Operator &op: operators) {
+            op.remove_unreachable_facts(ordering);
         }
         // TODO: Activate this if axioms get supported by the h2 heuristic
         // cout << "Change id of axioms: " << axioms.size() << endl;
@@ -118,15 +118,15 @@ int main(int argc, const char **argv) {
         //     axioms[i].remove_unreachable_facts();
         // }
         cout << "Change id of mutexes" << endl;
-        for (size_t i = 0; i < mutexes.size(); ++i) {
-            mutexes[i].remove_unreachable_facts();
+        for (MutexGroup &mutex : mutexes) {
+            mutex.remove_unreachable_facts();
         }
         cout << "Change id of goals" << endl;
         vector<pair<Variable *, int> > new_goals;
-        for (size_t i = 0; i < goals.size(); ++i) {
-            if (goals[i].first->is_necessary()) {
-                goals[i].second = goals[i].first->get_new_id(goals[i].second);
-                new_goals.push_back(goals[i]);
+        for (pair<Variable *, int> &goal : goals) {
+            if (goal.first->is_necessary()) {
+                goal.second = goal.first->get_new_id(goal.second);
+                new_goals.push_back(goal);
             }
         }
         new_goals.swap(goals);
@@ -135,9 +135,9 @@ int main(int argc, const char **argv) {
 
         cout << "Remove unreachable facts from variables: " << ordering.size() << endl;
         // 2)Remove unreachable facts from variables
-        for (size_t i = 0; i < ordering.size(); ++i) {
-            if (ordering[i]->is_necessary()) {
-                ordering[i]->remove_unreachable_facts();
+        for (Variable *var : ordering) {
+            if (var->is_necessary()) {
+                var->remove_unreachable_facts();
             }
         }
 
@@ -196,18 +196,18 @@ int main(int argc, const char **argv) {
         int num_total_potential_noeff = 0;
         int num_op_potential_noeff = 0;
 
-        for (size_t i = 0; i < operators.size(); i++) {
-            int count = operators[i].count_augmented_preconditions();
+        for (const Operator &op : operators) {
+            int count = op.count_augmented_preconditions();
             if (count) {
                 num_op_augmented++;
                 num_total_augmented += count;
             }
-            count = operators[i].count_potential_preconditions();
+            count = op.count_potential_preconditions();
             if (count) {
                 num_op_potential++;
                 num_total_potential += count;
             }
-            count = operators[i].count_potential_noeff_preconditions();
+            count = op.count_potential_noeff_preconditions();
             if (count) {
                 num_op_potential_noeff++;
                 num_total_potential_noeff += count;
@@ -221,12 +221,12 @@ int main(int argc, const char **argv) {
         cout << "Potential preconditions contradict effects: " << num_total_potential_noeff << endl;
         cout << "Ops with potential preconditions contradict effects: " << num_op_potential_noeff << endl;
         set<vector<int> > mutexes_fw, mutexes_bw;
-        for (size_t i = 0; i < mutexes.size(); i++) {
-            if (!mutexes[i].is_redundant()) {
-                if (mutexes[i].is_fw())
-                    mutexes[i].add_tuples(mutexes_fw);
+        for (MutexGroup &mutex : mutexes) {
+            if (!mutex.is_redundant()) {
+                if (mutex.is_fw())
+                    mutex.add_tuples(mutexes_fw);
                 else
-                    mutexes[i].add_tuples(mutexes_bw);
+                    mutex.add_tuples(mutexes_bw);
             }
         }
         cout << "Preprocessor mutex groups fw: " << mutexes_fw.size()
@@ -234,8 +234,8 @@ int main(int argc, const char **argv) {
     }
 
     if (include_augmented_preconditions) {
-        for (size_t i = 0; i < operators.size(); i++) {
-            operators[i].include_augmented_preconditions();
+        for (Operator &op : operators) {
+            op.include_augmented_preconditions();
         }
     }
     // Calculate the problem size
@@ -253,14 +253,15 @@ int main(int argc, const char **argv) {
     cout << "Preprocessor task size: " << task_size << endl;
 
     cout << "Writing output..." << endl;
-  if (ordering.empty()){
-      cout << "Unsolvable task in preprocessor" << endl;
-      generate_unsolvable_cpp_input();
-  }else{
-    generate_cpp_input(solveable_in_poly_time, ordering, metric,
-                       mutexes, initial_state, goals,
-                       operators, axioms, successor_generator,
-                       transition_graphs, causal_graph);
-}
+    if (ordering.empty()) {
+        cout << "Unsolvable task in preprocessor" << endl;
+        generate_unsolvable_cpp_input();
+    } else {
+         generate_cpp_input(
+              solveable_in_poly_time, ordering, metric,
+              mutexes, initial_state, goals,
+              operators, axioms, successor_generator,
+              transition_graphs, causal_graph);
+    }
     cout << "done" << endl;
 }

@@ -106,17 +106,17 @@ void MutexGroup::get_mutex_group(vector<pair<int, int> > &invariant_group) const
 }
 void MutexGroup::remove_unreachable_facts() {
     vector<pair<const Variable *, int> > newfacts;
-    for (size_t i = 0; i < facts.size(); ++i) {
-        if (facts[i].first->is_necessary() && facts[i].first->is_reachable(facts[i].second)) {
-            newfacts.push_back(make_pair(facts[i].first, facts[i].first->get_new_id(facts[i].second)));
+    for (const pair<const Variable *, int> &fact : facts) {
+        if (fact.first->is_necessary() && fact.first->is_reachable(fact.second)) {
+            newfacts.push_back(make_pair(fact.first, fact.first->get_new_id(fact.second)));
         }
     }
     newfacts.swap(facts);
 }
 
 bool MutexGroup::hasPair(int var, int val) const {
-    for (size_t i = 0; i < facts.size(); ++i) {
-        if (facts[i].first->get_level() == var && facts[i].second == val) {
+    for (const pair<const Variable *, int> &fact : facts) {
+        if (fact.first->get_level() == var && fact.second == val) {
             return true;
         }
     }

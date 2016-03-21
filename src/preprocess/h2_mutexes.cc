@@ -133,9 +133,9 @@ void H2Mutexes::detect_unreachable_fluents(const vector <Variable *> &variables)
     } while (new_unreachable);
 
     int num_unreach = unreachable.size();
-    for (int var = 0; var < num_unreach; var++) {
+    for (int var = 0; var < num_unreach; ++var) {
 	int num_unreach_var = unreachable[var].size();
-        for (int val = 0; val < num_unreach_var; val++) {
+        for (int val = 0; val < num_unreach_var; ++val) {
             if (variables[var]->is_reachable(val) && unreachable[var][val]) {
                 // cout << "Unreachable proposition: " << variables[var]->get_fact_name(val) << endl;
                 variables[var]->set_unreachable(val);
@@ -210,7 +210,7 @@ bool H2Mutexes::initialize(const vector <Variable *> &variables,
         }
     }
 
-    //cout << "Get mutexes already computed" << endl    
+    //cout << "Get mutexes already computed" << endl;
     for (size_t i = 0; i < mutexes.size(); i++) {
         //cout << "Mutex: " << i << " of " << mutexes.size() << endl;
         vector<pair<int, int> > invariant_group;
@@ -500,8 +500,8 @@ int H2Mutexes::compute(const vector <Variable *> &variables,
     }
 
     int countUnreachable = 0;
-    for (size_t var = 0; var < unreachable.size(); var++) {
-        for (size_t val = 0; val < unreachable[var].size(); val++) {
+    for (int var = 0; var < static_cast<int>(unreachable.size()); var++) {
+        for (int val = 0; val < static_cast<int>(unreachable[var].size()); val++) {
             if (variables[var]->is_reachable(val) && unreachable[var][val]) {
                 // cout << "Unreachable proposition: " << variables[var]->get_fact_name(val) << endl;
                 countUnreachable++;
@@ -579,12 +579,12 @@ void Op_h2::instantiate_operator_forward(const Operator &op,
     for (unsigned j = 0; j < prevail.size(); j++) {
         // pre.push_back(p_index[prevail[j].var][prevail[j].prev]);
         int var = prevail[j].var->get_level();
-        size_t prev = prevail[j].prev;
+        int prev = prevail[j].prev;
         if (var == -1)
             continue;
 
         // fluents that belong to the same variable
-        for (size_t k = 0; k < p_index[var].size(); k++)
+        for (int k = 0; k < static_cast<int>(p_index[var].size()); k++)
             if (k != prev)
                 del.push_back(p_index[var][k]);
 
@@ -598,7 +598,7 @@ void Op_h2::instantiate_operator_forward(const Operator &op,
     // fluents mutex with adds are e-deleted: add as negative effect
     for (unsigned j = 0; j < pre_post.size(); j++) {
         int var = pre_post[j].var->get_level();
-        size_t post = pre_post[j].post;
+        int post = pre_post[j].post;
 
         if (pre_post[j].is_conditional_effect) {
             continue;
@@ -615,7 +615,7 @@ void Op_h2::instantiate_operator_forward(const Operator &op,
             continue;
 
         // fluents that belong to the same variable
-        for (size_t k = 0; k < p_index[var].size(); k++) {
+        for (int k = 0; k < static_cast<int>(p_index[var].size()); k++) {
             if (k != post) {
                 del.push_back(p_index[var][k]);
             }
@@ -680,13 +680,13 @@ void Op_h2::instantiate_operator_backward(const Operator &op,
     // fluents mutex with prevails are e-deleted: add as negative effect
     for (unsigned j = 0; j < prevail.size(); j++) {
         int var = prevail[j].var->get_level();
-        size_t prev = prevail[j].prev;
+        int prev = prevail[j].prev;
 
         if (var == -1)
             continue;
 
         // fluents that belong to the same variable
-        for (unsigned k = 0; k < p_index[var].size(); k++)
+        for (int k = 0; k < static_cast<int>(p_index[var].size()); k++)
             if (k != prev)
                 del.push_back(p_index[var][k]);
 
@@ -706,7 +706,7 @@ void Op_h2::instantiate_operator_backward(const Operator &op,
         if (var == -1 || pre == -1)
             continue;
 
-        // fluents that belong to the same variabl
+        // fluents that belong to the same variable
 	int num_p_index = p_index[var].size();
         for (int k = 0; k < num_p_index; k++)
             if (k != pre)

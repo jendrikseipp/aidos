@@ -138,28 +138,28 @@ void Operator::remove_ambiguity(const H2Mutexes &h2) {
 
     vector<pair<int, int> > known_values;
 
-    for (size_t i = 0; i < prevail.size(); i++) {
-        int var = prevail[i].var->get_level();
+    for (const Prevail &prev : prevail) {
+        int var = prev.var->get_level();
         if (var != -1) {
-            preconditions[var] = prevail[i].prev;
-            known_values.push_back(make_pair(var, prevail[i].prev));
+            preconditions[var] = prev.prev;
+            known_values.push_back(make_pair(var, prev.prev));
             original[var] = true;
         }
     }
-    for (size_t i = 0; i < pre_post.size(); i++) {
-        int var = pre_post[i].var->get_level();
+    for (const PrePost &effect : pre_post) {
+        int var = effect.var->get_level();
         if (var != -1) {
-            preconditions[var] = pre_post[i].pre;
-            known_values.push_back(make_pair(var, pre_post[i].pre));
+            preconditions[var] = effect.pre;
+            known_values.push_back(make_pair(var, effect.pre));
             original[var] = (preconditions[var] != -1);
             effect_var[var] = true;
-            effects.push_back(make_pair(var, pre_post[i].post));
+            effects.push_back(make_pair(var, effect.post));
         }
     }
-    for (size_t i = 0; i < augmented_preconditions.size(); i++) {
-        preconditions[augmented_preconditions[i].first] = augmented_preconditions[i].second;
-        known_values.push_back(make_pair(augmented_preconditions[i].first, augmented_preconditions[i].second));
-        original[augmented_preconditions[i].first] = true;
+    for (const pair<int, int> &augmented_precondition : augmented_preconditions) {
+        preconditions[augmented_precondition.first] = augmented_precondition.second;
+        known_values.push_back(make_pair(augmented_precondition.first, augmented_precondition.second));
+        original[augmented_precondition.first] = true;
     }
 
     // check that no precondition is unreachable or mutex with some other precondition
@@ -274,26 +274,26 @@ void Operator::remove_ambiguity(const H2Mutexes &h2) {
 
 void Operator::remove_unreachable_facts(const vector<Variable *> &variables) {
     vector<Prevail> newprev;
-    for (size_t i = 0; i < prevail.size(); ++i) {
-        if (prevail[i].var->is_necessary()) {
-            prevail[i].remove_unreachable_facts();
-            newprev.push_back(prevail[i]);
+    for (Prevail &prev : prevail) {
+        if (prev.var->is_necessary()) {
+            prev.remove_unreachable_facts();
+            newprev.push_back(prev);
         }
     }
     newprev.swap(prevail);
-    for (size_t i = 0; i < pre_post.size(); ++i) {
-        pre_post[i].remove_unreachable_facts();
+    for (PrePost &effect : pre_post) {
+        effect.remove_unreachable_facts();
     }
-    for (size_t i = 0; i < augmented_preconditions.size(); ++i) {
-        int var = augmented_preconditions[i].first;
-        int val = augmented_preconditions[i].second;
+    for (const pair<int, int> &augmented_precondition : augmented_preconditions) {
+        int var = augmented_precondition.first;
+        int val = augmented_precondition.second;
         if (variables[var]->is_necessary()) {
             augmented_preconditions_var.push_back(pair<Variable *, int> (variables[var], variables[var]->get_new_id(val)));
         }
     }
-    for (size_t i = 0; i < potential_preconditions.size(); ++i) {
-        int var = potential_preconditions[i].first;
-        int val = potential_preconditions[i].second;
+    for (const pair<int, int> &potential_precondition : potential_preconditions) {
+        int var = potential_precondition.first;
+        int val = potential_precondition.second;
 
         if (variables[var]->is_necessary()) {
             potential_preconditions_var.push_back(pair<Variable *, int> (variables[var], variables[var]->get_new_id(val)));

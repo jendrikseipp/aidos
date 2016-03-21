@@ -16,7 +16,7 @@ class MutexGroup {
     // Bw mutexes cannot reach the goal (should be pruned in fw search)
     // Both mutex groups contain fw and bw mutexes so they should be pruned in both directions
     Dir dir;
-    vector<pair<const Variable *, int> > facts;
+    vector<pair<const Variable *, int>> facts;
 public:
     MutexGroup(istream &in, const vector<Variable *> &variables);
 

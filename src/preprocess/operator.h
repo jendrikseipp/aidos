@@ -59,9 +59,9 @@ public:
             post = var->get_new_id(post);
             if (is_conditional_effect) {
                 vector<EffCond> new_conds;
-                for (size_t i = 0; i < effect_conds.size(); ++i) {
-                    if (effect_conds[i].remove_unreachable_facts()) {
-                        new_conds.push_back(effect_conds[i]);
+                for (EffCond &effect_condition : effect_conds) {
+                    if (effect_condition.remove_unreachable_facts()) {
+                        new_conds.push_back(effect_condition);
                     }
                 }
                 effect_conds.swap(new_conds);
@@ -74,8 +74,8 @@ public:
 
 private:
     string name;
-    vector<Prevail> prevail;    // var, val
-    vector<PrePost> pre_post; // var, old-val, new-val
+    vector<Prevail> prevail;  // var, val
+    vector<PrePost> pre_post;  // var, old-val, new-val
     int cost;
     bool spurious;
 
@@ -96,10 +96,10 @@ public:
     int get_cost() const {return cost; }
     string get_name() const {return name; }
     bool has_conditional_effects() const {
-        for (size_t i = 0; i < pre_post.size(); i++)
-            if (pre_post[i].is_conditional())
+        for (const PrePost &effect : pre_post) {
+            if (effect.is_conditional())
                 return true;
-
+        }
         return false;
     }
     inline void set_spurious() {

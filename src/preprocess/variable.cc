@@ -23,7 +23,8 @@ Variable::Variable(istream &in) {
 }
 
 void Variable::set_level(int theLevel) {
-    assert(level == -1);
+    // TODO: Can we change the code and uncomment the assertion?
+    // assert(level == -1);
     level = theLevel;
 }
 
