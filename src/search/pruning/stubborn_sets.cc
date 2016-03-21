@@ -58,9 +58,10 @@ StubbornSets::StubbornSets(const Options &opts)
       num_pruned_successors_generated(0),
       min_pruning_ratio(opts.get<double>("min_pruning_ratio")),
       stubborn_calls(0),
-      por_off(false) {
+      do_pruning(true) {
     
-    cout << "minimal pruning ratio to keep pruning: " << min_pruning_ratio << endl;
+    cout << "minimal pruning ratio to keep pruning: "
+         << min_pruning_ratio << endl;
 
     verify_no_axioms_no_conditional_effects();
     compute_sorted_operators();
@@ -116,11 +117,21 @@ bool StubbornSets::mark_as_stubborn(int op_no) {
 
 void StubbornSets::prune_operators(
     const GlobalState &state, vector<const GlobalOperator *> &ops) {
-    
-    if (por_off) {
-	return;
+    if (!do_pruning) {
+        return;
     }
-    
+    if (stubborn_calls == SAFETY_BELT_SIZE) {
+        double pruning_ratio = 1 - ((double) num_pruned_successors_generated /
+                                    (double) num_unpruned_successors_generated);
+        cout << "pruning ratio after " << SAFETY_BELT_SIZE
+             << " calls: " << pruning_ratio << endl;
+        if (pruning_ratio < min_pruning_ratio) {
+            cout << "-- pruning ratio is lower than min pruning ratio ("
+                 << min_pruning_ratio << "); switching off pruning" << endl;
+            do_pruning = false;
+        }
+    }
+
     num_unpruned_successors_generated += ops.size();
     stubborn_calls++;
     
@@ -153,16 +164,6 @@ void StubbornSets::prune_operators(
 
     num_pruned_successors_generated += ops.size();
 	    
-    if (stubborn_calls >= SAFETY_BELT_SIZE) {
-	
-	double actual_ratio = 1-((double)num_pruned_successors_generated/(double)num_unpruned_successors_generated);
-	cout << "actual pruning ratio: " << actual_ratio << endl;
-
-    if (actual_ratio < min_pruning_ratio) {
-        cout << "-- pruning ratio " << actual_ratio << " is lower than " << min_pruning_ratio << "; switching off pruning" << endl;
-	    por_off = true;
-	}
-    }
 	    
 }
 
