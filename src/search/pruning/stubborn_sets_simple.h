@@ -8,9 +8,7 @@ class StubbornSetsSimple : public stubborn_sets::StubbornSets {
     /* interference_relation[op1_no] contains all operator indices
        of operators that interfere with op1. */
     std::vector<std::vector<int>> interference_relation;
-
-    // TODO: move to base class
-    bool on_the_fly_interference;
+    std::vector<bool> interference_relation_computed;
 
     void add_necessary_enabling_set(Fact fact);
     void add_interfering(int op_no);
@@ -20,7 +18,7 @@ class StubbornSetsSimple : public stubborn_sets::StubbornSets {
                can_conflict(op1_no, op2_no) ||
                can_disable(op2_no, op1_no);
     }
-    void compute_interference_relation();
+    const std::vector<int> &get_interfering_operators(int op_no);
 protected:
     virtual void initialize_stubborn_set(const GlobalState &state) override;
     virtual void handle_stubborn_operator(const GlobalState &state, int op_no) override;

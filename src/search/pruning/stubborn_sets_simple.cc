@@ -39,41 +39,28 @@ static inline Fact find_unsatisfied_precondition(
 
 StubbornSetsSimple::StubbornSetsSimple(const Options &opts) :
     StubbornSets(opts),
-    on_the_fly_interference(opts.get<bool>("on_the_fly_interference")) {
+    interference_relation(g_operators.size()),
+    interference_relation_computed(g_operators.size(), false) {
     cout << "pruning method: stubborn sets simple" << endl;
-
-    if (!on_the_fly_interference) {
-        cout << "interference computation: precompute entirely" << endl;
-        compute_interference_relation();
-    } else {
-        cout << "interference computation: on-the-fly" << endl;
-        int num_operators = g_operators.size();
-        interference_relation.resize(num_operators);
-
-        for (int i = 0; i < num_operators; ++i) {
-            vector<int> interfering_operators;
-            interference_relation.push_back(interfering_operators);
-        }
-    }
 }
 
-void StubbornSetsSimple::compute_interference_relation() {
+const vector<int> &StubbornSetsSimple::get_interfering_operators(int op_no) {
     int num_operators = g_operators.size();
-    interference_relation.resize(num_operators);
-
     /*
        TODO: as interference is symmetric, we only need to compute the
        relation for operators (o1, o2) with (o1 < o2) and add a lookup
        method that looks up (i, j) if i < j and (j, i) otherwise.
     */
-    for (int op1_no = 0; op1_no < num_operators; ++op1_no) {
-        vector<int> &interfere_op1 = interference_relation[op1_no];
+    vector<int> &interfering_ops = interference_relation[op_no];
+    if (!interference_relation_computed[op_no]) {
         for (int op2_no = 0; op2_no < num_operators; ++op2_no) {
-            if (op1_no != op2_no && interfere(op1_no, op2_no)) {
-                interfere_op1.push_back(op2_no);
+            if (op_no != op2_no && interfere(op_no, op2_no)) {
+                interfering_ops.push_back(op2_no);
             }
         }
+        interference_relation_computed[op_no] = true;
     }
+    return interfering_ops;
 }
 
 // Add all operators that achieve the fact (var, value) to stubborn set.
@@ -85,24 +72,7 @@ void StubbornSetsSimple::add_necessary_enabling_set(Fact fact) {
 
 // Add all operators that interfere with op.
 void StubbornSetsSimple::add_interfering(int op_no) {
-    // TODO: move first part to separate function
-    if (on_the_fly_interference && interference_relation[op_no].empty()) {
-        int num_operators = g_operators.size();
-        vector<int> &interfere_op = interference_relation[op_no];
-
-        for (int op2_no = 0; op2_no < num_operators; ++op2_no) {
-            if (op_no != op2_no && interfere(op_no, op2_no)) {
-                interfere_op.push_back(op2_no);
-            }
-        }
-
-        // mark as processed, but still empty
-        if (interfere_op.empty()) {
-            interfere_op.push_back(-1);
-        }
-    }
-
-    for (int interferer_no : interference_relation[op_no]) {
+    for (int interferer_no : get_interfering_operators(op_no)) {
         if (interferer_no != -1) {
             mark_as_stubborn(interferer_no);
         }
@@ -157,11 +127,6 @@ static shared_ptr<PruningMethod> _parse(OptionParser &parser) {
             " and Scheduling (ICAPS 2014)",
             "323-331",
             "AAAI Press, 2014"));
-
-    parser.add_option<bool>(
-        "on_the_fly_interference",
-        "compute operator interferences on-the-fly",
-        "false");
 
     parser.add_option<double>(
         "min_pruning_ratio",
