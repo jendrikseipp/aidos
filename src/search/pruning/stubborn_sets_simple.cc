@@ -73,9 +73,7 @@ void StubbornSetsSimple::add_necessary_enabling_set(Fact fact) {
 // Add all operators that interfere with op.
 void StubbornSetsSimple::add_interfering(int op_no) {
     for (int interferer_no : get_interfering_operators(op_no)) {
-        if (interferer_no != -1) {
-            mark_as_stubborn(interferer_no);
-        }
+        mark_as_stubborn(interferer_no);
     }
 }
 

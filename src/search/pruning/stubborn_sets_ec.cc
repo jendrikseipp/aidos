@@ -249,7 +249,7 @@ void StubbornSetsEC::add_nes_for_fact(Fact fact, const GlobalState &state) {
 void StubbornSetsEC::add_conflicting_and_disabling(int op_no,
                                                    const GlobalState &state) {
     for (int conflict : get_conflicting_and_disabling(op_no)) {
-        if (conflict != -1 && active_ops[conflict]) {
+        if (active_ops[conflict]) {
             mark_as_stubborn_and_remember_written_vars(conflict, state);
         }
     }
@@ -314,7 +314,7 @@ void StubbornSetsEC::handle_stubborn_operator(const GlobalState &state, int op_n
         //Rule S4'
         vector<int> disabled_vars;
         for (int disabled_op_no : get_disabled(op_no)) {
-            if (disabled_op_no != -1 && active_ops[disabled_op_no]) {
+            if (active_ops[disabled_op_no]) {
                 get_disabled_vars(op_no, disabled_op_no, disabled_vars);
                 if (!disabled_vars.empty()) {     // == can_disable(op1_no, op2_no)
                     bool v_applicable_op_found = false;
