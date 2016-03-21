@@ -45,7 +45,6 @@ StubbornSetsSimple::StubbornSetsSimple(const Options &opts) :
 }
 
 const vector<int> &StubbornSetsSimple::get_interfering_operators(int op_no) {
-    int num_operators = g_operators.size();
     /*
        TODO: as interference is symmetric, we only need to compute the
        relation for operators (o1, o2) with (o1 < o2) and add a lookup
@@ -53,6 +52,7 @@ const vector<int> &StubbornSetsSimple::get_interfering_operators(int op_no) {
     */
     vector<int> &interfering_ops = interference_relation[op_no];
     if (!interference_relation_computed[op_no]) {
+        int num_operators = g_operators.size();
         for (int op2_no = 0; op2_no < num_operators; ++op2_no) {
             if (op_no != op2_no && interfere(op_no, op2_no)) {
                 interfering_ops.push_back(op2_no);

@@ -116,27 +116,15 @@ void get_conflicting_vars(const vector<Fact> &facts1,
     }
 }
 
-StubbornSetsEC::StubbornSetsEC(const Options &opts) :
-    StubbornSets(opts),
-    on_the_fly_interference(opts.get<bool>("on_the_fly_interference")) {
+StubbornSetsEC::StubbornSetsEC(const Options &opts)
+    : StubbornSets(opts),
+      conflicting_and_disabling(g_operators.size()),
+      conflicting_and_disabling_computed(g_operators.size(), false),
+      disabled(g_operators.size()),
+      disabled_computed(g_operators.size(), false) {
     cout << "pruning method: stubborn sets ec" << endl;
 
     compute_operator_preconditions();
-    if (!on_the_fly_interference) {
-        cout << "interference computation: precompute entirely" << endl;
-        compute_conflicts_and_disabling();
-    } else {
-        cout << "interference computation: on-the-fly" << endl;
-        int num_operators = g_operators.size();
-        conflicting_and_disabling.resize(num_operators);
-        disabled.resize(num_operators);
-        for (int i = 0; i < num_operators; ++i) {
-            vector<int> operators;
-            conflicting_and_disabling.push_back(operators);
-            disabled.push_back(operators);
-        }
-    }
-
     build_reachability_map();
 
     int num_variables = g_variable_domain.size();
@@ -199,40 +187,38 @@ void StubbornSetsEC::compute_active_operators(const GlobalState &state) {
     }
 }
 
-void StubbornSetsEC::compute_conflicts_and_disabling() {
-    int num_operators = g_operators.size();
-    conflicting_and_disabling.resize(num_operators);
-    disabled.resize(num_operators);
-
-    for (int op1_no = 0; op1_no < num_operators; ++op1_no) {
+const vector<int> &StubbornSetsEC::get_conflicting_and_disabling(int op_no) {
+    vector<int> &result = conflicting_and_disabling[op_no];
+    if (!conflicting_and_disabling_computed[op_no]) {
+        int num_operators = g_operators.size();
         for (int op2_no = 0; op2_no < num_operators; ++op2_no) {
-            if (op1_no != op2_no) {
-                bool conflict = can_conflict(op1_no, op2_no);
-                bool disable = can_disable(op2_no, op1_no);
+            if (op_no != op2_no) {
+                bool conflict = can_conflict(op_no, op2_no);
+                bool disable = can_disable(op2_no, op_no);
                 if (conflict || disable) {
-                    conflicting_and_disabling[op1_no].push_back(op2_no);
-                }
-                if (disable) {
-                    disabled[op2_no].push_back(op1_no);
+                    result.push_back(op2_no);
                 }
             }
         }
+        conflicting_and_disabling_computed[op_no] = true;
     }
+    return result;
 }
 
-void StubbornSetsEC::compute_disabled_operators(int op_no) {
+const std::vector<int> &StubbornSetsEC::get_disabled(int op_no) {
     int num_operators = g_operators.size();
-    for (int op2_no = 0; op2_no < num_operators; ++op2_no) {
-        if (op_no != op2_no) {
-            if (can_disable(op_no, op2_no)) {
-                disabled[op_no].push_back(op2_no);
+    vector<int> &result = disabled[op_no];
+    if (!disabled_computed[op_no]) {
+        for (int disabled_op_no = 0; disabled_op_no < num_operators; ++disabled_op_no) {
+            if (disabled_op_no != op_no) {
+                if (can_disable(op_no, disabled_op_no)) {
+                    result.push_back(disabled_op_no);
+                }
             }
         }
+        disabled_computed[op_no] = true;
     }
-    if (disabled[op_no].empty()) {
-        // mark as processed
-        disabled[op_no].push_back(-1);
-    }
+    return result;
 }
 
 // TODO: find a better name.
@@ -262,26 +248,7 @@ void StubbornSetsEC::add_nes_for_fact(Fact fact, const GlobalState &state) {
 
 void StubbornSetsEC::add_conflicting_and_disabling(int op_no,
                                                    const GlobalState &state) {
-    // TODO: move first part to separate function
-    int num_operators = g_operators.size();
-    if (on_the_fly_interference && conflicting_and_disabling[op_no].empty()) {
-        for (int op2_no = 0; op2_no < num_operators; ++op2_no) {
-            if (op_no != op2_no) {
-                bool conflict = can_conflict(op_no, op2_no);
-                bool disable = can_disable(op2_no, op_no);
-                if (conflict || disable) {
-                    conflicting_and_disabling[op_no].push_back(op2_no);
-                }
-            }
-        }
-
-        // mark as processed and still empty
-        if (conflicting_and_disabling[op_no].empty()) {
-            conflicting_and_disabling[op_no].push_back(-1);
-        }
-    }
-
-    for (int conflict : conflicting_and_disabling[op_no]) {
+    for (int conflict : get_conflicting_and_disabling(op_no)) {
         if (conflict != -1 && active_ops[conflict]) {
             mark_as_stubborn_and_remember_written_vars(conflict, state);
         }
@@ -346,11 +313,7 @@ void StubbornSetsEC::handle_stubborn_operator(const GlobalState &state, int op_n
         add_conflicting_and_disabling(op_no, state);     // active operators used
         //Rule S4'
         vector<int> disabled_vars;
-        if (disabled[op_no].empty()) {
-            compute_disabled_operators(op_no);
-        }
-
-        for (int disabled_op_no : disabled[op_no]) {
+        for (int disabled_op_no : get_disabled(op_no)) {
             if (disabled_op_no != -1 && active_ops[disabled_op_no]) {
                 get_disabled_vars(op_no, disabled_op_no, disabled_vars);
                 if (!disabled_vars.empty()) {     // == can_disable(op1_no, op2_no)
@@ -397,11 +360,6 @@ static shared_ptr<PruningMethod> _parse(OptionParser &parser) {
             "and Scheduling (ICAPS 2013)",
             "251-259",
             "AAAI Press 2013"));
-
-    parser.add_option<bool>(
-        "on_the_fly_interference",
-        "compute operator interferences on-the-fly",
-        "false");
 
     parser.add_option<double>(
         "min_pruning_ratio",
