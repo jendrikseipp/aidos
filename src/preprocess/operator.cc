@@ -134,9 +134,9 @@ void Operator::remove_ambiguity(const H2Mutexes &h2) {
     vector<bool> original(h2.num_variables(), false);
 
     vector<bool> effect_var(h2.num_variables(), false);
-    vector<pair<int, int> > effects;
+    vector<pair<int, int>> effects;
 
-    vector<pair<int, int> > known_values;
+    vector<pair<int, int>> known_values;
 
     for (const Prevail &prev : prevail) {
         int var = prev.var->get_level();
@@ -178,13 +178,13 @@ void Operator::remove_ambiguity(const H2Mutexes &h2) {
         }
     }
 
-    std::list<std::pair<unsigned, std::list<unsigned> > > candidates;
+    std::list<std::pair<unsigned, std::list<unsigned>>> candidates;
     for (int i = 0; i < h2.num_variables(); i++) {
         // consider unknown preconditions only
         if (preconditions[i] != -1)
             continue;
 
-        pair<unsigned, list<unsigned> > candidate_var = make_pair(i, list<unsigned>());
+        pair<unsigned, list<unsigned>> candidate_var = make_pair(i, list<unsigned>());
         // add every reachable fluent
         for (int j = 0; j < h2.num_values(i); j++)
             candidate_var.second.push_back(j);
@@ -194,9 +194,9 @@ void Operator::remove_ambiguity(const H2Mutexes &h2) {
 
     // actual disambiguation process
     while (!known_values.empty()) {
-        vector<pair<int, int> > aux_values;
+        vector<pair<int, int>> aux_values;
         // for each unknown variable
-        for (list<pair<unsigned, list<unsigned> > >::iterator it = candidates.begin(); it != candidates.end();) {
+        for (list<pair<unsigned, list<unsigned>>>::iterator it = candidates.begin(); it != candidates.end();) {
             unsigned var = it->first;
             list<unsigned> candidate_var = it->second;
             // cout << var << " -> " << candidate_var.size() << endl;
@@ -317,7 +317,7 @@ void Operator::include_augmented_preconditions() {
             if (pre_post[j].var->get_level() == var->get_level()) {
                 if (pre_post[j].pre != -1) {
                     cerr <<
-                    "Assertion error: augmented precondition was already encoded in the operator"
+                        "Assertion error: augmented precondition was already encoded in the operator"
                          << endl;
                     cerr << name << endl;
                     exit(-1);
@@ -337,7 +337,7 @@ void Operator::include_augmented_preconditions() {
             prevail.push_back(Prevail(var, val));
         }
     }
-    vector<pair<int, int> > ().swap(augmented_preconditions);
+    vector<pair<int, int>> ().swap(augmented_preconditions);
 }
 
 

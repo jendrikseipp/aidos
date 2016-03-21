@@ -15,7 +15,7 @@ void compute_h2_mutexes(const vector <Variable *> &variables,
                         vector<Axiom> &axioms,
                         vector<MutexGroup> &mutexes,
                         State &initial_state,
-                        const vector<pair<Variable *, int> > &goals,
+                        const vector<pair<Variable *, int>> &goals,
                         int limit_seconds, bool disable_bw_h2) {
     H2Mutexes h2(limit_seconds);
 
@@ -72,8 +72,8 @@ void compute_h2_mutexes(const vector <Variable *> &variables,
 
 
 Op_h2::Op_h2(const Operator &op,
-             const vector< vector<unsigned> > &p_index,
-             const vector<vector<set<pair<int, int> > > > &inconsistent_facts,
+             const vector< vector<unsigned>> &p_index,
+             const vector<vector<set<pair<int, int>>>> &inconsistent_facts,
              bool regression) {
     // //cout << "New op: " << op.get_name() << endl;
 
@@ -119,7 +119,7 @@ void H2Mutexes::detect_unreachable_fluents(const vector <Variable *> &variables)
                     unreachable_fluents.insert(static_fluent);
 
                     //Set inconsistent with everything else
-                    const set<pair<int, int> > &inconsistent = inconsistent_facts[static_fluent.first][static_fluent.second];
+                    const set<pair<int, int>> &inconsistent = inconsistent_facts[static_fluent.first][static_fluent.second];
                     for (auto it = inconsistent.begin();
                          it != inconsistent.end(); it++) {
                         if (!is_unreachable(it->first, it->second)) {
@@ -134,7 +134,7 @@ void H2Mutexes::detect_unreachable_fluents(const vector <Variable *> &variables)
 
     int num_unreach = unreachable.size();
     for (int var = 0; var < num_unreach; ++var) {
-	int num_unreach_var = unreachable[var].size();
+        int num_unreach_var = unreachable[var].size();
         for (int val = 0; val < num_unreach_var; ++val) {
             if (variables[var]->is_reachable(val) && unreachable[var][val]) {
                 // cout << "Unreachable proposition: " << variables[var]->get_fact_name(val) << endl;
@@ -213,7 +213,7 @@ bool H2Mutexes::initialize(const vector <Variable *> &variables,
     //cout << "Get mutexes already computed" << endl;
     for (size_t i = 0; i < mutexes.size(); i++) {
         //cout << "Mutex: " << i << " of " << mutexes.size() << endl;
-        vector<pair<int, int> > invariant_group;
+        vector<pair<int, int>> invariant_group;
         mutexes[i].get_mutex_group(invariant_group);
         for (size_t j = 0; j < invariant_group.size(); ++j) {
             const pair<int, int> &fact1 = invariant_group[j];
@@ -291,11 +291,11 @@ void H2Mutexes::init_values_progression(const vector <Variable *> &variables,
         }
     }
     cout << "Initialized mvalues forward: reached=" << countReached <<
-    ", notReached=" << countNotReached << ", spurious=" << countSpurious << endl;
+        ", notReached=" << countNotReached << ", spurious=" << countSpurious << endl;
 }
 
 
-void H2Mutexes::init_values_regression(const vector<pair<Variable *, int> > &goal) {
+void H2Mutexes::init_values_regression(const vector<pair<Variable *, int>> &goal) {
     cout << "Init values regression" << endl;
     for (unsigned i = 0; i < m_values.size(); i++) {
         if (m_values[i] != SPURIOUS) {
@@ -308,8 +308,8 @@ void H2Mutexes::init_values_regression(const vector<pair<Variable *, int> > &goa
         int gvar = goal[g].first->get_level();
         int gval = goal[g].second;
         //cout << "Goal: " << goal[g].first->get_fact_name(goal[g].second) << endl;
-        const set<pair<int, int> > &goal_mutexes = inconsistent_facts[gvar][gval];
-        for (set<pair<int, int> >::iterator it = goal_mutexes.begin(); it != goal_mutexes.end(); ++it) {
+        const set<pair<int, int>> &goal_mutexes = inconsistent_facts[gvar][gval];
+        for (set<pair<int, int>>::iterator it = goal_mutexes.begin(); it != goal_mutexes.end(); ++it) {
             setPropositionNotReached(p_index[it->first][it->second]);
         }
         for (int val1 = 0; val1 < num_vals[gvar]; val1++) {
@@ -332,7 +332,7 @@ void H2Mutexes::init_values_regression(const vector<pair<Variable *, int> > &goa
 
 
     cout << "Initialized mvalues backward: reached=" << countReached <<
-    ", notReached=" << countNotReached << ", spurious=" << countSpurious << endl;
+        ", notReached=" << countNotReached << ", spurious=" << countSpurious << endl;
 }
 
 void H2Mutexes::setPropositionNotReached(int prop_index) {
@@ -370,7 +370,7 @@ int H2Mutexes::compute(const vector <Variable *> &variables,
                        vector<Operator> &operators,  //operators is not const because they may be detected as spurious
                        const vector<Axiom> &axioms,
                        const State &initial_state,
-                       const vector<pair<Variable *, int> > &goal,
+                       const vector<pair<Variable *, int>> &goal,
                        vector<MutexGroup> &mutexes,
                        bool regression) {
     cout << "Initialize m_index " << (regression ? "bw" : "fw") << endl;
@@ -456,7 +456,7 @@ int H2Mutexes::compute(const vector <Variable *> &variables,
         }
     }
     cout << "Mutex computation finished with reached=" << countReached <<
-    ", notReached=" << countNotReached << ", spurious=" << countSpurious << endl;
+        ", notReached=" << countNotReached << ", spurious=" << countSpurious << endl;
 
     int numSpuriousOps = 0;
     for (unsigned op_i = 0; op_i < m_ops.size(); op_i++) {
@@ -486,7 +486,7 @@ int H2Mutexes::compute(const vector <Variable *> &variables,
                     count++;
                     // add to mutex groups
                     if (a.first < b.first) {
-                        vector <pair <int, int> > mut_group;
+                        vector <pair <int, int>> mut_group;
                         mut_group.push_back(make_pair(a.first, a.second));
                         mut_group.push_back(make_pair(b.first, b.second));
                         mutexes.push_back(MutexGroup(mut_group, variables, regression));
@@ -559,8 +559,8 @@ bool H2Mutexes::time_exceeded() {
 
 
 void Op_h2::instantiate_operator_forward(const Operator &op,
-                                         const vector< vector<unsigned> > &p_index,
-                                         const vector<vector<set<pair<int, int> > > > &inconsistent_facts) {
+                                         const vector< vector<unsigned>> &p_index,
+                                         const vector<vector<set<pair<int, int>>>> &inconsistent_facts) {
     vector<bool> prepost_var(inconsistent_facts.size(), false);
 
     const vector<Operator::Prevail> &prevail = op.get_prevail();
@@ -589,8 +589,8 @@ void Op_h2::instantiate_operator_forward(const Operator &op,
                 del.push_back(p_index[var][k]);
 
         // fluents mutex with the prevail
-        const set<pair<int, int> > prev_mutexes = inconsistent_facts[var][prev];
-        for (set<pair<int, int> >::iterator it = prev_mutexes.begin(); it != prev_mutexes.end(); ++it)
+        const set<pair<int, int>> prev_mutexes = inconsistent_facts[var][prev];
+        for (set<pair<int, int>>::iterator it = prev_mutexes.begin(); it != prev_mutexes.end(); ++it)
             del.push_back(p_index[it->first][it->second]);
     }
 
@@ -622,13 +622,13 @@ void Op_h2::instantiate_operator_forward(const Operator &op,
         }
 
         // fluents mutex with the add
-        const set<pair<int, int> > prev_mutexes = inconsistent_facts[var][post];
-        for (set<pair<int, int> >::iterator it = prev_mutexes.begin(); it != prev_mutexes.end(); ++it)
+        const set<pair<int, int>> prev_mutexes = inconsistent_facts[var][post];
+        for (set<pair<int, int>>::iterator it = prev_mutexes.begin(); it != prev_mutexes.end(); ++it)
             del.push_back(p_index[it->first][it->second]);
     }
 
     // augmented preconditions from the disambiguation
-    const vector<pair<int, int> > &augmented = op.get_augmented_preconditions();
+    const vector<pair<int, int>> &augmented = op.get_augmented_preconditions();
     //     cout << "Augmented size: " << op.get_name() << " -> " << augmented.size() << endl;
     for (unsigned j = 0; j < augmented.size(); j++) {
         int var = augmented[j].first;
@@ -637,20 +637,20 @@ void Op_h2::instantiate_operator_forward(const Operator &op,
 
         if (!prepost_var[var]) {
             // add the mutexes as deletes
-	    int num_p_index = p_index[var].size();
+            int num_p_index = p_index[var].size();
             for (int k = 0; k < num_p_index; k++)
                 if (k != val)
                     del.push_back(p_index[var][k]);
-            const set<pair<int, int> > augmented_mutexes = inconsistent_facts[var][val];
-            for (set<pair<int, int> >::iterator it = augmented_mutexes.begin(); it != augmented_mutexes.end(); ++it)
+            const set<pair<int, int>> augmented_mutexes = inconsistent_facts[var][val];
+            for (set<pair<int, int>>::iterator it = augmented_mutexes.begin(); it != augmented_mutexes.end(); ++it)
                 del.push_back(p_index[it->first][it->second]);
         }
     }
 }
 
 void Op_h2::instantiate_operator_backward(const Operator &op,
-                                          const vector< vector<unsigned> > &p_index,
-                                          const vector<vector<set<pair<int, int> > > > &inconsistent_facts) {
+                                          const vector< vector<unsigned>> &p_index,
+                                          const vector<vector<set<pair<int, int>>>> &inconsistent_facts) {
     vector<bool> prepost_var(inconsistent_facts.size(), false);
 
     const vector<Operator::Prevail> &prevail = op.get_prevail();
@@ -691,8 +691,8 @@ void Op_h2::instantiate_operator_backward(const Operator &op,
                 del.push_back(p_index[var][k]);
 
         // fluents mutex with the prevail
-        const set<pair<int, int> > prev_mutexes = inconsistent_facts[var][prev];
-        for (set<pair<int, int> >::iterator it = prev_mutexes.begin(); it != prev_mutexes.end(); ++it)
+        const set<pair<int, int>> prev_mutexes = inconsistent_facts[var][prev];
+        for (set<pair<int, int>>::iterator it = prev_mutexes.begin(); it != prev_mutexes.end(); ++it)
             del.push_back(p_index[it->first][it->second]);
     }
 
@@ -707,19 +707,19 @@ void Op_h2::instantiate_operator_backward(const Operator &op,
             continue;
 
         // fluents that belong to the same variable
-	int num_p_index = p_index[var].size();
+        int num_p_index = p_index[var].size();
         for (int k = 0; k < num_p_index; k++)
             if (k != pre)
                 del.push_back(p_index[var][k]);
 
         // fluents mutex with the add
-        const set<pair<int, int> > pre_mutexes = inconsistent_facts[var][pre];
-        for (set<pair<int, int> >::iterator it = pre_mutexes.begin(); it != pre_mutexes.end(); ++it)
+        const set<pair<int, int>> pre_mutexes = inconsistent_facts[var][pre];
+        for (set<pair<int, int>>::iterator it = pre_mutexes.begin(); it != pre_mutexes.end(); ++it)
             del.push_back(p_index[it->first][it->second]);
     }
 
     // augmented preconditions from the disambiguation
-    const vector<pair<int, int> > &augmented = op.get_augmented_preconditions();
+    const vector<pair<int, int>> &augmented = op.get_augmented_preconditions();
     //     cout << "Augmented size: " << op.get_name() << " -> " << augmented.size() << endl;
     for (unsigned j = 0; j < augmented.size(); j++) {
         int var = augmented[j].first;
@@ -730,20 +730,20 @@ void Op_h2::instantiate_operator_backward(const Operator &op,
             pre.push_back(p_index[var][val]);
 
         // add the mutexes as deletes
-	int num_p_index_var = p_index[var].size();
+        int num_p_index_var = p_index[var].size();
         for (int k = 0; k < num_p_index_var; k++)
             if (k != augmented[j].second)
                 del.push_back(p_index[var][k]);
-        const set<pair<int, int> > augmented_mutexes = inconsistent_facts[var][val];
-        for (set<pair<int, int> >::iterator it = augmented_mutexes.begin(); it != augmented_mutexes.end(); ++it)
+        const set<pair<int, int>> augmented_mutexes = inconsistent_facts[var][val];
+        for (set<pair<int, int>>::iterator it = augmented_mutexes.begin(); it != augmented_mutexes.end(); ++it)
             del.push_back(p_index[it->first][it->second]);
     }
 
     // potential preconditions from the disambiguation
-    const vector<pair<int, int> > &potential = op.get_potential_preconditions();
+    const vector<pair<int, int>> &potential = op.get_potential_preconditions();
     //For each variable, the set of potential deletes to add the set of
     //mutexes with ALL potential preconditions as deletes.
-    map<int, set<pair<int, int> > > potential_deletes;
+    map<int, set<pair<int, int>>> potential_deletes;
     for (unsigned j = 0; j < potential.size(); j++) {
         int pvar = potential[j].first;
         int pval = potential[j].second;
@@ -752,15 +752,15 @@ void Op_h2::instantiate_operator_backward(const Operator &op,
         add.push_back(p_index[pvar][pval]);
 
         //Update the potential deletes
-        set<pair<int, int> > potential_deletes_aux =
+        set<pair<int, int>> potential_deletes_aux =
             inconsistent_facts[pvar][pval]; //copy
-	int num_p_index_var = p_index[pvar].size();
+        int num_p_index_var = p_index[pvar].size();
         for (int k = 0; k < num_p_index_var; k++)
             if (k != pval)
                 potential_deletes_aux.insert(potential[j]);
 
         if (potential_deletes.count(pvar)) {
-            set<pair<int, int> > intersect;
+            set<pair<int, int>> intersect;
             set_intersection(potential_deletes[pvar].begin(), potential_deletes[pvar].end(),
                              potential_deletes_aux.begin(), potential_deletes_aux.end(),
                              std::inserter(intersect, intersect.begin()));
@@ -769,9 +769,9 @@ void Op_h2::instantiate_operator_backward(const Operator &op,
             potential_deletes[pvar].swap(potential_deletes_aux);
         }
     }
-    for (map<int, set<pair<int, int> > >::iterator it = potential_deletes.begin();
+    for (map<int, set<pair<int, int>>>::iterator it = potential_deletes.begin();
          it != potential_deletes.end(); ++it) {
-        for (set<pair<int, int> >::iterator it2 = it->second.begin();
+        for (set<pair<int, int>>::iterator it2 = it->second.begin();
              it2 != it->second.end(); ++it2) {
             del.push_back(p_index[it2->first][it2->second]);
         }

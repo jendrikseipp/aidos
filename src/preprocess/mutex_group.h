@@ -20,7 +20,7 @@ class MutexGroup {
 public:
     MutexGroup(istream &in, const vector<Variable *> &variables);
 
-    MutexGroup(const vector<pair<int, int> > &f,
+    MutexGroup(const vector<pair<int, int>> &f,
                const vector<Variable *> &variables,
                bool regression);
 
@@ -37,17 +37,17 @@ public:
     }
     void generate_cpp_input(ofstream &outfile) const;
     void dump() const;
-    void get_mutex_group(vector<pair<int, int> > &invariant_group) const;
+    void get_mutex_group(vector<pair<int, int>> &invariant_group) const;
 
     void remove_unreachable_facts();
 
     bool hasPair(int var, int val) const;
 
-    inline const vector<pair<const Variable *, int> > &getFacts() const {
+    inline const vector<pair<const Variable *, int>> &getFacts() const {
         return facts;
     }
 
-    void add_tuples(std::set<std::vector<int> > &tuples) const {
+    void add_tuples(std::set<std::vector<int>> &tuples) const {
         for (size_t i = 0; i < facts.size(); ++i) {
             for (size_t j = i + 1; j < facts.size(); ++j) {
                 int v1 = facts[i].first->get_level();

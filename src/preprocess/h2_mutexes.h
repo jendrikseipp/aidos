@@ -23,8 +23,8 @@ enum Reachability {SPURIOUS, REACHED, NOT_REACHED};
 class Op_h2 {
 public:
     Op_h2(const Operator &op,
-          const vector< vector<unsigned> > &p_index,
-          const std::vector<std::vector<std::set<std::pair<int, int> > > > &inconsistent_facts,
+          const vector< vector<unsigned>> &p_index,
+          const std::vector<std::vector<std::set<std::pair<int, int>>>> &inconsistent_facts,
           bool regression);
 
     vector<unsigned> pre;
@@ -33,22 +33,22 @@ public:
     Reachability triggered;
 
 private:
-    inline void push_pre(const vector< vector<unsigned> > &p_index, Variable *var, int val) {
+    inline void push_pre(const vector< vector<unsigned>> &p_index, Variable *var, int val) {
         if (var->get_level() >= 0) {
             pre.push_back(p_index[var->get_level()][val]);
         }
     }
 
-    inline void push_add(const vector< vector<unsigned> > &p_index, Variable *var, int val) {
+    inline void push_add(const vector< vector<unsigned>> &p_index, Variable *var, int val) {
         if (var->get_level() >= 0) {
             add.push_back(p_index[var->get_level()][val]);
         }
     }
 
-    void instantiate_operator_backward(const Operator &op, const vector< vector<unsigned> > &p_index,
-                                       const std::vector<std::vector<std::set<std::pair<int, int> > > > &inconsistent_facts);
-    void instantiate_operator_forward(const Operator &op, const vector< vector<unsigned> > &p_index,
-                                      const std::vector<std::vector<std::set<std::pair<int, int> > > > &inconsistent_facts);
+    void instantiate_operator_backward(const Operator &op, const vector< vector<unsigned>> &p_index,
+                                       const std::vector<std::vector<std::set<std::pair<int, int>>>> &inconsistent_facts);
+    void instantiate_operator_forward(const Operator &op, const vector< vector<unsigned>> &p_index,
+                                      const std::vector<std::vector<std::set<std::pair<int, int>>>> &inconsistent_facts);
 };
 
 
@@ -64,7 +64,7 @@ public:
                 vector<Operator> &operators, //not const because may be detected to be spurious
                 const vector<Axiom> &axioms,
                 const State &initial_state,
-                const vector<pair<Variable *, int> > &goal,
+                const vector<pair<Variable *, int>> &goal,
                 vector<MutexGroup> &mutexes,
                 bool regression);
 
@@ -106,16 +106,16 @@ protected:
     int num_vars;
     std::vector<int> num_vals;
 
-    std::set<std::pair<int, int> > unreachable_fluents;
-    std::vector <std::vector <bool > > unreachable;
-    std::vector<std::vector<std::set<std::pair<int, int> > > > inconsistent_facts;
+    std::set<std::pair<int, int>> unreachable_fluents;
+    std::vector <std::vector <bool >> unreachable;
+    std::vector<std::vector<std::set<std::pair<int, int>>>> inconsistent_facts;
 
     unsigned number_props;
     vector<unsigned> m_values;
     vector<Op_h2> m_ops;
 
-    vector< vector<unsigned> > p_index;
-    vector< pair<unsigned, unsigned> > p_index_reverse;
+    vector< vector<unsigned>> p_index;
+    vector< pair<unsigned, unsigned>> p_index_reverse;
 
     Reachability eval_propositions(vector<unsigned> props);
 
@@ -135,7 +135,7 @@ protected:
 
     void init_values_progression(const vector <Variable *> &variables,
                                  const State &initial_state);
-    void init_values_regression(const vector<pair<Variable *, int> > &goal);
+    void init_values_regression(const vector<pair<Variable *, int>> &goal);
     void init_h2_operators(const vector<Operator> &operators,
                            const vector<Axiom> &axioms, bool regression);
 
@@ -148,7 +148,7 @@ extern void compute_h2_mutexes(const vector <Variable *> &variables,
                                vector<Axiom> &axioms,
                                vector<MutexGroup> &mutexes,
                                State &initial_state,
-                               const vector<pair<Variable *, int> > &goal,
+                               const vector<pair<Variable *, int>> &goal,
                                int limit_seconds, bool disable_bw_h2);
 
 

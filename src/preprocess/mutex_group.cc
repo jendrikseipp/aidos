@@ -18,7 +18,7 @@ MutexGroup::MutexGroup(istream &in, const vector<Variable *> &variables) : dir(F
     }
     check_magic(in, "end_mutex_group");
 }
-MutexGroup::MutexGroup(const vector<pair<int, int> > &f,
+MutexGroup::MutexGroup(const vector<pair<int, int>> &f,
                        const vector<Variable *> &variables,
                        bool regression) {
     if (regression) {
@@ -96,7 +96,7 @@ void strip_mutexes(vector<MutexGroup> &mutexes) {
 }
 
 
-void MutexGroup::get_mutex_group(vector<pair<int, int> > &invariant_group) const {
+void MutexGroup::get_mutex_group(vector<pair<int, int>> &invariant_group) const {
     invariant_group.reserve(facts.size());
     for (size_t j = 0; j < facts.size(); ++j) {
         int var = facts[j].first->get_level();
@@ -105,7 +105,7 @@ void MutexGroup::get_mutex_group(vector<pair<int, int> > &invariant_group) const
     }
 }
 void MutexGroup::remove_unreachable_facts() {
-    vector<pair<const Variable *, int> > newfacts;
+    vector<pair<const Variable *, int>> newfacts;
     for (const pair<const Variable *, int> &fact : facts) {
         if (fact.first->is_necessary() && fact.first->is_reachable(fact.second)) {
             newfacts.push_back(make_pair(fact.first, fact.first->get_new_id(fact.second)));

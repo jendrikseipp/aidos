@@ -79,11 +79,11 @@ private:
     int cost;
     bool spurious;
 
-    std::vector<std::pair<int, int> > augmented_preconditions;
-    std::vector<std::pair<int, int> > potential_preconditions;
+    std::vector<std::pair<int, int>> augmented_preconditions;
+    std::vector<std::pair<int, int>> potential_preconditions;
 
-    std::vector<std::pair<Variable *, int> > augmented_preconditions_var;
-    std::vector<std::pair<Variable *, int> > potential_preconditions_var;
+    std::vector<std::pair<Variable *, int>> augmented_preconditions_var;
+    std::vector<std::pair<Variable *, int>> potential_preconditions_var;
 public:
     Operator(istream &in, const vector<Variable *> &variables);
 
@@ -107,11 +107,11 @@ public:
     }
     inline const vector<Prevail> &get_prevail() const {return prevail; }
     inline const vector<PrePost> &get_pre_post() const {return pre_post; }
-    inline const std::vector<std::pair<int, int> > &get_augmented_preconditions() const {
+    inline const std::vector<std::pair<int, int>> &get_augmented_preconditions() const {
         return augmented_preconditions;
     }
 
-    inline const std::vector<std::pair<int, int> > &get_potential_preconditions() const {
+    inline const std::vector<std::pair<int, int>> &get_potential_preconditions() const {
         return potential_preconditions;
     }
 

@@ -122,7 +122,7 @@ int main(int argc, const char **argv) {
             mutex.remove_unreachable_facts();
         }
         cout << "Change id of goals" << endl;
-        vector<pair<Variable *, int> > new_goals;
+        vector<pair<Variable *, int>> new_goals;
         for (pair<Variable *, int> &goal : goals) {
             if (goal.first->is_necessary()) {
                 goal.second = goal.first->get_new_id(goal.second);
@@ -220,7 +220,7 @@ int main(int argc, const char **argv) {
         cout << "Ops with potential preconditions: " << num_op_potential << endl;
         cout << "Potential preconditions contradict effects: " << num_total_potential_noeff << endl;
         cout << "Ops with potential preconditions contradict effects: " << num_op_potential_noeff << endl;
-        set<vector<int> > mutexes_fw, mutexes_bw;
+        set<vector<int>> mutexes_fw, mutexes_bw;
         for (MutexGroup &mutex : mutexes) {
             if (!mutex.is_redundant()) {
                 if (mutex.is_fw())
@@ -257,11 +257,11 @@ int main(int argc, const char **argv) {
         cout << "Unsolvable task in preprocessor" << endl;
         generate_unsolvable_cpp_input();
     } else {
-         generate_cpp_input(
-              solveable_in_poly_time, ordering, metric,
-              mutexes, initial_state, goals,
-              operators, axioms, successor_generator,
-              transition_graphs, causal_graph);
+        generate_cpp_input(
+            solveable_in_poly_time, ordering, metric,
+            mutexes, initial_state, goals,
+            operators, axioms, successor_generator,
+            transition_graphs, causal_graph);
     }
     cout << "done" << endl;
 }

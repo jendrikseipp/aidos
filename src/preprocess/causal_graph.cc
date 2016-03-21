@@ -123,6 +123,7 @@ void CausalGraph::update() {
             ordering[i]->remove_unreachable_facts();
         }
 
+
     ordering = new_ordering;
     for (size_t i = 0; i < ordering.size(); i++) {
         ordering[i]->set_level(i);

@@ -247,11 +247,11 @@ void generate_unsolvable_cpp_input() {
             << "var1" << endl
             << "0" << endl
             << "2" << endl
-	    << "val0" << endl
-	    << "val1" << endl
-	    << "end_variable" << endl;
+            << "val0" << endl
+            << "val1" << endl
+            << "end_variable" << endl;
 
-    //Mutexes 
+    //Mutexes
     outfile << "0" << endl;
 
     //Initial state and goal
@@ -268,11 +268,10 @@ void generate_unsolvable_cpp_input() {
     outfile << "check 0" << endl;
     outfile << "end_SG" << endl;
 
-    outfile << "begin_DTG" << endl << "0" << endl  << "0" << endl
-     << "end_DTG" << endl;
+    outfile << "begin_DTG" << endl << "0" << endl << "0" << endl
+            << "end_DTG" << endl;
 
     outfile << "begin_CG" << endl << "0" << endl << "end_CG" << endl;
 
     outfile.close();
 }
-
