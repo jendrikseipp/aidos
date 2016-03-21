@@ -28,7 +28,7 @@ class StubbornSets : public PruningMethod {
     double min_pruning_ratio;
     int stubborn_calls;
     bool do_pruning;
-    
+
     // number of expansions when pruning ratio is checked
     const int SAFETY_BELT_SIZE = 1000;
 

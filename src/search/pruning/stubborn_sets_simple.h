@@ -11,7 +11,7 @@ class StubbornSetsSimple : public stubborn_sets::StubbornSets {
 
     // TODO: move to base class
     bool on_the_fly_interference;
-    
+
     void add_necessary_enabling_set(Fact fact);
     void add_interfering(int op_no);
 
