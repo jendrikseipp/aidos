@@ -59,7 +59,7 @@ public:
             post = var->get_new_id(post);
             if (is_conditional_effect) {
                 vector<EffCond> new_conds;
-                for (int i = 0; i < effect_conds.size(); ++i) {
+                for (size_t i = 0; i < effect_conds.size(); ++i) {
                     if (effect_conds[i].remove_unreachable_facts()) {
                         new_conds.push_back(effect_conds[i]);
                     }
@@ -96,7 +96,7 @@ public:
     int get_cost() const {return cost; }
     string get_name() const {return name; }
     bool has_conditional_effects() const {
-        for (int i = 0; i < pre_post.size(); i++)
+        for (size_t i = 0; i < pre_post.size(); i++)
             if (pre_post[i].is_conditional())
                 return true;
 

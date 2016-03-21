@@ -16,7 +16,6 @@ class MutexGroup {
     // Bw mutexes cannot reach the goal (should be pruned in fw search)
     // Both mutex groups contain fw and bw mutexes so they should be pruned in both directions
     Dir dir;
-
     vector<pair<const Variable *, int> > facts;
 public:
     MutexGroup(istream &in, const vector<Variable *> &variables);
@@ -36,7 +35,6 @@ public:
     int num_facts() const {
         return facts.size();
     }
-
     void generate_cpp_input(ofstream &outfile) const;
     void dump() const;
     void get_mutex_group(vector<pair<int, int> > &invariant_group) const;
@@ -50,8 +48,8 @@ public:
     }
 
     void add_tuples(std::set<std::vector<int> > &tuples) const {
-        for (int i = 0; i < facts.size(); ++i) {
-            for (int j = i + 1; j < facts.size(); ++j) {
+        for (size_t i = 0; i < facts.size(); ++i) {
+            for (size_t j = i + 1; j < facts.size(); ++j) {
                 int v1 = facts[i].first->get_level();
                 int v2 = facts[j].first->get_level();
                 int a1 = facts[i].second;
