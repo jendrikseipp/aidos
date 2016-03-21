@@ -7,8 +7,8 @@
 
 namespace stubborn_sets {
 class StubbornSets : public PruningMethod {
-    long num_unpruned_successors_generated;
-    long num_pruned_successors_generated;
+    long num_successors_before_pruning;
+    long num_successors_after_pruning;
 
     /* stubborn[op_no] is true iff the operator with operator index
        op_no is contained in the stubborn set */
@@ -24,7 +24,7 @@ class StubbornSets : public PruningMethod {
 
     double min_pruning_ratio;
     int stubborn_calls;
-    bool por_off;
+    bool do_pruning;
     
     // number of expansions when pruning ratio is checked
     const int SAFETY_BELT_SIZE = 1000;

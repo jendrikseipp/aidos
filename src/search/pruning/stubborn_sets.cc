@@ -54,8 +54,8 @@ vector<Fact> get_sorted_fact_set(const vector<T> &facts) {
 }
 
 StubbornSets::StubbornSets(const Options &opts)
-    : num_unpruned_successors_generated(0),
-      num_pruned_successors_generated(0),
+    : num_successors_before_pruning(0),
+      num_successors_after_pruning(0),
       min_pruning_ratio(opts.get<double>("min_pruning_ratio")),
       stubborn_calls(0),
       do_pruning(true) {
@@ -117,12 +117,9 @@ bool StubbornSets::mark_as_stubborn(int op_no) {
 
 void StubbornSets::prune_operators(
     const GlobalState &state, vector<const GlobalOperator *> &ops) {
-    if (!do_pruning) {
-        return;
-    }
     if (stubborn_calls == SAFETY_BELT_SIZE) {
-        double pruning_ratio = 1 - ((double) num_pruned_successors_generated /
-                                    (double) num_unpruned_successors_generated);
+        double pruning_ratio = 1 - ((double) num_successors_after_pruning /
+                                    (double) num_successors_before_pruning);
         cout << "pruning ratio after " << SAFETY_BELT_SIZE
              << " calls: " << pruning_ratio << endl;
         if (pruning_ratio < min_pruning_ratio) {
@@ -131,8 +128,11 @@ void StubbornSets::prune_operators(
             do_pruning = false;
         }
     }
+    if (!do_pruning) {
+        return;
+    }
 
-    num_unpruned_successors_generated += ops.size();
+    num_successors_before_pruning += ops.size();
     stubborn_calls++;
     
     // Clear stubborn set from previous call.
@@ -162,15 +162,15 @@ void StubbornSets::prune_operators(
         sort(ops.begin(), ops.end());
     }
 
-    num_pruned_successors_generated += ops.size();
+    num_successors_after_pruning += ops.size();
 	    
 	    
 }
 
 void StubbornSets::print_statistics() const {
     cout << "total successors before partial-order reduction: "
-         << num_unpruned_successors_generated << endl
+         << num_successors_before_pruning << endl
          << "total successors after partial-order reduction: "
-         << num_pruned_successors_generated << endl;
+         << num_successors_after_pruning << endl;
 }
 }
