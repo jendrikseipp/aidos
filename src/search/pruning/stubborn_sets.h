@@ -22,7 +22,7 @@ class StubbornSets : public PruningMethod {
     */
     std::vector<int> stubborn_queue;
 
-    double pruning_ratio;
+    double min_pruning_ratio;
     int stubborn_calls;
     bool por_off;
     

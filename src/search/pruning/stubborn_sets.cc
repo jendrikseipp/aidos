@@ -56,11 +56,11 @@ vector<Fact> get_sorted_fact_set(const vector<T> &facts) {
 StubbornSets::StubbornSets(const Options &opts)
     : num_unpruned_successors_generated(0),
       num_pruned_successors_generated(0),
-      pruning_ratio(opts.get<double>("pruning_ratio")),
+      min_pruning_ratio(opts.get<double>("min_pruning_ratio")),
       stubborn_calls(0),
       por_off(false) {
     
-    cout << "minimal pruning ratio to keep pruning: " << pruning_ratio << endl;
+    cout << "minimal pruning ratio to keep pruning: " << min_pruning_ratio << endl;
 
     verify_no_axioms_no_conditional_effects();
     compute_sorted_operators();
@@ -158,8 +158,8 @@ void StubbornSets::prune_operators(
 	double actual_ratio = 1-((double)num_pruned_successors_generated/(double)num_unpruned_successors_generated);
 	cout << "actual pruning ratio: " << actual_ratio << endl;
 
-	if (actual_ratio < pruning_ratio) {
-	    cout << "-- pruning ratio " << actual_ratio << " is lower than " << pruning_ratio << "; switching off pruning" << endl;
+    if (actual_ratio < min_pruning_ratio) {
+        cout << "-- pruning ratio " << actual_ratio << " is lower than " << min_pruning_ratio << "; switching off pruning" << endl;
 	    por_off = true;
 	}
     }

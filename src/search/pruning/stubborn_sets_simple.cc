@@ -167,7 +167,7 @@ static shared_ptr<PruningMethod> _parse(OptionParser &parser) {
                             "compute operator interferences on-the-fly",
                             "false");
 
-    parser.add_option<double>("pruning_ratio",
+    parser.add_option<double>("min_pruning_ratio",
 			      "minimal pruning ratio such that pruning is not switched off",
 			      "1.0");
     
