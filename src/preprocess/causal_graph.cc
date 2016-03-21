@@ -117,12 +117,12 @@ void CausalGraph::update() {
     // change ordering to leave out unimportant vars
     vector<Variable *> new_ordering;
     int old_size = ordering.size();
-    for (int i = 0; i < old_size; i++)
+    for (int i = 0; i < old_size; i++) {
         if (ordering[i]->is_necessary() || g_do_not_prune_variables) {
             new_ordering.push_back(ordering[i]);
             ordering[i]->remove_unreachable_facts();
         }
-
+    }
 
     ordering = new_ordering;
     for (size_t i = 0; i < ordering.size(); i++) {
