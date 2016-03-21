@@ -52,7 +52,7 @@ protected:
     virtual void initialize_stubborn_set(const GlobalState &state) = 0;
     virtual void handle_stubborn_operator(const GlobalState &state, int op_no) = 0;
 public:
-    StubbornSets(const options::Options &opts);
+    explicit StubbornSets(const options::Options &opts);
     virtual ~StubbornSets() = default;
 
     /* TODO: move prune_operators, and also the statistics, to the

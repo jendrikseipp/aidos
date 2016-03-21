@@ -129,7 +129,7 @@ static shared_ptr<PruningMethod> _parse(OptionParser &parser) {
     parser.add_option<double>(
         "min_pruning_ratio",
         "minimal pruning ratio such that pruning is not switched off",
-        "1.0");
+        "0.0");
 
     Options opts = parser.parse();
 

@@ -23,7 +23,7 @@ protected:
     virtual void initialize_stubborn_set(const GlobalState &state) override;
     virtual void handle_stubborn_operator(const GlobalState &state, int op_no) override;
 public:
-    StubbornSetsSimple(const options::Options &opts);
+    explicit StubbornSetsSimple(const options::Options &opts);
     virtual ~StubbornSetsSimple() = default;
 };
 }
