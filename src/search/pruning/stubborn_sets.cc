@@ -117,6 +117,9 @@ bool StubbornSets::mark_as_stubborn(int op_no) {
 
 void StubbornSets::prune_operators(
     const GlobalState &state, vector<const GlobalOperator *> &ops) {
+    if (!do_pruning) {
+        return;
+    }
     if (stubborn_calls == SAFETY_BELT_SIZE) {
         const double pruning_ratio = 1 - (
             static_cast<double>(num_successors_after_pruning) /
@@ -128,9 +131,6 @@ void StubbornSets::prune_operators(
                  << min_pruning_ratio << "); switching off pruning" << endl;
             do_pruning = false;
         }
-    }
-    if (!do_pruning) {
-        return;
     }
 
     num_successors_before_pruning += ops.size();
