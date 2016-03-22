@@ -142,7 +142,7 @@ def run_search(args):
         if "--help" not in args.search_options:
             args.search_options.extend(["--internal-plan-file", args.plan_file])
 
-        if any("f_bound=F_BOUND" in x for x in args.search_options):
+        if any("f_bound=compute" in x for x in args.search_options):
             exitcode = portfolio_runner.run_unsolvable_resource_detection(
                 search, args.search_options, args.search_input, time_limit, memory_limit)
             if exitcode in returncodes.EXPECTED_EXITCODES:

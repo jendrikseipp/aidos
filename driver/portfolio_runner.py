@@ -173,8 +173,8 @@ def run_unsolvable_resource_detection(
     for index, arg in enumerate(args):
         if arg == "--search":
             search = args[index + 1]
-            assert "f_bound=F_BOUND" in search
-            args[index + 1] = search.replace("f_bound=F_BOUND", "f_bound=%d" % f_bound)
+            assert "f_bound=compute" in search
+            args[index + 1] = search.replace("f_bound=compute", "f_bound=%d" % f_bound)
     dummy_plan_manager = plan_manager.PlanManager("projected_sas_plan")
     exitcode = run_search(
         executable, args, projected_sas_file, dummy_plan_manager, run_time, memory)
@@ -187,7 +187,7 @@ def run_unsolvable_resource_detection(
 def run_opt(configs, executable, sas_file, plan_manager, timeout, memory):
     for pos, (relative_time, args) in enumerate(configs):
         run_time = compute_run_time(timeout, configs, pos)
-        if any("f_bound=F_BOUND" in x for x in args):
+        if any("f_bound=compute" in x for x in args):
             exitcode = run_unsolvable_resource_detection(
                 executable, args, sas_file, run_time, memory)
         else:
