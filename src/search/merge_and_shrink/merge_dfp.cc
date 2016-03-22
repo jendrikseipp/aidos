@@ -41,8 +41,8 @@ void MergeDFP::initialize(const shared_ptr<AbstractTask> task) {
                      randomized_order,
                      transition_system_order);
 
-    if (!randomized_order && (atomic_ts_order == REGULAR &&
-                              product_ts_order == NEW_TO_OLD &&
+    if (!randomized_order && (atomic_ts_order == AtomicTSOrder::REGULAR &&
+                              product_ts_order == ProductTSOrder::NEW_TO_OLD &&
                               !atomic_before_product)) {
         int num_variables = task_proxy.get_variables().size();
         int max_transition_system_count = num_variables * 2 - 1;
@@ -270,9 +270,9 @@ void MergeDFP::compute_ts_order(const TaskProxy &task_proxy,
         for (int i = 0; i < num_variables; ++i) {
             atomic_tso.push_back(i);
         }
-        if (atomic_ts_order == INVERSE) {
+        if (atomic_ts_order == AtomicTSOrder::INVERSE) {
             reverse(atomic_tso.begin(), atomic_tso.end());
-        } else if (atomic_ts_order == RANDOM1) {
+        } else if (atomic_ts_order == AtomicTSOrder::RANDOM) {
             g_rng.shuffle(atomic_tso);
         }
 
@@ -281,9 +281,9 @@ void MergeDFP::compute_ts_order(const TaskProxy &task_proxy,
         for (int i = num_variables; i < max_transition_system_count; ++i) {
             product_tso.push_back(i);
         }
-        if (product_ts_order == NEW_TO_OLD) {
+        if (product_ts_order == ProductTSOrder::NEW_TO_OLD) {
             reverse(product_tso.begin(), product_tso.end());
-        } else if (product_ts_order == RANDOM2) {
+        } else if (product_ts_order == ProductTSOrder::RANDOM) {
             g_rng.shuffle(product_tso);
         }
 

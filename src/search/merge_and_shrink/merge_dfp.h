@@ -10,16 +10,16 @@ class Options;
 class TaskProxy;
 
 namespace merge_and_shrink {
-enum AtomicTSOrder {
+enum class AtomicTSOrder {
     REGULAR,
     INVERSE,
-    RANDOM1
+    RANDOM
 };
 
-enum ProductTSOrder {
+enum class ProductTSOrder {
     OLD_TO_NEW,
     NEW_TO_OLD,
-    RANDOM2
+    RANDOM
 };
 
 class MergeDFP : public MergeStrategy {
