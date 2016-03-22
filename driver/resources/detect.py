@@ -7,7 +7,7 @@ from resourcecost import find_operator_costs
 
 
 MIN_AVAILABILITY = 5
-MAX_REL_NUM_OPS_IN_PROJECTION = 0.5
+MAX_REL_NUM_OPS_IN_PROJECTION = 0.85
 
 
 def detect_resources(task):
