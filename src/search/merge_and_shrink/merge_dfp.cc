@@ -228,6 +228,7 @@ pair<int, int> MergeDFP::get_next(FactoredTransitionSystem &fts,
             if (ts_index == given_index) {
                 assert(fts.is_active(ts_index));
                 sorted_active_ts_indices.push_back(ts_index);
+                break;
             }
         }
     }
