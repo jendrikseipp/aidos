@@ -53,6 +53,12 @@ def get_experiment_name():
     return "%s-%s" % (script_dir, script_base)
 
 
+def get_domain_dir():
+    path = os.path.abspath(get_repo_base())
+    path = os.path.dirname(path)
+    return os.path.join(path, "unsolvable-pddl-tasks")
+
+
 def get_data_dir():
     """Get data dir for the experiment.
 

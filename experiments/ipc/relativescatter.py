@@ -5,7 +5,11 @@ import os
 
 from lab import tools
 
-from matplotlib import ticker
+try:
+    from matplotlib import ticker
+except ImportError:
+    print "matplotlib not availabe, creating scatter plots won't work"
+
 
 from downward.reports.scatter import ScatterPlotReport
 from downward.reports.plot import PlotReport, Matplotlib, MatplotlibPlot
