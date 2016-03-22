@@ -58,7 +58,7 @@ void MergeDFP::initialize(const shared_ptr<AbstractTask> task) {
     }
 }
 
-void MergeDFP::compute_label_ranks(FactoredTransitionSystem &fts,
+void MergeDFP::compute_label_ranks(const FactoredTransitionSystem &fts,
                                    int index,
                                    vector<int> &label_ranks) const {
     const TransitionSystem &ts = fts.get_ts(index);
@@ -102,7 +102,7 @@ void MergeDFP::compute_label_ranks(FactoredTransitionSystem &fts,
 }
 
 pair<int, int> MergeDFP::get_next_dfp(
-    FactoredTransitionSystem &fts,
+    const FactoredTransitionSystem &fts,
     const vector<int> &sorted_active_ts_indices) {
     int next_index1 = -1;
     int next_index2 = -1;
@@ -195,19 +195,14 @@ pair<int, int> MergeDFP::get_next(FactoredTransitionSystem &fts) {
     assert(!done());
 
     /*
-      Precompute a vector sorted_active_ts_indices which contains all exisiting
-      transition systems in the given order and compute label ranks.
+      Precompute a vector sorted_active_ts_indices which contains all active
+      transition system indices in the correct order.
     */
     assert(!transition_system_order.empty());
     vector<int> sorted_active_ts_indices;
-    vector<vector<int>> transition_system_label_ranks;
-    for (size_t tso_index = 0; tso_index < transition_system_order.size(); ++tso_index) {
-        int ts_index = transition_system_order[tso_index];
+    for (int ts_index : transition_system_order) {
         if (fts.is_active(ts_index)) {
             sorted_active_ts_indices.push_back(ts_index);
-            transition_system_label_ranks.push_back(vector<int>());
-            vector<int> &label_ranks = transition_system_label_ranks.back();
-            compute_label_ranks(fts, ts_index, label_ranks);
         }
     }
 
@@ -223,13 +218,12 @@ pair<int, int> MergeDFP::get_next(FactoredTransitionSystem &fts,
     assert(!done());
 
     /*
-      Precompute a vector sorted_active_ts_indices which contains all exisiting
-      transition systems in the given order and compute label ranks.
+      Precompute a vector sorted_active_ts_indices which contains all given
+      transition system indices in the correct order.
     */
     assert(!transition_system_order.empty());
     vector<int> sorted_active_ts_indices;
-    for (size_t tso_index = 0; tso_index < transition_system_order.size(); ++tso_index) {
-        int ts_index = transition_system_order[tso_index];
+    for (int ts_index : transition_system_order) {
         for (int given_index : ts_indices) {
             if (ts_index == given_index) {
                 assert(fts.is_active(ts_index));
