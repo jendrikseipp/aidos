@@ -68,7 +68,7 @@ EXAMPLES = [
      ["./fast-downward.py", "--debug", "output", "--search", '"astar(ipdb())"']),
     ("Pass options to translator and search components:",
      ["./fast-downward.py", "benchmarks/gripper/prob01.pddl",
-      "--translate-options", "--full-encoding",
+      "--translate-options", "--invariant-generation-max-candidates", "0",
       "--search-options", "--search", '"astar(lmcut())"']),
     ("Validate existing plan:",
      ["./fast-downward.py", "--validate",

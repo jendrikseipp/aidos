@@ -17,6 +17,7 @@ set(PREPROCESS_SOURCES
     axiom
     causal_graph
     domain_transition_graph
+    h2_mutexes
     helper_functions
     max_dag
     mutex_group
