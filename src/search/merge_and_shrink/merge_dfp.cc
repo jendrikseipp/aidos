@@ -139,7 +139,7 @@ pair<int, int> MergeDFP::get_next_dfp(
                 vector<int> &label_ranks2 = transition_system_label_ranks[j];
                 if (label_ranks2.empty()) {
                     compute_label_ranks(fts, ts_index2, label_ranks2);
-                };
+                }
                 assert(label_ranks1.size() == label_ranks2.size());
                 int pair_weight = INF;
                 for (size_t k = 0; k < label_ranks1.size(); ++k) {
@@ -259,7 +259,6 @@ void MergeDFP::compute_ts_order(const TaskProxy &task_proxy,
         }
         g_rng.shuffle(ts_order);
     } else {
-
         // Compute the order in which atomic transition systems are considered
         vector<int> atomic_tso;
         for (int i = 0; i < num_variables; ++i) {
@@ -285,18 +284,18 @@ void MergeDFP::compute_ts_order(const TaskProxy &task_proxy,
         // Put the orders in the correct order
         if (atomic_before_product) {
             ts_order.insert(ts_order.end(),
-                                           atomic_tso.begin(),
-                                           atomic_tso.end());
+                            atomic_tso.begin(),
+                            atomic_tso.end());
             ts_order.insert(ts_order.end(),
-                                           product_tso.begin(),
-                                           product_tso.end());
+                            product_tso.begin(),
+                            product_tso.end());
         } else {
             ts_order.insert(ts_order.end(),
-                                           product_tso.begin(),
-                                           product_tso.end());
+                            product_tso.begin(),
+                            product_tso.end());
             ts_order.insert(ts_order.end(),
-                                           atomic_tso.begin(),
-                                           atomic_tso.end());
+                            atomic_tso.begin(),
+                            atomic_tso.end());
         }
     }
 }

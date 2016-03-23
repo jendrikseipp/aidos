@@ -141,8 +141,8 @@ pair<int, int> MergeSCCs::get_next_linear(
                 const vector<int> &incorporated_variables =
                     fts.get_ts(index).get_incorporated_variables();
                 vector<int>::const_iterator it = find(incorporated_variables.begin(),
-                                                incorporated_variables.end(),
-                                                var);
+                                                      incorporated_variables.end(),
+                                                      var);
                 if (it != incorporated_variables.end()) { // ts contains var
                     if (next_index1 == -1) {
                         next_index1 = index;
@@ -187,7 +187,7 @@ pair<int, int> MergeSCCs::get_next(
 
     if (current_ts_indices.size() == 2) {
         next_pair = make_pair(current_ts_indices[0],
-            current_ts_indices[1]);
+                              current_ts_indices[1]);
         current_ts_indices.clear();
     } else {
         if (internal_merge_order == LINEAR1) {
@@ -201,7 +201,7 @@ pair<int, int> MergeSCCs::get_next(
 
         // Remove the two merged indices from the current set of indices
         for (vector<int>::iterator it = current_ts_indices.begin();
-            it != current_ts_indices.end(); ) {
+             it != current_ts_indices.end();) {
             if (*it == next_pair.first || *it == next_pair.second) {
                 it = current_ts_indices.erase(it);
             } else {
