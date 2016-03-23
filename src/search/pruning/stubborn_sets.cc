@@ -2,6 +2,7 @@
 
 #include "../global_operator.h"
 #include "../globals.h"
+#include "../option_parser.h"
 
 #include <algorithm>
 #include <cassert>
@@ -53,9 +54,15 @@ vector<Fact> get_sorted_fact_set(const vector<T> &facts) {
     return result;
 }
 
-StubbornSets::StubbornSets()
-    : num_unpruned_successors_generated(0),
-      num_pruned_successors_generated(0) {
+StubbornSets::StubbornSets(const Options &opts)
+    : num_successors_before_pruning(0),
+      num_successors_after_pruning(0),
+      min_pruning_ratio(opts.get<double>("min_pruning_ratio")),
+      stubborn_calls(0),
+      do_pruning(true) {
+    cout << "minimal pruning ratio to keep pruning: "
+         << min_pruning_ratio << endl;
+
     verify_no_axioms_no_conditional_effects();
     compute_sorted_operators();
     compute_achievers();
@@ -110,7 +117,24 @@ bool StubbornSets::mark_as_stubborn(int op_no) {
 
 void StubbornSets::prune_operators(
     const GlobalState &state, vector<const GlobalOperator *> &ops) {
-    num_unpruned_successors_generated += ops.size();
+    if (!do_pruning) {
+        return;
+    }
+    if (stubborn_calls == SAFETY_BELT_SIZE) {
+        const double pruning_ratio = 1 - (
+            static_cast<double>(num_successors_after_pruning) /
+            static_cast<double>(num_successors_before_pruning));
+        cout << "pruning ratio after " << SAFETY_BELT_SIZE
+             << " calls: " << pruning_ratio << endl;
+        if (pruning_ratio < min_pruning_ratio) {
+            cout << "-- pruning ratio is lower than min pruning ratio ("
+                 << min_pruning_ratio << "); switching off pruning" << endl;
+            do_pruning = false;
+        }
+    }
+
+    num_successors_before_pruning += ops.size();
+    stubborn_calls++;
 
     // Clear stubborn set from previous call.
     stubborn.clear();
@@ -139,13 +163,13 @@ void StubbornSets::prune_operators(
         sort(ops.begin(), ops.end());
     }
 
-    num_pruned_successors_generated += ops.size();
+    num_successors_after_pruning += ops.size();
 }
 
 void StubbornSets::print_statistics() const {
     cout << "total successors before partial-order reduction: "
-         << num_unpruned_successors_generated << endl
+         << num_successors_before_pruning << endl
          << "total successors after partial-order reduction: "
-         << num_pruned_successors_generated << endl;
+         << num_successors_after_pruning << endl;
 }
 }

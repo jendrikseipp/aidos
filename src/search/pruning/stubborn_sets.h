@@ -4,10 +4,14 @@
 #include "../abstract_task.h"
 #include "../pruning_method.h"
 
+namespace options {
+class Options;
+}
+
 namespace stubborn_sets {
 class StubbornSets : public PruningMethod {
-    long num_unpruned_successors_generated;
-    long num_pruned_successors_generated;
+    long num_successors_before_pruning;
+    long num_successors_after_pruning;
 
     /* stubborn[op_no] is true iff the operator with operator index
        op_no is contained in the stubborn set */
@@ -20,6 +24,13 @@ class StubbornSets : public PruningMethod {
       of the operators in the queue).
     */
     std::vector<int> stubborn_queue;
+
+    double min_pruning_ratio;
+    int stubborn_calls;
+    bool do_pruning;
+
+    // number of expansions when pruning ratio is checked
+    const int SAFETY_BELT_SIZE = 1000;
 
     void compute_sorted_operators();
     void compute_achievers();
@@ -41,7 +52,7 @@ protected:
     virtual void initialize_stubborn_set(const GlobalState &state) = 0;
     virtual void handle_stubborn_operator(const GlobalState &state, int op_no) = 0;
 public:
-    StubbornSets();
+    explicit StubbornSets(const options::Options &opts);
     virtual ~StubbornSets() = default;
 
     /* TODO: move prune_operators, and also the statistics, to the
