@@ -30,3 +30,8 @@ set(PREPROCESS_SOURCES
 )
 
 add_executable(preprocess ${PREPROCESS_SOURCES})
+
+# On Linux, find the rt library for clock_gettime().
+if(UNIX AND NOT APPLE)
+    target_link_libraries(preprocess rt)
+endif()
