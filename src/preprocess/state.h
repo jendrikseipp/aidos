@@ -16,6 +16,7 @@ public:
 
     int operator[](Variable *var) const;
     void dump() const;
+    void remove_unreachable_facts();
 };
 
 #endif
