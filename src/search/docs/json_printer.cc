@@ -13,7 +13,12 @@ JsonPrinter::JsonPrinter(ostream &out)
 
 Jzon::Node JsonPrinter::get_arg_node(const options::ArgumentInfo &arg) const {
     Jzon::Node node = Jzon::object();
-    node.add("type_name", arg.type_name);
+    const string &type_name = arg.type_name;
+    node.add("type_name", type_name);
+    if (type_name == "int" || type_name == "double") {
+        node.add("lower_bound", arg.bounds.min);
+        node.add("upper_bound", arg.bounds.max);
+    }
     node.add("default_value", arg.default_value);
     node.add("help", arg.help);
     if (!arg.value_explanations.empty()) {
