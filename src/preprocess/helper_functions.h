@@ -52,4 +52,6 @@ void generate_cpp_input(bool causal_graph_acyclic,
                         const CausalGraph &cg);
 void check_magic(istream &in, string magic);
 
+int get_peak_memory_in_kb();
+
 #endif

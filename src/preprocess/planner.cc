@@ -263,5 +263,6 @@ int main(int argc, const char **argv) {
             operators, axioms, successor_generator,
             transition_graphs, causal_graph);
     }
+    cout << "Preprocessor peak memory: " << get_peak_memory_in_kb() << " KB" << endl;
     cout << "done" << endl;
 }

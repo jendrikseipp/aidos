@@ -2,8 +2,10 @@
 #include <iostream>
 #include <fstream>
 
+#include <limits>
 #include <string>
 #include <vector>
+
 using namespace std;
 
 #include "helper_functions.h"
@@ -274,4 +276,28 @@ void generate_unsolvable_cpp_input() {
     outfile << "begin_CG" << endl << "0" << endl << "end_CG" << endl;
 
     outfile.close();
+}
+
+int get_peak_memory_in_kb() {
+    // On error, produces a warning on cerr and returns -1.
+    int memory_in_kb = -1;
+
+    ifstream procfile;
+    procfile.open("/proc/self/status");
+    string word;
+    while (procfile.good()) {
+        procfile >> word;
+        if (word == "VmPeak:") {
+            procfile >> memory_in_kb;
+            break;
+        }
+        // Skip to end of line.
+        procfile.ignore(numeric_limits<streamsize>::max(), '\n');
+    }
+    if (procfile.fail())
+        memory_in_kb = -1;
+
+    if (memory_in_kb == -1)
+        cerr << "warning: could not determine peak memory" << endl;
+    return memory_in_kb;
 }
