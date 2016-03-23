@@ -16,6 +16,7 @@
 #include "axiom.h"
 #include "h2_mutexes.h"
 #include "variable.h"
+#include "timer.h"
 #include <iostream>
 using namespace std;
 
@@ -263,6 +264,7 @@ int main(int argc, const char **argv) {
             operators, axioms, successor_generator,
             transition_graphs, causal_graph);
     }
+    cout << "Preprocessor time: " << utils::g_timer << endl;
     cout << "Preprocessor peak memory: " << get_peak_memory_in_kb() << " KB" << endl;
     cout << "done" << endl;
 }

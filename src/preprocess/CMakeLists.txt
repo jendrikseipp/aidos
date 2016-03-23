@@ -25,6 +25,7 @@ set(PREPROCESS_SOURCES
     scc
     state
     successor_generator
+    timer
     variable
 )
 
