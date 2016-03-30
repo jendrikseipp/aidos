@@ -244,7 +244,7 @@ configs = [
         'unsolvable_sokoban_unsolvable_incumbent',
         ['--random-seed', '246877',
          '--heuristic', 'h_deadpdbs=deadpdbs(cache_estimates=false, cost_type=one, max_dead_ends=480377, max_time=182.862658505, patterns=systematic(only_interesting_patterns=true, pattern_max_size=1))',
-         '--search', 'unsolvable_search(heuristics=[h_deadpdbs], cost_type=one, pruning=null())']
+         '--search', 'unsolvable_search(heuristics=[h_deadpdbs], cost_type=one, pruning=null())'],
         build_options=["release64"],
         driver_options=["--search-memory-limit", "7G"]),
 # hand crafted
