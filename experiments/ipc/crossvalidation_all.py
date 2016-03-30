@@ -17,7 +17,7 @@ configs = [
          '--heuristic', 'h_lmcut=lmcut(cache_estimates=true, cost_type=normal)',
          '--search', 'astar(f_bound=compute, mpd=false, pruning=stubborn_sets_ec(min_pruning_ratio=0.66261628704913), eval=max([h_all_states_potential, h_cpdbs, h_lmcut]))'],
          build_options=["release64"],
-        driver_options=["--search-memory-limit", "7G"]),
+        driver_options=["--build", "release64", "--search-memory-limit", "7G"]),
     IssueConfig(
         'resources_rcp_nomystery_m07_resource_incumbent',
         ['--random-seed', '12690727',
@@ -27,7 +27,7 @@ configs = [
          '--heuristic', 'h_operatorcounting=operatorcounting(cache_estimates=false, constraint_generators=[feature_constraints(max_size=4), lmcut_constraints(), state_equation_constraints()], cost_type=normal)',
          '--search', 'astar(f_bound=compute, mpd=true, pruning=stubborn_sets_simple(min_pruning_ratio=0.9106278996048794), eval=max([h_blind, h_cegar, h_cpdbs, h_operatorcounting]))'],
          build_options=["release64"],
-        driver_options=["--search-memory-limit", "7G"]),
+        driver_options=["--build", "release64", "--search-memory-limit", "7G"]),
     IssueConfig(
         'resources_rcp_nomystery_m08_m09_resource_incumbent',
         ['--random-seed', '8529744',
@@ -42,7 +42,7 @@ configs = [
          '--heuristic', 'h_unsolvable_all_states_potential=unsolvable_all_states_potential(cache_estimates=false, cost_type=normal)',
          '--search', 'astar(f_bound=compute, mpd=false, pruning=null(), eval=max([h_all_states_potential, h_cegar, h_cpdbs, h_deadpdbs, h_deadpdbs_simple, h_diverse_potentials, h_hmax, h_operatorcounting, h_unsolvable_all_states_potential]))'],
          build_options=["release64"],
-        driver_options=["--search-memory-limit", "7G"]),
+        driver_options=["--build", "release64", "--search-memory-limit", "7G"]),
     IssueConfig(
         'resources_rcp_rovers_m05_m06_resource_incumbent',
         ['--random-seed', '3787992',
@@ -53,7 +53,7 @@ configs = [
          '--heuristic', 'h_zopdbs=zopdbs(patterns=genetic(disjoint=false, mutation_probability=0.2794745683909153, pdb_max_size=1, num_collections=40, num_episodes=2), cost_type=normal, cache_estimates=true)',
          '--search', 'astar(f_bound=compute, mpd=false, pruning=stubborn_sets_ec(min_pruning_ratio=0.2444996579070121), eval=max([h_deadpdbs, h_deadpdbs_simple, h_lmcut, h_operatorcounting, h_zopdbs]))'],
          build_options=["release64"],
-        driver_options=["--search-memory-limit", "7G"]),
+        driver_options=["--build", "release64", "--search-memory-limit", "7G"]),
     IssueConfig(
         'resources_rcp_rovers_m07_resource_incumbent',
         ['--random-seed', '1466751',
@@ -65,7 +65,7 @@ configs = [
          '--heuristic', 'h_lmcut=lmcut(cache_estimates=false, cost_type=normal)',
          '--search', 'astar(f_bound=compute, mpd=true, pruning=stubborn_sets_ec(min_pruning_ratio=0.6604351517386684), eval=max([h_blind, h_cegar, h_cpdbs, h_deadpdbs, h_diverse_potentials, h_lmcut]))'],
          build_options=["release64"],
-        driver_options=["--search-memory-limit", "7G"]),
+        driver_options=["--build", "release64", "--search-memory-limit", "7G"]),
     IssueConfig(
         'resources_rcp_rovers_m08_m09_resource_incumbent',
         ['--random-seed', '4522340',
@@ -78,7 +78,7 @@ configs = [
          '--heuristic', 'h_pdb=pdb(pattern=greedy(max_states=250), cost_type=normal, cache_estimates=false)',
          '--search', 'astar(f_bound=compute, mpd=true, pruning=null(), eval=max([h_cegar, h_cpdbs, h_deadpdbs, h_deadpdbs_simple, h_lmcut, h_operatorcounting, h_pdb]))'],
          build_options=["release64"],
-        driver_options=["--search-memory-limit", "7G"]),
+        driver_options=["--build", "release64", "--search-memory-limit", "7G"]),
     IssueConfig(
         'resources_rcp_tpp_m05_m06_resource_incumbent',
         ['--random-seed', '13134690',
@@ -93,7 +93,7 @@ configs = [
          '--heuristic', 'h_unsolvable_all_states_potential=unsolvable_all_states_potential(cache_estimates=false, cost_type=normal)',
          '--search', 'astar(f_bound=compute, mpd=true, pruning=stubborn_sets_simple(min_pruning_ratio=0.31327744487104425), eval=max([h_all_states_potential, h_cegar, h_deadpdbs, h_deadpdbs_simple, h_diverse_potentials, h_lmcut, h_operatorcounting, h_sample_based_potentials, h_unsolvable_all_states_potential]))'],
          build_options=["release64"],
-        driver_options=["--search-memory-limit", "7G"]),
+        driver_options=["--build", "release64", "--search-memory-limit", "7G"]),
     IssueConfig(
         'resources_rcp_tpp_m07_resource_incumbent',
         ['--random-seed', '3212469',
@@ -109,7 +109,7 @@ configs = [
          '--heuristic', 'h_unsolvable_all_states_potential=unsolvable_all_states_potential(cache_estimates=true, cost_type=normal)',
          '--search', 'astar(f_bound=compute, mpd=true, pruning=stubborn_sets_ec(min_pruning_ratio=0.6645183316299098), eval=max([h_all_states_potential, h_blind, h_deadpdbs, h_diverse_potentials, h_hm, h_hmax, h_lmcut, h_operatorcounting, h_pdb, h_unsolvable_all_states_potential]))'],
          build_options=["release64"],
-        driver_options=["--search-memory-limit", "7G"]),
+        driver_options=["--build", "release64", "--search-memory-limit", "7G"]),
     IssueConfig(
         'resources_rcp_tpp_m08_m09_resource_incumbent',
         ['--random-seed', '11119560',
@@ -124,7 +124,7 @@ configs = [
          '--heuristic', 'h_zopdbs=zopdbs(patterns=genetic(disjoint=false, mutation_probability=0.056415829877983104, pdb_max_size=78, num_collections=5, num_episodes=63), cost_type=normal, cache_estimates=true)',
          '--search', 'astar(f_bound=compute, mpd=false, pruning=stubborn_sets_ec(min_pruning_ratio=0.5812385663973145), eval=max([h_all_states_potential, h_blind, h_deadpdbs_simple, h_hmax, h_initial_state_potential, h_lmcut, h_operatorcounting, h_unsolvable_all_states_potential, h_zopdbs]))'],
          build_options=["release64"],
-        driver_options=["--search-memory-limit", "7G"]),
+        driver_options=["--build", "release64", "--search-memory-limit", "7G"]),
     IssueConfig(
         '3unsat_unsolvable_incumbent',
         ['--random-seed', '13485870',
@@ -132,7 +132,7 @@ configs = [
          '--heuristic', 'h_operatorcounting=operatorcounting(cache_estimates=false, constraint_generators=[feature_constraints(max_size=10), state_equation_constraints()], cost_type=zero)',
          '--search', 'unsolvable_search(heuristics=[h_hmax, h_operatorcounting], cost_type=one, pruning=stubborn_sets_ec(min_pruning_ratio=0.4567602354825518))'],
          build_options=["release64"],
-        driver_options=["--search-memory-limit", "7G"]),
+        driver_options=["--build", "release64", "--search-memory-limit", "7G"]),
     IssueConfig(
         'rcp_nomystery_m05_unsolvable_incumbent',
         ['--random-seed', '10248012',
@@ -141,7 +141,7 @@ configs = [
          '--heuristic', 'h_operatorcounting=operatorcounting(cache_estimates=false, constraint_generators=[feature_constraints(max_size=5), lmcut_constraints(), state_equation_constraints()], cost_type=one)',
          '--search', 'unsolvable_search(heuristics=[h_hm, h_hmax, h_operatorcounting], cost_type=one, pruning=null())'],
          build_options=["release64"],
-        driver_options=["--search-memory-limit", "7G"]),
+        driver_options=["--build", "release64", "--search-memory-limit", "7G"]),
     IssueConfig(
         'rcp_nomystery_m09_unsolvable_incumbent',
         ['--random-seed', '7756908',
@@ -150,7 +150,7 @@ configs = [
          '--heuristic', 'h_deadpdbs=deadpdbs(cache_estimates=false, cost_type=one, max_dead_ends=2223694, max_time=740.277837628, patterns=systematic(only_interesting_patterns=true, pattern_max_size=61))',
          '--search', 'unsolvable_search(heuristics=[h_blind, h_cegar, h_deadpdbs], cost_type=one, pruning=null())'],
          build_options=["release64"],
-        driver_options=["--search-memory-limit", "7G"]),
+        driver_options=["--build", "release64", "--search-memory-limit", "7G"]),
     IssueConfig(
         'rcp_rovers_m05_unsolvable_incumbent',
         ['--random-seed', '8337657',
@@ -161,7 +161,7 @@ configs = [
          '--heuristic', 'h_unsolvable_all_states_potential=unsolvable_all_states_potential(cache_estimates=false, cost_type=one)',
          '--search', 'unsolvable_search(heuristics=[h_blind, h_cegar, h_hmax, h_operatorcounting, h_unsolvable_all_states_potential], cost_type=one, pruning=null())'],
          build_options=["release64"],
-        driver_options=["--search-memory-limit", "7G"]),
+        driver_options=["--build", "release64", "--search-memory-limit", "7G"]),
     IssueConfig(
         'rcp_rovers_m09_unsolvable_incumbent',
         ['--random-seed', '3280155',
@@ -174,7 +174,7 @@ configs = [
          '--heuristic', 'h_unsolvable_all_states_potential=unsolvable_all_states_potential(cache_estimates=false, cost_type=one)',
          '--search', 'unsolvable_search(heuristics=[h_blind, h_deadpdbs, h_deadpdbs_simple, h_hmax, h_merge_and_shrink, h_pdb, h_unsolvable_all_states_potential], cost_type=one, pruning=stubborn_sets_simple(min_pruning_ratio=0.2517428666541712))'],
          build_options=["release64"],
-        driver_options=["--search-memory-limit", "7G"]),
+        driver_options=["--build", "release64", "--search-memory-limit", "7G"]),
     IssueConfig(
         'rcp_tpp_m05_unsolvable_incumbent',
         ['--random-seed', '1551623',
@@ -183,7 +183,7 @@ configs = [
          '--heuristic', 'h_operatorcounting=operatorcounting(cache_estimates=false, constraint_generators=[feature_constraints(max_size=infinity), pho_constraints(patterns=genetic(disjoint=false, mutation_probability=0.17038147427036285, num_collections=1, num_episodes=495, pdb_max_size=1)), state_equation_constraints()], cost_type=one)',
          '--search', 'unsolvable_search(heuristics=[h_deadpdbs, h_hmax, h_operatorcounting], cost_type=one, pruning=stubborn_sets_ec(min_pruning_ratio=0.9716249209641807))'],
          build_options=["release64"],
-        driver_options=["--search-memory-limit", "7G"]),
+        driver_options=["--build", "release64", "--search-memory-limit", "7G"]),
     IssueConfig(
         'rcp_tpp_m09_unsolvable_incumbent',
         ['--random-seed', '2537508',
@@ -191,7 +191,7 @@ configs = [
          '--heuristic', 'h_operatorcounting=operatorcounting(cache_estimates=false, constraint_generators=[state_equation_constraints()], cost_type=zero)',
          '--search', 'unsolvable_search(heuristics=[h_deadpdbs, h_operatorcounting], cost_type=one, pruning=null())'],
          build_options=["release64"],
-        driver_options=["--search-memory-limit", "7G"]),
+        driver_options=["--build", "release64", "--search-memory-limit", "7G"]),
     IssueConfig(
         'unsat_mystery_unsolvable_incumbent',
         ['--random-seed', '13721267',
@@ -201,35 +201,35 @@ configs = [
          '--heuristic', 'h_unsolvable_all_states_potential=unsolvable_all_states_potential(cache_estimates=false, cost_type=one)',
          '--search', 'unsolvable_search(heuristics=[h_blind, h_hm, h_pdb, h_unsolvable_all_states_potential], cost_type=one, pruning=stubborn_sets_ec(min_pruning_ratio=0.3595127221437011))'],
          build_options=["release64"],
-        driver_options=["--search-memory-limit", "7G"]),
+        driver_options=["--build", "release64", "--search-memory-limit", "7G"]),
     IssueConfig(
         'unsat_pegsol_strips_unsolvable_incumbent',
         ['--random-seed', '2847783',
          '--heuristic', 'h_blind=blind(cache_estimates=false, cost_type=one)',
          '--search', 'unsolvable_search(heuristics=[h_blind], cost_type=one, pruning=null())'],
          build_options=["release64"],
-        driver_options=["--search-memory-limit", "7G"]),
+        driver_options=["--build", "release64", "--search-memory-limit", "7G"]),
     IssueConfig(
         'unsat_tiles_unsolvable_incumbent',
         ['--random-seed', '5113347',
          '--heuristic', 'h_deadpdbs=deadpdbs(cache_estimates=false, cost_type=one, max_dead_ends=19, max_time=182.944769355, patterns=genetic(disjoint=false, mutation_probability=0.5185313060921733, num_collections=4, num_episodes=1, pdb_max_size=1))',
          '--search', 'unsolvable_search(heuristics=[h_deadpdbs], cost_type=one, pruning=null())'],
          build_options=["release64"],
-        driver_options=["--search-memory-limit", "7G"]),
+        driver_options=["--build", "release64", "--search-memory-limit", "7G"]),
     IssueConfig(
         'unsolvable_cavediving_strips_unsolvable_incumbent',
         ['--random-seed', '5816452',
          '--heuristic', 'h_deadpdbs=deadpdbs(cache_estimates=false, cost_type=one, max_dead_ends=3, max_time=605.93544671, patterns=combo(max_states=17))',
          '--search', 'unsolvable_search(heuristics=[h_deadpdbs], cost_type=one, pruning=stubborn_sets_ec(min_pruning_ratio=0.44448343973504517))'],
          build_options=["release64"],
-        driver_options=["--search-memory-limit", "7G"]),
+        driver_options=["--build", "release64", "--search-memory-limit", "7G"]),
     IssueConfig(
         'unsolvable_no_mystery_unsolvable_incumbent',
         ['--random-seed', '11612062',
          '--heuristic', 'h_deadpdbs_simple=deadpdbs_simple(patterns=systematic(only_interesting_patterns=true, pattern_max_size=3), cost_type=one, cache_estimates=false)',
          '--search', 'unsolvable_search(heuristics=[h_deadpdbs_simple], cost_type=one, pruning=null())'],
          build_options=["release64"],
-        driver_options=["--search-memory-limit", "7G"]),
+        driver_options=["--build", "release64", "--search-memory-limit", "7G"]),
     IssueConfig(
         'unsolvable_parking_unsolvable_incumbent',
         ['--random-seed', '13250859',
@@ -239,32 +239,32 @@ configs = [
          '--heuristic', 'h_unsolvable_all_states_potential=unsolvable_all_states_potential(cache_estimates=false, cost_type=one)',
          '--search', 'unsolvable_search(heuristics=[h_cegar, h_hmax, h_operatorcounting, h_unsolvable_all_states_potential], cost_type=one, pruning=stubborn_sets_ec(min_pruning_ratio=0.0029587459660708193))'],
          build_options=["release64"],
-        driver_options=["--search-memory-limit", "7G"]),
+        driver_options=["--build", "release64", "--search-memory-limit", "7G"]),
     IssueConfig(
         'unsolvable_sokoban_unsolvable_incumbent',
         ['--random-seed', '246877',
          '--heuristic', 'h_deadpdbs=deadpdbs(cache_estimates=false, cost_type=one, max_dead_ends=480377, max_time=182.862658505, patterns=systematic(only_interesting_patterns=true, pattern_max_size=1))',
          '--search', 'unsolvable_search(heuristics=[h_deadpdbs], cost_type=one, pruning=null())'],
         build_options=["release64"],
-        driver_options=["--search-memory-limit", "7G"]),
+        driver_options=["--build", "release64", "--search-memory-limit", "7G"]),
 # hand crafted
     IssueConfig(
         'seq_features_prune_025',
         ['--heuristic', 'h_seq=operatorcounting([state_equation_constraints(), feature_constraints(max_size=infinity)], cost_type=zero)',
          '--search', 'unsolvable_search([h_seq], pruning=stubborn_sets_ec(min_pruning_ratio=0.25))'],
         build_options=["release64"],
-        driver_options=["--search-memory-limit", "7G", "--search-time-limit", "10m"]),
+        driver_options=["--build", "release64", "--search-memory-limit", "7G", "--search-time-limit", "10m"]),
     IssueConfig(
         'deadpdbs_120_prune_025',
         ['--search', 'unsolvable_search([deadpdbs(max_time=120)], pruning=stubborn_sets_ec(min_pruning_ratio=0.25))'],
         build_options=["release64"],
-        driver_options=["--search-memory-limit", "7G", "--search-time-limit", "10m"]),
+        driver_options=["--build", "release64", "--search-memory-limit", "7G", "--search-time-limit", "10m"]),
     IssueConfig(
         'resources_lmcut_seq_pruning_025',
         ['--heuristic', 'h_seq=operatorcounting([state_equation_constraints(), lmcut_constraints()], cost_type=zero)',
          '--search', 'astar(f_bound=compute, eval=max([h_seq]), pruning=stubborn_sets_ec(min_pruning_ratio=0.25))'],
-         build_options=["release64"],
-        driver_options=["--search-memory-limit", "7G", "--search-time-limit", "10m"]),
+        build_options=["release64"],
+        driver_options=["--build", "release64", "--search-memory-limit", "7G", "--search-time-limit", "10m"]),
 ]
 revisions = ["unsolvable"]
 
