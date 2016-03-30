@@ -160,7 +160,7 @@ class IssueExperiment(FastDownwardExperiment):
 
     def __init__(self, suite, revisions=[], configs={}, grid_priority=None,
                  path=None, test_suite=None, email=None, processes=None,
-                 extra_evironment_options=None,
+                 extra_environment_options=None,
                  **kwargs):
         """Create a DownwardExperiment with some convenience features.
 
