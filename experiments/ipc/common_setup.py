@@ -160,6 +160,7 @@ class IssueExperiment(FastDownwardExperiment):
 
     def __init__(self, suite, revisions=[], configs={}, grid_priority=None,
                  path=None, test_suite=None, email=None, processes=None,
+                 extra_evironment_options=None,
                  **kwargs):
         """Create a DownwardExperiment with some convenience features.
 
@@ -221,6 +222,7 @@ class IssueExperiment(FastDownwardExperiment):
             suite = test_suite or self.DEFAULT_TEST_SUITE
         elif "environment" not in kwargs:
             kwargs["environment"] = MaiaEnvironment(
+                extra_options=extra_environment_options,
                 priority=grid_priority, email=email)
 
         path = path or get_data_dir()
