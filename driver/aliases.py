@@ -140,7 +140,7 @@ ALIASES["seq-opt-bjolp"] = [
 ALIASES["seq-opt-lmcut"] = [
     "--search", "astar(lmcut())"]
 
-## TODO: adapt name
+## TODO: adapt name and config
 ALIASES["fd-explorer"] = [
     "--search", "astar(lmcut())"]
 
