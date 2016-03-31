@@ -132,6 +132,7 @@ void CausalGraph::update() {
 
     // 2) Reconstruct causal graph with new variables and operators
 
+  predecessor_graph.clear();
     weighted_graph.clear();
     for (Variable *variable : ordering) {
         weighted_graph[variable] = WeightedSuccessors();
@@ -160,6 +161,8 @@ void CausalGraph::update() {
     */
 
 
+  vector<Variable *>().swap(ordering);
+  calculate_topological_pseudo_sort(sccs);
   calculate_important_vars(); 
     //Put -1 to every variable to remove variables that are not in ordering
     for (Variable *var : variables) {
