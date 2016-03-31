@@ -20,6 +20,9 @@ using namespace std;
 
 enum Reachability {SPURIOUS, REACHED, NOT_REACHED};
 
+static const int UNSOLVABLE = -2;
+static const int  TIMEOUT = -1;
+
 class Op_h2 {
 public:
     Op_h2(const Operator &op,
@@ -53,6 +56,10 @@ private:
 
 
 class H2Mutexes {
+    bool check_initial_state_is_dead_end(const vector <Variable *> &variables,
+						    const State &initial_state) const;
+
+    bool check_goal_state_is_unreachable(const vector<pair<Variable *, int>> &goal) const;
 public:
     H2Mutexes(int t = -1) : limit_seconds(t) {
         if (limit_seconds != -1)
@@ -68,7 +75,7 @@ public:
                 vector<MutexGroup> &mutexes,
                 bool regression);
 
-    void print_mutexes();
+    void print_mutexes(const std::vector <Variable *> &variables);
 
     inline bool are_mutex(int var1, int val1, int var2, int val2) const {
         if (val1 == -1 || val2 == -1)
@@ -94,7 +101,9 @@ public:
     }
 
 
-    void detect_unreachable_fluents(const vector <Variable *> &variables);
+    int detect_unreachable_fluents(const vector <Variable *> &variables, 
+				    const State &initial_state, 
+				   const vector<pair<Variable *, int>> &goal);
 
     bool remove_spurious_operators(vector<Operator> &operators);
     void set_unreachable_propositions(const vector <Variable *> &variables);
@@ -106,7 +115,7 @@ protected:
     int num_vars;
     std::vector<int> num_vals;
 
-    std::set<std::pair<int, int>> unreachable_fluents;
+    std::set<std::pair<int, int>> static_fluents;
     std::vector <std::vector <bool >> unreachable;
     std::vector<std::vector<std::set<std::pair<int, int>>>> inconsistent_facts;
 
@@ -117,15 +126,15 @@ protected:
     vector< vector<unsigned>> p_index;
     vector< pair<unsigned, unsigned>> p_index_reverse;
 
-    Reachability eval_propositions(vector<unsigned> props);
+    Reachability eval_propositions(const vector<unsigned> & props);
 
     inline unsigned position(unsigned a, unsigned b) const {
         return (a * number_props) + b;
     }
 
-    inline void set_unreachable(int var, int val) {
-        unreachable[var][val] = true;
-    }
+    bool set_unreachable(int var, int val, const vector <Variable *> &variables, 
+			 const State &initial_state, 
+			 const vector<pair<Variable *, int>> &goal); 
 
     void print_pair(unsigned pair);
 
@@ -133,9 +142,9 @@ protected:
     time_t start;
     bool time_exceeded();
 
-    void init_values_progression(const vector <Variable *> &variables,
+    bool init_values_progression(const vector <Variable *> &variables,
                                  const State &initial_state);
-    void init_values_regression(const vector<pair<Variable *, int>> &goal);
+    bool init_values_regression(const vector<pair<Variable *, int>> &goal);
     void init_h2_operators(const vector<Operator> &operators,
                            const vector<Axiom> &axioms, bool regression);
 
@@ -143,7 +152,7 @@ protected:
 };
 
 //Computes h2 mutexes, and removes every unnecessary variables, operators, axioms, initial state and goal.
-extern void compute_h2_mutexes(const vector <Variable *> &variables,
+extern bool compute_h2_mutexes(const vector <Variable *> &variables,
                                vector<Operator> &operators,
                                vector<Axiom> &axioms,
                                vector<MutexGroup> &mutexes,
