@@ -101,9 +101,13 @@ int main(int argc, const char **argv) {
         if(!compute_h2_mutexes(ordering, operators, axioms,
                            mutexes, initial_state, goals,
 			       h2_mutex_time, disable_bw_h2)){
-	    cout << "Unsolvable task in preprocessor" << endl;
-	    generate_unsolvable_cpp_input();
-	    return 0;
+	                // TODO: don't duplicate the code to return an unsolvable task, log and exit here
+            cout << "Unsolvable task in preprocessor" << endl;
+            generate_unsolvable_cpp_input();
+            cout << "Preprocessor time: " << utils::g_timer << endl;
+            cout << "Preprocessor peak memory: " << get_peak_memory_in_kb() << " KB" << endl;
+            cout << "done" << endl;
+            return 0;
 	}
 
         //Update the causal graph and remove unneccessary variables
@@ -135,7 +139,15 @@ int main(int argc, const char **argv) {
         }
         new_goals.swap(goals);
         cout << "Change id of initial state" << endl;
-        initial_state.remove_unreachable_facts();
+        if (initial_state.remove_unreachable_facts()) {
+            // TODO: don't duplicate the code to return an unsolvable task, log and exit here
+            cout << "Unsolvable task in preprocessor" << endl;
+            generate_unsolvable_cpp_input();
+            cout << "Preprocessor time: " << utils::g_timer << endl;
+            cout << "Preprocessor peak memory: " << get_peak_memory_in_kb() << " KB" << endl;
+            cout << "done" << endl;
+            return 0;
+        }
 
         cout << "Remove unreachable facts from variables: " << ordering.size() << endl;
         // 2)Remove unreachable facts from variables
