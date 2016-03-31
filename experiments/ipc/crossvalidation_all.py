@@ -322,6 +322,13 @@ exp.add_suite(get_domain_dir(), [
     "unsolvable-tetris",
 ])
 
-exp.add_absolute_report_step(attributes=exp.DEFAULT_TABLE_ATTRIBUTES + ["unsolvable"])
+def add_unsolvable(run):
+    if run.get("error") == "incomplete-search-found-no-plan":
+        run["unsolvable"] = 1
+    return run
+
+exp.add_absolute_report_step(
+    filter=add_unsolvable,
+    attributes=exp.DEFAULT_TABLE_ATTRIBUTES + ["unsolvable"])
 
 exp()
