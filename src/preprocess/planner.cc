@@ -98,9 +98,13 @@ int main(int argc, const char **argv) {
         if (conditional_effects)
             disable_bw_h2 = true;
 
-        compute_h2_mutexes(ordering, operators, axioms,
+        if(!compute_h2_mutexes(ordering, operators, axioms,
                            mutexes, initial_state, goals,
-                           h2_mutex_time, disable_bw_h2);
+			       h2_mutex_time, disable_bw_h2)){
+	    cout << "Unsolvable task in preprocessor" << endl;
+	    generate_unsolvable_cpp_input();
+	    return 0;
+	}
 
         //Update the causal graph and remove unneccessary variables
         strip_mutexes(mutexes);
@@ -183,9 +187,11 @@ int main(int argc, const char **argv) {
         if (var->is_derived())
             derived_vars++;
     }
+    cout << "Preprocessor variables: " << ordering.size() << endl;
     cout << "Preprocessor facts: " << facts << endl;
     cout << "Preprocessor derived variables: " << derived_vars << endl;
     cout << "Preprocessor operators: " << operators.size() << endl;
+    cout << "Preprocessor mutex groups: " << mutexes.size() << endl;
 
     if (expensive_statistics) {
         //Count potential preconditions
