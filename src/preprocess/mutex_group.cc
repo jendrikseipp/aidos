@@ -95,15 +95,6 @@ void strip_mutexes(vector<MutexGroup> &mutexes) {
          << " mutex groups necessary." << endl;
 }
 
-
-void MutexGroup::get_mutex_group(vector<pair<int, int>> &invariant_group) const {
-    invariant_group.reserve(facts.size());
-    for (size_t j = 0; j < facts.size(); ++j) {
-        int var = facts[j].first->get_level();
-        int val = facts[j].second;
-        invariant_group.push_back(make_pair(var, val));
-    }
-}
 void MutexGroup::remove_unreachable_facts() {
     vector<pair<const Variable *, int>> newfacts;
     for (const pair<const Variable *, int> &fact : facts) {
@@ -112,6 +103,17 @@ void MutexGroup::remove_unreachable_facts() {
         }
     }
     newfacts.swap(facts);
+}
+
+
+
+void MutexGroup::get_mutex_group(vector<pair<int, int>> &invariant_group) const {
+    invariant_group.reserve(facts.size());
+    for (size_t j = 0; j < facts.size(); ++j) {
+        int var = facts[j].first->get_level();
+        int val = facts[j].second;
+        invariant_group.push_back(make_pair(var, val));
+    }
 }
 
 bool MutexGroup::hasPair(int var, int val) const {
