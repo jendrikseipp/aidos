@@ -9,7 +9,6 @@ SANITY_TEST_COMPILE=1
 SANITY_TEST_RUN_STRIPS=1
 SANITY_TEST_RUN_AXIOMS=0
 
-
 set -o errexit
 
 if [[ $# != 2 ]]; then
@@ -34,9 +33,12 @@ hg archive -I 're:src\/cmake_modules\/' $DIST
 hg archive -I 're:src\/translate\/' $DIST
 hg archive -I 're:src\/preprocess\/' $DIST
 hg archive -I 're:src\/search\/' $DIST
+## TODO: do we still need VAL?
+hg archive -I 're:src\/VAL\/' $DIST
 hg archive -I 're:driver\/' $DIST
 hg archive -I 're:fast-downward.py' $DIST
 hg archive -I 're:build.py' $DIST
+hg archive -I 're:build_configs.py' $DIST
 hg id -i >> $DIST/src/VERSION
 echo "$WORDSIZE bit" >> $DIST/src/VERSION
 
@@ -55,15 +57,30 @@ echo '#! /bin/bash' > $DIST/build
 echo "./build.py $BUILD" > $DIST/build
 chmod 755 $DIST/build
 
-echo '#! /bin/bash' > $DIST/plan
-echo 'DOMAIN="$1"' >> $DIST/plan
-echo 'PROBLEM="$2"' >> $DIST/plan
-echo 'PLAN_FILE="$3"' >> $DIST/plan
+echo '#! /bin/bash' > $DIST/call_planner
+echo 'DOMAIN="$1"' >> $DIST/call_planner
+echo 'PROBLEM="$2"' >> $DIST/call_planner
+echo 'PLAN_FILE="$3"' >> $DIST/call_planner
 echo '"$(dirname "$0")"/fast-downward.py' \
      "--build=$BUILD" \
       '--plan-file "$PLAN_FILE"' \
       '--alias' "$PLANNER_NAME" \
-      '"$DOMAIN"' '"$PROBLEM"' >> $DIST/plan
+      '"$DOMAIN"' '"$PROBLEM"' >> $DIST/call_planner
+chmod 755 $DIST/call_planner
+
+echo '#! /bin/bash' > $DIST/plan
+echo './call_planner $1 $2 $3 > log 2> err' >> $DIST/plan
+echo 'last=""' >> $DIST/plan
+echo 'if grep "Solution found!" log &> /dev/null; then last="solvable"; else ' >> $DIST/plan
+echo 'if grep "Search stopped without finding a solution" log &> /dev/null; then last="unsolvable"; fi' >> $DIST/plan
+echo 'fi' >> $DIST/plan
+echo 'if [[ "$last" == "unsolvable" ]];' >> $DIST/plan
+echo 'then echo $last' >> $DIST/plan
+echo 'else if [[ "$last" == "solvable" ]];' >> $DIST/plan
+echo 'then echo $last' >> $DIST/plan
+echo 'else echo "unknown"' >> $DIST/plan
+echo 'fi' >> $DIST/plan
+echo 'fi' >> $DIST/plan
 chmod 755 $DIST/plan
 
 # Packaging
@@ -77,7 +94,9 @@ rm -rf $DIST
 DIR="$(cd "$(dirname "$0")" && pwd)"
 echo $DIR
 BENCHMARKS="$DIR/../benchmarks"
-VALIDATOR="$DIR/../src/VAL/validate"
+VALIDATOR="$DIR/$DIST/builds/$BUILD/bin/validate"
+
+echo $VALIDATOR
 
 function planner-test-run () {
     DOMAIN="$BENCHMARKS/$1"
