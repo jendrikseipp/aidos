@@ -140,6 +140,9 @@ ALIASES["seq-opt-bjolp"] = [
 ALIASES["seq-opt-lmcut"] = [
     "--search", "astar(lmcut())"]
 
+## TODO: adapt name
+ALIASES["fd-explorer"] = [
+    "--search", "astar(lmcut())"]
 
 PORTFOLIOS = {}
 for portfolio in os.listdir(PORTFOLIO_DIR):
