@@ -180,6 +180,7 @@ def run_unsolvable_resource_detection(
         executable, args, projected_sas_file, dummy_plan_manager, run_time, memory)
     exitcode_mapping = {
         returncodes.EXIT_PLAN_FOUND: returncodes.EXIT_TIMEOUT,
+        returncodes.EXIT_UNSOLVED_INCOMPLETE: returncodes.EXIT_UNSOLVABLE,
     }
     return exitcode_mapping.get(exitcode, exitcode)
 
