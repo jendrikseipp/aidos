@@ -140,9 +140,6 @@ ALIASES["seq-opt-bjolp"] = [
 ALIASES["seq-opt-lmcut"] = [
     "--search", "astar(lmcut())"]
 
-ALIASES["pruner"] = [
-    "--search", "astar(lmcut())"]
-
 PORTFOLIOS = {}
 for portfolio in os.listdir(PORTFOLIO_DIR):
     name, ext = os.path.splitext(portfolio)
