@@ -61,6 +61,9 @@ echo 'DOMAIN="$1"' >> $DIST/plan
 echo 'PROBLEM="$2"' >> $DIST/plan
 echo 'EXIT_PLAN_FOUND=0' >> $DIST/plan
 echo 'EXIT_UNSOLVABLE=4' >> $DIST/plan
+echo 'EXIT_OUT_OF_MEMORY=6' >> $DIST/plan
+echo 'EXIT_TIMEOUT=7' >> $DIST/plan
+echo 'EXIT_TIMEOUT_AND_MEMORY=8' >> $DIST/plan
 echo '"$(dirname "$0")"/fast-downward.py' \
      "--build=$BUILD" \
      "--translate" "--preprocess" "--search" \
@@ -73,8 +76,14 @@ echo 'if [[ "$exitcode" == "$EXIT_PLAN_FOUND" ]]; then' >> $DIST/plan
 echo '    echo "solvable"' >> $DIST/plan
 echo 'elif [[ "$exitcode" == "$EXIT_UNSOLVABLE" ]]; then' >> $DIST/plan
 echo '    echo "unsolvable"' >> $DIST/plan
-echo 'else' >> $DIST/plan
+echo 'elif [[ "$exitcode" == "$EXIT_OUT_OF_MEMORY" ]] || ' \
+          '[[ "$exitcode" == "$EXIT_TIMEOUT" ]] || ' \
+          '[[ "$exitcode" == "$EXIT_TIMEOUT_AND_MEMORY" ]] ; then' >> $DIST/plan
 echo '    echo "unknown"' >> $DIST/plan
+echo 'else' >> $DIST/plan
+echo '    echo "The planner exited with unexpected exit code $exitcode."' >> $DIST/plan
+echo '    echo "Please inspect planner.log and planner.err"' >> $DIST/plan
+echo '    exit 1' >> $DIST/plan
 echo 'fi' >> $DIST/plan
 chmod 755 $DIST/plan
 
