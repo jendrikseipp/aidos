@@ -132,6 +132,7 @@ void CausalGraph::update() {
 
     // 2) Reconstruct causal graph with new variables and operators
 
+  predecessor_graph.clear();
     weighted_graph.clear();
     for (Variable *variable : ordering) {
         weighted_graph[variable] = WeightedSuccessors();
@@ -159,7 +160,10 @@ void CausalGraph::update() {
       }
     */
 
-    //calculate_important_vars();
+
+  vector<Variable *>().swap(ordering);
+  calculate_topological_pseudo_sort(sccs);
+  calculate_important_vars(); 
     //Put -1 to every variable to remove variables that are not in ordering
     for (Variable *var : variables) {
         var->set_level(-1);
@@ -198,6 +202,7 @@ CausalGraph::CausalGraph(const vector<Variable *> &the_variables,
       }
     }
     */
+
     calculate_topological_pseudo_sort(sccs);
     calculate_important_vars();
 
@@ -209,10 +214,6 @@ CausalGraph::CausalGraph(const vector<Variable *> &the_variables,
     for (size_t i = 0; i < ordering.size(); i++) {
         ordering[i]->set_level(i);
     }
-    // cout << "new variable order: ";
-    // for(int i = 0; i < ordering.size(); i++)
-    //   cout << ordering[i]->get_name()<<" - ";
-    // cout << endl;
 }
 
 void CausalGraph::calculate_topological_pseudo_sort(const Partition &sccs) {
@@ -291,10 +292,12 @@ void CausalGraph::get_strongly_connected_components(const vector <Variable *> &v
     }
 }
 void CausalGraph::calculate_important_vars() {
+    for (auto var : ordering){
+        var->reset_necessary();
+}
+
     for (const auto &goal : goals) {
         if (!goal.first->is_necessary()) {
-            //cout << "var " << goals[i].first->get_name() <<" is directly neccessary."
-            // << endl;
             goal.first->set_necessary();
             dfs(goal.first);
         }
@@ -352,6 +355,8 @@ const {
     //TODO: use const iterator!
     vector<WeightedSuccessors *> succs; // will be ordered like ordered_vars
     vector<int> number_of_succ; // will be ordered like ordered_vars
+	//cout << "Number of vars: " << ordered_vars.size() << endl;
+    //cout << "weighted " << weighted_graph.size() << endl;
     succs.resize(ordered_vars.size());
     number_of_succ.resize(ordered_vars.size());
     for (const auto &source : weighted_graph) {

@@ -6,8 +6,6 @@
 #include <string>
 #include <vector>
 
-using namespace std;
-
 #include "helper_functions.h"
 #include "state.h"
 #include "mutex_group.h"
@@ -17,6 +15,7 @@ using namespace std;
 #include "successor_generator.h"
 #include "domain_transition_graph.h"
 
+using namespace std;
 
 static const int SAS_FILE_VERSION = 3;
 static const int PRE_FILE_VERSION = SAS_FILE_VERSION;
