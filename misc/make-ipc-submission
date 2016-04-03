@@ -12,13 +12,14 @@ SANITY_TEST_RUN_AXIOMS=0
 set -euo pipefail
 
 if [[ $# != 2 ]]; then
-    echo need exactly two arguments: seq-opt-bjolp 32, \
-         seq-sat-lama-2011 64 or some such
+    echo need exactly two arguments: seq-opt-bjolp release32, \
+         seq-sat-lama-2011 release64 or some such
     exit 2
 fi
 
 DIST=$1
-WORDSIZE=$2
+BUILD=$2
+TIME_LIMIT="30m"
 
 PLANNER_NAME="$DIST"
 
@@ -36,19 +37,11 @@ hg archive -I 're:src\/search\/' $DIST
 hg archive -I 're:driver\/' $DIST
 hg archive -I 're:fast-downward.py' $DIST
 hg archive -I 're:build.py' $DIST
-hg archive -I 're:build_configs.py' $DIST
+hg archive -I 're:.*build_configs.py' $DIST
 hg id -i >> $DIST/src/VERSION
-echo "$WORDSIZE bit" >> $DIST/src/VERSION
+echo "BUILD: $BUILD" >> $DIST/src/VERSION
+echo "CONFIG: $DIST" >> $DIST/src/VERSION
 
-
-if [[ "$WORDSIZE" == "32" ]]; then
-    BUILD="release32"
-elif [[ "$WORDSIZE" == "64" ]]; then
-    BUILD="release64"
-else
-    echo "Second parameter must be 32 or 64"
-    exit 2
-fi
 
 echo "Preparing distribution directory..."
 echo '#! /bin/bash' > $DIST/build
@@ -66,6 +59,7 @@ echo 'EXIT_TIMEOUT=7' >> $DIST/plan
 echo 'EXIT_TIMEOUT_AND_MEMORY=8' >> $DIST/plan
 echo '"$(dirname "$0")"/fast-downward.py' \
      "--build=$BUILD" \
+     "--overall-time-limit=$TIME_LIMIT" \
      "--translate" "--preprocess" "--search" \
       '--alias' "$PLANNER_NAME" \
       '"$DOMAIN"' '"$PROBLEM" > planner.log 2> planner.err' >> $DIST/plan
