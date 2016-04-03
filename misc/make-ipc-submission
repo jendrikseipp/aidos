@@ -9,17 +9,17 @@ SANITY_TEST_COMPILE=1
 SANITY_TEST_RUN_STRIPS=1
 SANITY_TEST_RUN_AXIOMS=0
 
-
-set -o errexit
+set -euo pipefail
 
 if [[ $# != 2 ]]; then
-    echo need exactly two arguments: seq-opt-bjolp 32, \
-         seq-sat-lama-2011 64 or some such
+    echo need exactly two arguments: seq-opt-bjolp release32, \
+         seq-sat-lama-2011 release64 or some such
     exit 2
 fi
 
 DIST=$1
-WORDSIZE=$2
+BUILD=$2
+TIME_LIMIT="30m"
 
 PLANNER_NAME="$DIST"
 
@@ -37,18 +37,11 @@ hg archive -I 're:src\/search\/' $DIST
 hg archive -I 're:driver\/' $DIST
 hg archive -I 're:fast-downward.py' $DIST
 hg archive -I 're:build.py' $DIST
+hg archive -I 're:.*build_configs.py' $DIST
 hg id -i >> $DIST/src/VERSION
-echo "$WORDSIZE bit" >> $DIST/src/VERSION
+echo "BUILD: $BUILD" >> $DIST/src/VERSION
+echo "CONFIG: $DIST" >> $DIST/src/VERSION
 
-
-if [[ "$WORDSIZE" == "32" ]]; then
-    BUILD="release32"
-elif [[ "$WORDSIZE" == "64" ]]; then
-    BUILD="release64"
-else
-    echo "Second parameter must be 32 or 64"
-    exit 2
-fi
 
 echo "Preparing distribution directory..."
 echo '#! /bin/bash' > $DIST/build
@@ -56,14 +49,36 @@ echo "./build.py $BUILD" > $DIST/build
 chmod 755 $DIST/build
 
 echo '#! /bin/bash' > $DIST/plan
+echo 'set -u' >> $DIST/plan
 echo 'DOMAIN="$1"' >> $DIST/plan
 echo 'PROBLEM="$2"' >> $DIST/plan
-echo 'PLAN_FILE="$3"' >> $DIST/plan
+echo 'EXIT_PLAN_FOUND=0' >> $DIST/plan
+echo 'EXIT_UNSOLVABLE=4' >> $DIST/plan
+echo 'EXIT_OUT_OF_MEMORY=6' >> $DIST/plan
+echo 'EXIT_TIMEOUT=7' >> $DIST/plan
+echo 'EXIT_TIMEOUT_AND_MEMORY=8' >> $DIST/plan
 echo '"$(dirname "$0")"/fast-downward.py' \
      "--build=$BUILD" \
-      '--plan-file "$PLAN_FILE"' \
+     "--overall-time-limit=$TIME_LIMIT" \
+     "--translate" "--preprocess" "--search" \
       '--alias' "$PLANNER_NAME" \
-      '"$DOMAIN"' '"$PROBLEM"' >> $DIST/plan
+      '"$DOMAIN"' '"$PROBLEM" > planner.log 2> planner.err' >> $DIST/plan
+
+echo 'exitcode=$?' >> $DIST/plan
+echo 'echo "Exitcode: $exitcode"' >> $DIST/plan
+echo 'if [[ "$exitcode" == "$EXIT_PLAN_FOUND" ]]; then' >> $DIST/plan
+echo '    echo "solvable"' >> $DIST/plan
+echo 'elif [[ "$exitcode" == "$EXIT_UNSOLVABLE" ]]; then' >> $DIST/plan
+echo '    echo "unsolvable"' >> $DIST/plan
+echo 'elif [[ "$exitcode" == "$EXIT_OUT_OF_MEMORY" ]] || ' \
+          '[[ "$exitcode" == "$EXIT_TIMEOUT" ]] || ' \
+          '[[ "$exitcode" == "$EXIT_TIMEOUT_AND_MEMORY" ]] ; then' >> $DIST/plan
+echo '    echo "unknown"' >> $DIST/plan
+echo 'else' >> $DIST/plan
+echo '    echo "The planner exited with unexpected exit code $exitcode."' >> $DIST/plan
+echo '    echo "Please inspect planner.log and planner.err"' >> $DIST/plan
+echo '    exit 1' >> $DIST/plan
+echo 'fi' >> $DIST/plan
 chmod 755 $DIST/plan
 
 # Packaging
@@ -77,18 +92,14 @@ rm -rf $DIST
 DIR="$(cd "$(dirname "$0")" && pwd)"
 echo $DIR
 BENCHMARKS="$DIR/../benchmarks"
-VALIDATOR="$DIR/../src/VAL/validate"
 
 function planner-test-run () {
     DOMAIN="$BENCHMARKS/$1"
     PROBLEM="$BENCHMARKS/$2"
     echo "Sanity test: $DOMAIN $PROBLEM ..."
-    ./plan "$DOMAIN" "$PROBLEM" sas_plan
-    for PLAN in $(ls sas_plan*); do
-        "$VALIDATOR" "$DOMAIN" "$PROBLEM" "$PLAN"
-    done
+    ./plan "$DOMAIN" "$PROBLEM"
 
-    rm -f output.sas output sas_plan* plan_numbers_and_cost elapsed.time
+    rm -f output.sas output sas_plan*
 }
 
 if [[ "$SANITY_TEST_UNPACK" == 1 ]]; then
