@@ -65,7 +65,7 @@ echo '"$(dirname "$0")"/fast-downward.py' \
       '"$DOMAIN"' '"$PROBLEM" > planner.log 2> planner.err' >> $DIST/plan
 
 echo 'exitcode=$?' >> $DIST/plan
-echo 'echo "Exitcode: $exitcode"' >> $DIST/plan
+echo 'echo "Exitcode: $exitcode" >> planner.log' >> $DIST/plan
 echo 'if [[ "$exitcode" == "$EXIT_PLAN_FOUND" ]]; then' >> $DIST/plan
 echo '    echo "solvable"' >> $DIST/plan
 echo 'elif [[ "$exitcode" == "$EXIT_UNSOLVABLE" ]]; then' >> $DIST/plan
