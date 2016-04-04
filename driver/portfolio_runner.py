@@ -20,6 +20,7 @@ the process is started.
 __all__ = ["run"]
 
 import os
+import re
 import subprocess
 import sys
 import traceback
@@ -185,9 +186,20 @@ def run_unsolvable_resource_detection(
     return exitcode_mapping.get(exitcode, exitcode)
 
 
+def get_replace_relative_time_option_function(run_time):
+    def replace_relative_time_option(match):
+        assert len(match.groups("relativetime")) == 1
+        relativetime = match.groups("relativetime")[0]
+        return "=%d" % (run_time * int(relativetime) / 100)
+    return replace_relative_time_option
+
 def run_opt(configs, executable, sas_file, plan_manager, timeout, memory):
     for pos, (relative_time, args) in enumerate(configs):
         run_time = compute_run_time(timeout, configs, pos)
+        args = [re.sub(r"=relative time (?P<relativetime>\d+)",
+                    get_replace_relative_time_option_function(run_time), arg)
+                for arg in args]
+
         if any("f_bound=compute" in x for x in args):
             exitcode = run_unsolvable_resource_detection(
                 executable, args, sas_file, run_time, memory)
