@@ -11,12 +11,14 @@ import os
 configs = [
     IssueConfig(
         'rcp_pdbs_seq',
-        [build_options=["aidos_ipc"],
-         driver_options=["--build", "aidos_ipc", "--alias=seq-unsolvable-aidos", "--search-memory-limit", "7G", "--overall-time-limit", "30m"]),
+        [],
+        build_options=["aidos_ipc"],
+        driver_options=["--build", "aidos_ipc", "--alias=seq-unsolvable-aidos", "--search-memory-limit", "7G", "--overall-time-limit", "30m"]),
     IssueConfig(
         'rcp_seq_pdbs',
-        [build_options=["aidos_ipc"],
-         driver_options=["--build", "aidos_ipc", "--alias=seq-unsolvable-aidos-order2", "--search-memory-limit", "7G", "--overall-time-limit", "30m"]),
+        [],
+        build_options=["aidos_ipc"],
+        driver_options=["--build", "aidos_ipc", "--alias=seq-unsolvable-aidos-order2", "--search-memory-limit", "7G", "--overall-time-limit", "30m"]),
 ]
 revisions = ["unsolvable-portfolio-order"]
 
