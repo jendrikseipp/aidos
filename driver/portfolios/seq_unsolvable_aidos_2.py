@@ -5,12 +5,12 @@ OPTIMAL = True
 CONFIGS = [
     (1, [
         "--heuristic",
-        "h_seq=operatorcounting([state_equation_constraints(), feature_constraints(max_size=infinity)], cost_type=zero)",
+        "h_seq=operatorcounting([state_equation_constraints(), feature_constraints(max_size=2)], cost_type=zero)",
         "--search",
         "unsolvable_search([h_seq], pruning=stubborn_sets_ec(min_pruning_ratio=0.20))"]),
     (4, [
         "--search",
-        "unsolvable_search([deadpdbs(max_time=relative time 1)], pruning=stubborn_sets_ec(min_pruning_ratio=0.80))"]),
+        "unsolvable_search([deadpdbs(max_time=1)], pruning=stubborn_sets_ec(min_pruning_ratio=0.80))"]),
     (598, [
         "--heuristic",
         "h_seq=operatorcounting([state_equation_constraints(), lmcut_constraints()], cost_type=zero)",
@@ -23,7 +23,7 @@ CONFIGS = [
         "unsolvable_search([deadpdbs(max_time=relative time 50)], pruning=stubborn_sets_ec(min_pruning_ratio=0.80))"]),
     (599, [
         "--heuristic",
-        "h_seq=operatorcounting([state_equation_constraints(), feature_constraints(max_size=infinity)], cost_type=zero)",
+        "h_seq=operatorcounting([state_equation_constraints(), feature_constraints(max_size=3)], cost_type=zero)",
         "--search",
         "unsolvable_search([h_seq], pruning=stubborn_sets_ec(min_pruning_ratio=0.20))"]),
 ]
