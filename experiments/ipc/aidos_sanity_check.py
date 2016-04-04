@@ -20,7 +20,7 @@ configs = [
         build_options=["aidos_ipc"],
         driver_options=["--build", "aidos_ipc", "--alias=seq-unsolvable-aidos-2", "--search-memory-limit", "7G", "--overall-time-limit", "5m"]),
 ]
-revisions = ["unsolvable-portfolio-order"]
+revisions = ["unsolvable"]
 
 def get_domain_dir():
     path = os.path.abspath(common_setup.get_repo_base())
