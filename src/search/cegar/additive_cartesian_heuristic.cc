@@ -41,7 +41,7 @@ AdditiveCartesianHeuristic::AdditiveCartesianHeuristic(const Options &opts)
     : Heuristic(opts),
       subtask_generators(opts.get_list<shared_ptr<SubtaskGenerator>>("subtasks")),
       max_states(opts.get<int>("max_states")),
-      max_h(opts.get<int>("max_h")),
+      f_bound(opts.get<int>("f_bound")),
       timer(new utils::CountdownTimer(opts.get<double>("max_time"))),
       use_general_costs(opts.get<bool>("use_general_costs")),
       pick_split(static_cast<PickSplit>(opts.get<int>("pick"))),
@@ -75,7 +75,7 @@ bool AdditiveCartesianHeuristic::may_build_another_abstraction() {
            !timer->is_expired() &&
            utils::extra_memory_padding_is_reserved() &&
            h != DEAD_END &&
-           h < max_h;
+           h <= f_bound;
 }
 
 void AdditiveCartesianHeuristic::build_abstractions(
@@ -85,10 +85,11 @@ void AdditiveCartesianHeuristic::build_abstractions(
         subtask = get_remaining_costs_task(subtask);
 
         assert(num_states < max_states);
+        const int max_h = f_bound + 1 - compute_heuristic(g_initial_state());
         Abstraction abstraction(
             subtask,
             max(1, (max_states - num_states) / rem_subtasks),
-            max_h - compute_heuristic(g_initial_state()),
+            max_h,
             timer->get_remaining_time() / rem_subtasks,
             use_general_costs,
             pick_split);
@@ -208,8 +209,8 @@ static Heuristic *_parse(OptionParser &parser) {
     parser.add_option<bool>(
         "use_general_costs", "allow negative costs in cost partitioning", "true");
     parser.add_option<int>(
-        "max_h",
-        "inclusive maximum total h-value",
+        "f_bound",
+        "inclusive bound on f values (stop refinement when total h value > f_bound)",
         "infinity",
         Bounds("0", "infinity"));
     Heuristic::add_options_to_parser(parser);
