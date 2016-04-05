@@ -41,6 +41,7 @@ AdditiveCartesianHeuristic::AdditiveCartesianHeuristic(const Options &opts)
     : Heuristic(opts),
       subtask_generators(opts.get_list<shared_ptr<SubtaskGenerator>>("subtasks")),
       max_states(opts.get<int>("max_states")),
+      f_bound(opts.get<int>("f_bound")),
       timer(new utils::CountdownTimer(opts.get<double>("max_time"))),
       use_general_costs(opts.get<bool>("use_general_costs")),
       pick_split(static_cast<PickSplit>(opts.get<int>("pick"))),
@@ -69,10 +70,12 @@ shared_ptr<AbstractTask> AdditiveCartesianHeuristic::get_remaining_costs_task(
 }
 
 bool AdditiveCartesianHeuristic::may_build_another_abstraction() {
+    const int h = compute_heuristic(g_initial_state());
     return num_states < max_states &&
            !timer->is_expired() &&
            utils::extra_memory_padding_is_reserved() &&
-           compute_heuristic(g_initial_state()) != DEAD_END;
+           h != DEAD_END &&
+           h <= f_bound;
 }
 
 void AdditiveCartesianHeuristic::build_abstractions(
@@ -82,9 +85,11 @@ void AdditiveCartesianHeuristic::build_abstractions(
         subtask = get_remaining_costs_task(subtask);
 
         assert(num_states < max_states);
+        const int max_h = f_bound + 1 - compute_heuristic(g_initial_state());
         Abstraction abstraction(
             subtask,
             max(1, (max_states - num_states) / rem_subtasks),
+            max_h,
             timer->get_remaining_time() / rem_subtasks,
             use_general_costs,
             pick_split);
@@ -203,6 +208,11 @@ static Heuristic *_parse(OptionParser &parser) {
         "pick", pick_strategies, "split-selection strategy", "MAX_REFINED");
     parser.add_option<bool>(
         "use_general_costs", "allow negative costs in cost partitioning", "true");
+    parser.add_option<int>(
+        "f_bound",
+        "inclusive bound on f values (stop refinement when total h value > f_bound)",
+        "infinity",
+        Bounds("0", "infinity"));
     Heuristic::add_options_to_parser(parser);
     Options opts = parser.parse();
     if (parser.dry_run())
