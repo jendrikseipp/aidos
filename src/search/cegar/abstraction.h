@@ -27,6 +27,7 @@ struct Flaw;
 class Abstraction {
     const TaskProxy task_proxy;
     const int max_states;
+    const int max_h;
 
     AbstractSearch abstract_search;
     SplitSelector split_selector;
@@ -99,6 +100,7 @@ public:
     explicit Abstraction(
         const std::shared_ptr<AbstractTask> task,
         int max_states,
+        int max_h,
         double max_time,
         bool use_general_costs,
         PickSplit pick,

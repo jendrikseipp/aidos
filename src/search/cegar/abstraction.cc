@@ -68,12 +68,14 @@ struct Flaw {
 Abstraction::Abstraction(
     const shared_ptr<AbstractTask> task,
     int max_states,
+    int max_h,
     double max_time,
     bool use_general_costs,
     PickSplit pick,
     bool debug)
     : task_proxy(*task),
       max_states(max_states),
+      max_h(max_h),
       abstract_search(
           get_operator_costs(task_proxy),
           states,
@@ -88,6 +90,7 @@ Abstraction::Abstraction(
     assert(max_states >= 1);
     g_log << "Start building abstraction." << endl;
     cout << "Maximum number of states: " << max_states << endl;
+    cout << "Maximum h value: " << max_h << endl;
     build();
     g_log << "Done building abstraction." << endl;
     cout << "Time for building abstraction: " << timer << endl;
@@ -144,6 +147,7 @@ bool Abstraction::may_keep_refining() const {
        Without doing so, the algorithm would be more deterministic. */
     return utils::extra_memory_padding_is_reserved() &&
            get_num_states() < max_states &&
+           init->get_h_value() < max_h &&
            !timer.is_expired();
 }
 

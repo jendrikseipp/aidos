@@ -172,10 +172,8 @@ def run_unsolvable_resource_detection(
     if f_bound is None:
         return returncodes.EXIT_TIMEOUT
     for index, arg in enumerate(args):
-        if arg == "--search":
-            search = args[index + 1]
-            assert "f_bound=compute" in search
-            args[index + 1] = search.replace("f_bound=compute", "f_bound=%d" % f_bound)
+        if "f_bound=compute" in arg:
+            args[index] = arg.replace("f_bound=compute", "f_bound=%d" % f_bound)
     dummy_plan_manager = plan_manager.PlanManager("projected_sas_plan")
     exitcode = run_search(
         executable, args, projected_sas_file, dummy_plan_manager, run_time, memory)

@@ -70,6 +70,7 @@ class SubtaskGenerator;
 class AdditiveCartesianHeuristic : public Heuristic {
     std::vector<std::shared_ptr<SubtaskGenerator>> subtask_generators;
     const int max_states;
+    const int f_bound;
     std::unique_ptr<utils::CountdownTimer> timer;
     bool use_general_costs;
     PickSplit pick_split;
