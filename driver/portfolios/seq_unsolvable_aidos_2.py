@@ -13,7 +13,7 @@ CONFIGS = [
         "unsolvable_search([deadpdbs(max_time=1)], pruning=stubborn_sets_ec(min_pruning_ratio=0.80))"]),
     (598, [
         "--heuristic",
-        "h_seq=operatorcounting([state_equation_constraints(), lmcut_constraints()], cost_type=zero)",
+        "h_seq=operatorcounting([state_equation_constraints(), lmcut_constraints()])",
         "--heuristic",
         "h_cegar=cegar(subtasks=[original()], pick=max_hadd, max_time=relative time 75)",
         "--search",
