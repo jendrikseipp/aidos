@@ -15,7 +15,7 @@ CONFIGS = [
         "--heuristic",
         "h_seq=operatorcounting([state_equation_constraints(), lmcut_constraints()])",
         "--heuristic",
-        "h_cegar=cegar(subtasks=[original()], pick=max_hadd, max_time=relative time 75)",
+        "h_cegar=cegar(subtasks=[original()], pick=max_hadd, max_time=relative time 75, f_bound=compute)",
         "--search",
         "astar(f_bound=compute, eval=max([h_cegar, h_seq]), pruning=stubborn_sets_ec(min_pruning_ratio=0.50))"]),
     (598, [
