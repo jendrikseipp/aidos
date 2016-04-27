@@ -42,9 +42,12 @@ bool UnsolvableSearch::is_dead_end(const GlobalState &global_state) {
 
 void UnsolvableSearch::initialize() {
     cout << "Conducting unsolvable DFS search" << endl;
-    assert(g_state_registry->size() == 0);
-    /* Generate the initial state (we don't need the result,
-       but the state has to be created in the registry). */
+    assert(g_state_registry->size() <= 1);
+    /*
+      Generate the initial state (we don't need the result,
+      but the state has to be created in the registry, if this
+      has not been done before).
+    */
     g_state_registry->get_initial_state();
     // The initial state has id 0, so we'll start there.
     current_state_id = 0;
