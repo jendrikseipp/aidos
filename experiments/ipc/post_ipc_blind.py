@@ -11,17 +11,17 @@ import os
 configs = [
     IssueConfig(
         'blind',
-        ['--search', 'unsolvable_search([], pruning=stubborn_sets_ec(min_pruning_ratio=0.80))'],
+        ['--search', 'unsolvable_search([blind()], pruning=stubborn_sets_ec(min_pruning_ratio=0.80))'],
         build_options=["release64"],
         driver_options=["--build", "release64", "--search-memory-limit", "7G", "--search-time-limit", "30m"]),
     IssueConfig(
         'blind_prune_080',
-        ['--search', 'unsolvable_search([], pruning=stubborn_sets_ec(min_pruning_ratio=0.80))'],
+        ['--search', 'unsolvable_search([blind()], pruning=stubborn_sets_ec(min_pruning_ratio=0.80))'],
         build_options=["release64"],
         driver_options=["--build", "release64", "--search-memory-limit", "7G", "--search-time-limit", "30m"]),
     IssueConfig(
         'blind_prune_020',
-        ['--search', 'unsolvable_search([], pruning=stubborn_sets_ec(min_pruning_ratio=0.20))'],
+        ['--search', 'unsolvable_search([blind()], pruning=stubborn_sets_ec(min_pruning_ratio=0.20))'],
         build_options=["release64"],
         driver_options=["--build", "release64", "--search-memory-limit", "7G", "--search-time-limit", "30m"]),
 ]
