@@ -10,41 +10,18 @@ import os
 
 configs = [
     IssueConfig(
-        'aidos-1',
-        [],
-        build_options=["release64"],
-        driver_options=["--build", "release64", "--alias=seq-unsolvable-aidos-1", "--search-memory-limit", "7G", "--overall-time-limit", "30m"]),
-    IssueConfig(
-        'aidos-2',
-        [],
-        build_options=["release64"],
-        driver_options=["--build", "release64", "--alias=seq-unsolvable-aidos-2", "--search-memory-limit", "7G", "--overall-time-limit", "30m"]),
-    IssueConfig(
-        'aidos-3',
-        [],
-        build_options=["release64"],
-        driver_options=["--build", "release64", "--alias=seq-unsolvable-aidos-3", "--search-memory-limit", "7G", "--overall-time-limit", "30m"]),
-    IssueConfig(
-        'seq_features_prune_020',
-        ['--heuristic', 'h_seq=operatorcounting([state_equation_constraints(), feature_constraints(max_size=2)], cost_type=zero)',
-         '--search', 'unsolvable_search([h_seq], pruning=stubborn_sets_ec(min_pruning_ratio=0.20))'],
+        'blind',
+        ['--search', 'unsolvable_search([], pruning=stubborn_sets_ec(min_pruning_ratio=0.80))'],
         build_options=["release64"],
         driver_options=["--build", "release64", "--search-memory-limit", "7G", "--search-time-limit", "30m"]),
     IssueConfig(
-        'deadpdbs_1_prune_080',
-        ['--search', 'unsolvable_search([deadpdbs(max_time=1)], pruning=stubborn_sets_ec(min_pruning_ratio=0.80))'],
+        'blind_prune_080',
+        ['--search', 'unsolvable_search([], pruning=stubborn_sets_ec(min_pruning_ratio=0.80))'],
         build_options=["release64"],
         driver_options=["--build", "release64", "--search-memory-limit", "7G", "--search-time-limit", "30m"]),
     IssueConfig(
-        'deadpdbs_300_prune_080',
-        ['--search', 'unsolvable_search([deadpdbs(max_time=300)], pruning=stubborn_sets_ec(min_pruning_ratio=0.80))'],
-        build_options=["release64"],
-        driver_options=["--build", "release64", "--search-memory-limit", "7G", "--search-time-limit", "30m"]),
-    IssueConfig(
-        'resources_cegar_max_hadd_lmcut_seq_pruning_050',
-        ['--heuristic', 'h_seq=operatorcounting([state_equation_constraints(), lmcut_constraints()])',
-         '--heuristic', 'h_cegar=cegar(subtasks=[original()], pick=max_hadd, max_time=300)',
-         '--search', 'astar(f_bound=compute, eval=max([h_cegar, h_seq]), pruning=stubborn_sets_ec(min_pruning_ratio=0.50))'],
+        'blind_prune_020',
+        ['--search', 'unsolvable_search([], pruning=stubborn_sets_ec(min_pruning_ratio=0.20))'],
         build_options=["release64"],
         driver_options=["--build", "release64", "--search-memory-limit", "7G", "--search-time-limit", "30m"]),
 ]
