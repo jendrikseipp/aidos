@@ -5,6 +5,7 @@ from downward import suites
 
 import common_setup
 from common_setup import IssueConfig, IssueExperiment
+import cactus
 
 import os
 
@@ -530,4 +531,14 @@ exp.add_absolute_report_step(
     filter=add_unsolvable,
     attributes=exp.DEFAULT_TABLE_ATTRIBUTES + ["unsolvable"])
 
+for attribute in ["memory", "total_time"]:
+    exp.add_report(
+        cactus.CactusPlotReport(
+            attributes=[attribute],
+            xscale="linear",
+            filter_unsolvable=1,
+            filter=add_unsolvable,
+        ),
+        outfile="{}-{}.png".format(exp.name, attribute)
+    )
 exp()
