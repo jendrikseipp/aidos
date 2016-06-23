@@ -42,6 +42,9 @@ def parse_args():
     argparser.add_argument(
         "--dump-task", action="store_true",
         help="dump human-readable SAS+ representation of the task")
+    argparser.add_argument(
+        "--hacky-workaround-for-nasty-facts", action="store_true",
+        help="use hacky workaround for nasty facts")
     return argparser.parse_args()
 
 

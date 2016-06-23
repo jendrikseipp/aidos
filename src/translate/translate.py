@@ -44,6 +44,8 @@ DEBUG = False
 simplified_effect_condition_counter = 0
 added_implied_precondition_counter = 0
 
+nasty_facts = {}
+
 
 def strips_to_sas_dictionary(groups, assert_partial):
     dictionary = {}
@@ -320,7 +322,38 @@ def build_sas_operator(name, condition, effects_by_variable, cost, ranges,
     if not pre_post:  # operator is noop
         return None
     prevail = list(condition.items())
+    if options.hacky_workaround_for_nasty_facts:
+        collect_nasty_facts(pre_post)
     return sas_tasks.SASOperator(name, prevail, pre_post, cost)
+
+
+def collect_nasty_facts(pre_post):
+    ## Very hacky function to collect "nasty facts". A fact is nasty
+    ## if it corresponds to a PDDL delete effect that we have to
+    ## translate into a conditional effect because we can't determine
+    ## from looking at the operator whether the converted
+    ## finite-domain variable is set to a new value or not.
+    ##
+    ## Note that in the grand scheme of things, the analysis we
+    ## perform here probably doesn't go far enough if there are
+    ## multiple effects (at least on of them conditional) that can
+    ## affect the same effect variable in different directions. This
+    ## case is likely to still have nasty bugs, but this code is
+    ## intended for domains that don't have conditional effects in the
+    ## original encoding anyway.
+    for var, pre, post, cond in pre_post:
+        if len(cond) == 1:
+            cvar, cval = cond[0]
+            if cvar == var:
+                # Assert that their is no precondition on this
+                # variable: if there is, the effect condition is
+                # redundant or impossible and should have been removed
+                # earlier.
+                assert pre == -1, "this effect condition should not exist!"
+                fact = (var, cval)
+                if fact not in nasty_facts:
+                    nasty_facts[fact] = None
+                    print("nasty fact detected: %s" % (fact,))
 
 
 def prune_stupid_effect_conditions(var, val, conditions):
@@ -519,6 +552,21 @@ def pddl_to_sas(task):
     if not relaxed_reachable:
         return unsolvable_sas_task("No relaxed solution")
 
+    nasty_atom_names = set()
+    while True:
+        sas_task = pddl_to_sas_aux(task, relaxed_reachable, atoms, actions,
+                                   axioms, reachable_action_params, nasty_atom_names)
+        if not nasty_facts:
+            return sas_task
+        print("Oh, oh! Detected %d new nasty facts!" % len(nasty_facts))
+        assert nasty_atom_names.isdisjoint(nasty_facts.values()), (
+            sorted(nasty_atom_names), sorted(nasty_facts.values()))
+        nasty_atom_names.update(nasty_facts.values())
+        nasty_facts.clear()
+
+
+def pddl_to_sas_aux(task, relaxed_reachable, atoms, actions,
+                    axioms, reachable_action_params, nasty_atom_names):
     # HACK! Goals should be treated differently.
     if isinstance(task.goal, pddl.Conjunction):
         goal_list = task.goal.parts
@@ -529,7 +577,8 @@ def pddl_to_sas(task):
 
     with timers.timing("Computing fact groups", block=True):
         groups, mutex_groups, translation_key = fact_groups.compute_groups(
-            task, atoms, reachable_action_params)
+            task, atoms, reachable_action_params,
+            nasty_atom_names=nasty_atom_names)
 
     with timers.timing("Building STRIPS to SAS dictionary"):
         ranges, strips_to_sas = strips_to_sas_dictionary(
@@ -570,6 +619,12 @@ def pddl_to_sas(task):
             except simplify.TriviallySolvable:
                 return solvable_sas_task("Simplified to empty goal")
 
+    if nasty_facts:
+        print("summarizing nasty facts:")
+        for var, val in nasty_facts:
+            atom_name = translation_key[var][val]
+            nasty_facts[var, val] = atom_name
+            print("nasty fact %s => %s" % ((var, val), atom_name))
     return sas_task
 
 

@@ -106,11 +106,24 @@ def collect_all_mutex_groups(groups, atoms):
 def sort_groups(groups):
     return sorted(sorted(group) for group in groups)
 
-def compute_groups(task, atoms, reachable_action_params):
+def compute_groups(task, atoms, reachable_action_params, nasty_atom_names=set()):
+    # Note: nasty_atom_names is (only) used by the option
+    # --hacky-workaround-for-nasty-facts. This is of course a bad
+    # hack.
     groups = invariant_finder.get_groups(task, reachable_action_params)
 
     with timers.timing("Instantiating groups"):
         groups = instantiate_groups(groups, task, atoms)
+
+    if nasty_atom_names:
+        print("pruning nasty atoms from all mutex groups")
+        new_groups = []
+        for group in groups:
+            new_group = [atom for atom in group
+                         if str(atom) not in nasty_atom_names]
+            if new_group:
+                new_groups.append(new_group)
+        groups = new_groups
 
     # Sort here already to get deterministic mutex groups.
     groups = sort_groups(groups)
