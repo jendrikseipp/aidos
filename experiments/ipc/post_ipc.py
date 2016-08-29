@@ -52,7 +52,7 @@ configs = [
 revisions = ["unsolvable"]
 
 def get_domain_dir():
-    return "/infai/pommeren/projects/downward/unsolve-ipc-2016/domains/FINAL"
+    return os.path.expanduser("~/projects/downward/unsolve-ipc-2016/domains/FINAL")
 
 cores = 2
 exp = IssueExperiment(
@@ -531,6 +531,12 @@ exp.add_absolute_report_step(
     filter=add_unsolvable,
     attributes=exp.DEFAULT_TABLE_ATTRIBUTES + ["unsolvable"])
 
+exp.add_absolute_report_step(
+    resolution="domain",
+    filter=add_unsolvable,
+    attributes=["unsolvable"],
+    format="tex")
+
 for attribute in ["memory", "total_time"]:
     exp.add_report(
         cactus.CactusPlotReport(
@@ -538,7 +544,8 @@ for attribute in ["memory", "total_time"]:
             xscale="linear",
             filter_unsolvable=1,
             filter=add_unsolvable,
+            format="tex"
         ),
-        outfile="{}-{}.png".format(exp.name, attribute)
+        outfile="{}-{}.tex".format(exp.name, attribute)
     )
 exp()
