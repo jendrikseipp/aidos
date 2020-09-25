@@ -165,6 +165,16 @@ def run_sat(configs, executable, sas_file, plan_manager, final_config,
 
 def run_unsolvable_resource_detection(
         executable, args, sas_file, run_time, memory):
+    try:
+        import cplex
+    except ImportError:
+        print("ERROR: cplex module not found. Please add it to the PYTHONPATH.", file=sys.stderr)
+        return returncodes.EXIT_CRITICAL_ERROR
+    except Exception as e:
+        print("ERROR: loading cplex failed: {}".format(e), file=sys.stderr)
+        print("will skip the config {}".format(args), file=sys.stderr)
+        return returncodes.EXIT_CRITICAL_ERROR
+
     from .resources import detect
     from . import plan_manager
     projected_sas_file = sas_file.rstrip("/") + ".projected"
