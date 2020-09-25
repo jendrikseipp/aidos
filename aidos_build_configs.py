@@ -1,3 +1,4 @@
+# Aidos 1 and 2 can use this minimal build. Aidos 3 needs release64.
 aidos_ipc = [
     "-DCMAKE_BUILD_TYPE=Release",
     "-DALLOW_64_BIT=True",
