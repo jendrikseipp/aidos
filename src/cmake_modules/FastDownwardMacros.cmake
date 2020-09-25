@@ -14,7 +14,7 @@ macro(fast_downward_set_compiler_flags)
         endif()
 
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g")
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -pedantic -Werror")
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -pedantic")
 
         ## Configuration-specific flags
         set(CMAKE_CXX_FLAGS_RELEASE "-O3 -DNDEBUG -fomit-frame-pointer")
@@ -76,20 +76,20 @@ macro(fast_downward_set_linker_flags)
     else()
         # Any libs we build should be static.
         set(BUILD_SHARED_LIBS FALSE)
-    
+
         # Any libraries that are implicitly added to the end of the linker
         # command should be linked statically.
         set(LINK_SEARCH_END_STATIC TRUE)
-    
+
         # Do not add "-rdynamic" flag.
         set(CMAKE_SHARED_LIBRARY_LINK_C_FLAGS "")
         set(CMAKE_SHARED_LIBRARY_LINK_CXX_FLAGS "")
-    
+
         # Only look for static libraries (Windows does not support this).
         if(UNIX)
             set(CMAKE_FIND_LIBRARY_SUFFIXES .a)
         endif()
-    
+
         # Set linker flags to link statically.
         if(CMAKE_COMPILER_IS_GNUCXX)
             set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -g -static -static-libgcc")

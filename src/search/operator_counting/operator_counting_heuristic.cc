@@ -9,6 +9,8 @@
 #include "../utils/markup.h"
 #include "../utils/timer.h"
 
+#include <cmath>
+
 using namespace std;
 
 namespace operator_counting {
