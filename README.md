@@ -52,6 +52,16 @@ distributes the time uniformly.
 Aidos 3 is also a sequential portfolio, but the components and time limits
 are chosen from a larger design space automatically.
 
+## Instructions
+
+See http://www.fast-downward.org/ for installation instructions, including
+how to set up CPLEX for Fast Downward. Once you have installed all
+requirements, you can build and run Aidos 1 with the following commands:
+
+    ./build.py release64
+    ./fast-downward.py --build release64 --alias seq-unsolvable-aidos-1 --overall-time-limit 30m PDDL_FILE
+
+
 Aidos is built on top of the Fast Downward planning system.
 
 # Fast Downward
