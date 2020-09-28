@@ -83,6 +83,9 @@ endif()
 find_library(CPLEX_LIBRARY_RELEASE
     NAMES
     cplex
+    cplex1290
+    cplex1280
+    cplex1271
     cplex1262
     HINTS
     $ENV{DOWNWARD_CPLEX_ROOT}
@@ -94,6 +97,9 @@ find_library(CPLEX_LIBRARY_RELEASE
 find_library(CPLEX_LIBRARY_DEBUG
     NAMES
     cplex
+    cplex1290
+    cplex1280
+    cplex1271
     cplex1262
     HINTS
     $ENV{DOWNWARD_CPLEX_ROOT}
