@@ -19,7 +19,7 @@ jobs:
 
       - name: Compile planner
         run: |
-          export CXXFLAGS="-Werror" # Treat compilation warnings as errors.
+          #export CXXFLAGS="-Werror" # Treat compilation warnings as errors.
           ./build.py
           ./build.py --debug
 
