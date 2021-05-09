@@ -20,7 +20,7 @@ env:
 
 jobs:
   test:
-    name: Compile and test planner
+    name: Compile planner
     timeout-minutes: 60
     runs-on: ${{ matrix.platform.os }}
     strategy:
@@ -143,35 +143,5 @@ jobs:
           call "${{ matrix.platform.vc }}" %ARCH%
           python build.py release
           python build.py debug
-
-      - name: Install tox
-        run: |
-          pip3 install tox
-
-      - name: Run translator and search tests
-        shell: cmd
-        # We do not run driver tests here because that would require
-        # VAL to be installed, which currently cannot be easily done
-        # on Windows for the version of VAL we use. When the maintainers
-        # of VAL fix the latest version to accept plans without time
-        # steps, we hope to be able to install VAL natively on Windows.
-        run: |
-          call "${{ matrix.platform.vc }}" %ARCH%
-          rem "dumpbin /dependents builds\release\bin\downward.exe shows that"
-          rem "downward.exe depends on cplexXYZ.dll. Thus, we have to add it to"
-          rem "the PATH. On my local CPLEX installation this is done"
-          rem "automatically. For the GitHub Action we have to do it manually:"
-          set PATH=%PATH%;D:\a\downward\cplex_temp\opl\bin\x64_win64/
-          cd misc/
-          tox -e translator,search
-
-      - name: Run CPLEX tests
-        shell: cmd
-        if: ${{ env.CPLEX_URL != 0 }}
-        run: |
-          call "${{ matrix.platform.vc }}" %ARCH%
-          set PATH=%PATH%;D:\a\downward\cplex_temp\opl\bin\x64_win64/
-          cd misc/
-          tox -e cplex
 
 ...
