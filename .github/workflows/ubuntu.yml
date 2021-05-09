@@ -107,31 +107,4 @@ jobs:
           ./build.py --debug
           ./build.py
 
-      - name: Archive required files
-        # We only run tests on the version compiled with gcc, so we
-        # only need to archive that one.
-        if: ${{ matrix.compiler-version.cc == 'gcc' }}
-        # We determined the dynamically-linked libraries using ldd. We
-        # archive the entire lib directory of Osi because we need all
-        # 4 large library files and several file links to these.
-        run: |
-          libs=""
-          if [[ ! -z "${CPLEX_URL}" || ! -z "${SOPLEX_URL}" ]]; then
-            libs="${libs} lib/coin/lib/"
-          fi
-          if [[ ! -z "${CPLEX_URL}" ]]; then
-            libs="${libs} lib/ibm/ILOG/CPLEX_Studio129/cplex/bin/x86-64_linux/libcplex1290.so"
-          fi
-
-          # Handle libs first because tar complains when no files follow the last --directory option.
-          tar cfz archive.tar.gz --directory /home/runner ${libs} --directory ${GITHUB_WORKSPACE} fast-downward.py driver misc builds/debug/bin/ builds/release/bin/
-
-      - name: Upload archive
-        if: ${{ matrix.compiler-version.cc == 'gcc' }}
-        uses: actions/upload-artifact@master
-        with:
-          name: compiled-planner-${{ matrix.ubuntu-version }}
-          path: archive.tar.gz
-          retention-days: 1
-
 ...
