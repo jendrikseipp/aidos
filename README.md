@@ -54,12 +54,25 @@ are chosen from a larger design space automatically.
 
 ## Instructions
 
-See http://www.fast-downward.org/ for installation instructions, including
-how to set up CPLEX for Fast Downward. Once you have installed all
-requirements, you can build and run Aidos 1 with the following commands:
+Aidos can be build natively but on modern systems, we recommend building it in
+a Docker container. To do so, you need to obtain a license for CPLEX, download
+the installer for version 12.9, and place it next to this file (it should be
+called `cplex_studio129.linux-x86-64.bin`). You can then build the docker
+container by running
 
-    ./build.py release64
-    ./fast-downward.py --build release64 --alias seq-unsolvable-aidos-1 --overall-time-limit 30m PDDL_FILE
+     docker build . -t aidos1
+
+in the directory containing this file, the CPLEX installer and the source code.
+
+For experiments, we recommend using Singularity instead of Docker. You can
+create a Singularity image from the created Docker container by running
+
+    singularity build aidos1.sif docker-daemon://aidos1:latest
+
+The resulting file `aidos1.sif` can be run like a binary. Note that Aidos is a
+portfolio and requires specifying a time limit.
+
+    ./aidos1.sif --overall-time-limit 30m PDDL_FILE
 
 
 Aidos is built on top of the Fast Downward planning system.
