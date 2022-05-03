@@ -54,20 +54,20 @@ are chosen from a larger design space automatically.
 
 ## Instructions
 
-Aidos can be build natively but on modern systems, we recommend building it in
-a Docker container. To do so, you need to obtain a license for CPLEX, download
-the installer for version 12.9, and place it next to this file (it should be
-called `cplex_studio129.linux-x86-64.bin`). You can then build the docker
-container by running
+Aidos can be built natively, but on modern systems we recommend building it in a
+Docker container. To do so, you need to obtain a license for CPLEX, download the
+installer for version 12.9, and place it next to this file (it should be called
+`cplex_studio129.linux-x86-64.bin`). You can then build the docker container by
+running
 
-     docker build . -t aidos1
+    sudo docker build . --tag aidos1
 
 in the directory containing this file, the CPLEX installer and the source code.
 
 For experiments, we recommend using Singularity instead of Docker. You can
 create a Singularity image from the created Docker container by running
 
-    singularity build aidos1.sif docker-daemon://aidos1:latest
+    sudo singularity build aidos1.sif docker-daemon://aidos1:latest
 
 The resulting file `aidos1.sif` can be run like a binary. Note that Aidos is a
 portfolio and requires specifying a time limit.
