@@ -88,4 +88,5 @@ ENV DOWNWARD_CPLEX_ROOT=/opt/ibm/ILOG/CPLEX_Studio129/cplex
 ENV DOWNWARD_COIN_ROOT=/opt/osi
 ENV LD_LIBRARY_PATH=$DOWNWARD_CPLEX_ROOT/bin/x86-64_linux:$DOWNWARD_COIN_ROOT/lib
 
-ENTRYPOINT ["/workspace/aidos/fast-downward.py", "--build=aidos_ipc", "--alias=seq-unsolvable-aidos-1", "--translate", "--preprocess", "--search"]
+# We enumerate the three stages to leave out validation stage (which would need VAL).
+ENTRYPOINT ["/workspace/aidos/fast-downward.py", "--build=aidos_ipc", "--translate", "--preprocess", "--search"]

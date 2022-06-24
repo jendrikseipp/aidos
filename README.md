@@ -60,19 +60,49 @@ installer for version 12.9, and place it next to this file (it should be called
 `cplex_studio129.linux-x86-64.bin`). You can then build the docker container by
 running
 
-    sudo docker build . --tag aidos1
+    sudo docker build . --tag aidos
 
 in the directory containing this file, the CPLEX installer and the source code.
+To run the Aidos 1 portfolio inside Docker, run
+
+    sudo docker run -v /home/jendrik/projects/Downward/benchmarks:/tmp/benchmarks \
+        --interactive --tty aidos \
+        --alias seq-unsolvable-aidos-1 \
+        --overall-time-limit 30m \
+        /tmp/benchmarks/gripper/{domain,prob01}.pddl
 
 For experiments, we recommend using Singularity instead of Docker. You can
 create a Singularity image from the created Docker container by running
 
-    sudo singularity build aidos1.sif docker-daemon://aidos1:latest
+    sudo singularity build aidos.sif docker-daemon://aidos:latest
 
-The resulting file `aidos1.sif` can be run like a binary. Note that Aidos is a
-portfolio and requires specifying a time limit.
+The resulting file `aidos.sif` can be run like a binary. Note that all three
+versions of Aidos are portfolios and require specifying a time limit.
 
-    ./aidos1.sif --overall-time-limit 30m PDDL_FILE
+    # Aidos 1 portfolio (recommended)
+    ./aidos.sif --alias seq-unsolvable-aidos-1 --overall-time-limit 30m PDDL_FILE
+
+You can also run the three main component algorithms of Aidos 1 and 2 individually:
+
+    # Deadend Database
+    ./aidos.sif PDDL_FILE --search \
+        "unsolvable_search([deadpdbs(max_time=900)], pruning=stubborn_sets_ec(min_pruning_ratio=0.80))"
+
+    # Deadend Potentials
+    ./aidos.sif PDDL_FILE \
+        --heuristic \
+        "h_seq=operatorcounting([state_equation_constraints(), feature_constraints(max_size=2)], cost_type=zero)" \
+        --search \
+        "unsolvable_search([h_seq], pruning=stubborn_sets_ec(min_pruning_ratio=0.20))"
+
+    # Resource Detection
+    ./aidos.sif PDDL_FILE \
+        --heuristic \
+        "h_seq=operatorcounting([state_equation_constraints(), lmcut_constraints()])" \
+        --heuristic \
+        "h_cegar=cegar(subtasks=[original()], pick=max_hadd, max_time=1350, f_bound=compute)" \
+        --search \
+        "astar(f_bound=compute, eval=max([h_cegar, h_seq]), pruning=stubborn_sets_ec(min_pruning_ratio=0.50))"
 
 
 Aidos is built on top of the Fast Downward planning system.
